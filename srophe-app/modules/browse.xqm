@@ -16,7 +16,6 @@ import module namespace facet="http://expath.org/ns/facet" at "lib/facet.xqm";
 import module namespace facet-defs="http://syriaca.org/facet-defs" at "facet-defs.xqm";
 import module namespace page="http://syriaca.org/page" at "lib/paging.xqm";
 import module namespace geo="http://syriaca.org/geojson" at "lib/geojson.xqm";
-import module namespace bs="http://syriaca.org/bs" at "browse-spear.xqm";
 import module namespace templates="http://exist-db.org/xquery/templates";
 
 declare namespace xslt="http://exist-db.org/xquery/transform";
@@ -55,20 +54,8 @@ declare variable $browse:computed-lang{
  : Step one directory for browse 'browse path'
 :)
 declare function browse:collection-path($collection){
-    if($collection = ('persons','sbd','saints','q','authors')) then 
-        concat("collection('",$global:data-root,"/persons/tei')")
-    else if($collection = 'places') then 
-        concat("collection('",$global:data-root,"/places/tei')")
-    else if($collection = 'bhse') then 
-        concat("collection('",$global:data-root,"/works/tei')")
-    else if($collection = 'bibl') then 
-        concat("collection('",$global:data-root,"/bibl/tei')")
-    else if($collection = 'spear') then 
-        concat("collection('",$global:data-root,"/spear/tei')")
-    else if($collection = 'manuscripts') then 
-        concat("collection('",$global:data-root,"/manuscripts/tei')")
-    else if(exists($collection)) then 
-        concat("collection('",$global:data-root,xs:anyURI($collection),"')")
+    if($collection = ('e-gedsh','gedsh')) then 
+        concat("collection('",$global:data-root,"')")
     else 
         concat("collection('",$global:data-root,"')")
 };
@@ -174,57 +161,30 @@ declare function browse:filters($collection){
  : @param $collection collection name passed from html, should match data subdirectory name or tei series name
 :)
 declare function browse:get-all($node as node(), $model as map(*), $collection as xs:string?){
-let $hits-main := util:eval(concat(browse:collection-path($collection),browse:sub-collection-filter($collection)))
-let $hits := util:eval(concat("$hits-main",browse:filters($collection)))
+let $hits-main := util:eval(concat(browse:collection-path($collection),'//tei:div[@type="entry"]'))
+(:let $hits := util:eval(concat("$hits-main",browse:filters($collection))):)
 let $data := 
-    if($collection = 'spear') then util:eval(concat(browse:collection-path($collection),'//tei:div[parent::tei:body]'))
-    else if($collection = 'bibl' and not($browse:view)) then
-            for $hit in $hits-main//tei:titleStmt/tei:title[1][matches(.,'\p{IsBasicLatin}|\p{IsLatin-1Supplement}|\p{IsLatinExtended-A}|\p{IsLatinExtended-B}','i')]
-            where $hit[matches(substring(global:build-sort-string(.,$browse:computed-lang),1,1),browse:get-sort(),'i')]
-            order by global:build-sort-string(page:add-sort-options($hit,$browse:sort-element),'')
-            return $hit/ancestor::tei:TEI
-    else if($browse:computed-lang != '' and $browse:sort != '') then 
-            for $hit in $hits[matches(substring(global:build-sort-string(.,$browse:computed-lang),1,1),browse:get-sort(),'i')]
-            order by $hit collation "?lang=en&lt;syr&amp;decomposition=full"
-            return $hit/ancestor::tei:TEI  
-    (:TEST:)        
-    else if($browse:view = 'numeric') then
-        for $hit in $hits/ancestor::tei:TEI/descendant::tei:idno[starts-with(.,$global:base-uri)][1]
-        let $rec-id := tokenize(replace($hit,'/tei|/source',''),'/')[last()]
-        order by xs:integer($rec-id)
-        return $hit/ancestor::tei:TEI
-    else if($browse:view = 'all') then
-        for $hit in $hits-main/ancestor::tei:TEI/descendant::tei:titleStmt/tei:title[1]
+    if($browse:view = 'all') then
+        for $hit in $hits-main/tei:head[1]
         order by global:build-sort-string(page:add-sort-options($hit,$browse:sort-element),'') collation "?lang=en&lt;syr&amp;decomposition=full"
-        return $hit/ancestor::tei:TEI
+        return $hit/ancestor::tei:div[@type='entry'][1]
     else if($browse:view = 'facets') then
-        let $path := concat('$hits-main/ancestor::tei:TEI',facet:facet-filter(facet-defs:facet-definition($collection)))
+        let $path := concat('$hits-main/',facet:facet-filter(facet-defs:facet-definition($collection)))
         for $hit in util:eval($path)
-        let $title := $hit//tei:titleStmt/tei:title[1]
+        let $title := $hit/tei:head[1]
         order by global:build-sort-string(page:add-sort-options($title,$browse:sort-element),'')
         return $hit
-(:Next  4 are used by bibl module:)        
-    else if($browse:view = 'A-Z') then
-            for $hit in $hits-main//tei:titleStmt/tei:title[1][matches(.,'\p{IsBasicLatin}|\p{IsLatin-1Supplement}|\p{IsLatinExtended-A}|\p{IsLatinExtended-B}','i')]
-            where $hit[matches(substring(global:build-sort-string(.,$browse:computed-lang),1,1),browse:get-sort(),'i')]
-            order by global:build-sort-string(page:add-sort-options($hit,$browse:sort-element),'')
-            return $hit/ancestor::tei:TEI
-    else if($browse:view = 'ܐ-ܬ') then
-            for $hit in $hits-main//tei:titleStmt/tei:title[1][matches(.,'\p{IsSyriac}','i')]
-            order by global:build-sort-string(page:add-sort-options($hit,$browse:sort-element),'') collation "?lang=syr&amp;decomposition=full"
-            return $hit/ancestor::tei:TEI                            
-    else if($browse:view = 'ا-ي') then
-        for $hit in $hits-main//tei:titleStmt/tei:title[1][matches(.,'\p{IsArabic}','i')]
-        order by  global:build-sort-string(page:add-sort-options($hit,$browse:sort-element),'ar') collation "?lang=ar&amp;decomposition=full"
-        return $hit/ancestor::tei:TEI 
-    else if($browse:view = 'other') then
-        for $hit in $hits-main//tei:titleStmt/tei:title[1][not(matches(substring(global:build-sort-string(.,''),1,1),'\p{IsSyriac}|\p{IsArabic}|\p{IsBasicLatin}|\p{IsLatin-1Supplement}|\p{IsLatinExtended-A}|\p{IsLatinExtended-B}|\p{IsLatinExtendedAdditional}','i'))]
-        order by global:build-sort-string(page:add-sort-options($hit,$browse:sort-element),'') collation "?lang=en&lt;syr&lt;ar&amp;decomposition=full"
-        return $hit/ancestor::tei:TEI                         
-    else 
-        for $hit in $hits/ancestor::tei:TEI/descendant::tei:titleStmt/tei:title[1]
-        order by $hit collation "?lang=en&lt;syr&amp;decomposition=full"
-        return $hit/ancestor::tei:TEI
+    else  
+        if($browse:computed-lang != '') then 
+            for $hit in $hits-main[matches(substring(global:build-sort-string(tei:head[1],$browse:computed-lang),1,1),browse:get-sort(),'i')]
+            let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
+            order by $title collation "?lang=en&lt;syr&amp;decomposition=full"
+            return $hit
+        else 
+            for $hit in $hits-main
+            let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
+            order by $title collation "?lang=en&lt;syr&amp;decomposition=full"
+            return $hit
 return map{"browse-data" := $data }
 };
 
@@ -322,8 +282,7 @@ declare function browse:pages($hits, $collection as xs:string?, $sort-options as
 declare function browse:results-panel($node as node(), $model as map(*), $collection, $sort-options as xs:string*){
 let $hits := $model("browse-data")
 return
-if($collection = 'spear') then bs:spear-results-panel($hits)
-else if($browse:view = 'type' or $browse:view = 'date' or $browse:view = 'facets') then
+ if($browse:view = 'type' or $browse:view = 'date' or $browse:view = 'facets') then
     (<div class="col-md-4">
         {if($browse:view='type') then 
             browse:browse-type($collection) 
@@ -398,7 +357,17 @@ else
 
 declare function browse:display-hits($hits){
     for $data in subsequence($hits, $browse:start,$browse:perpage)
-    return global:display-recs-short-view($data, $browse:computed-lang)
+    return (:global:display-recs-short-view($data, $browse:computed-lang):)
+    <div class="results-list">
+       <span class="sort-title">
+            <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/tei:head}</a>
+        </span>
+        <span class="results-list-desc type">{$data/tei:ab[@type='infobox']}</span>
+        <span class="results-list-desc uri">
+            <span class="srp-label">URI: </span>
+            <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/descendant::tei:idno[@type='URI'][1]}</a>
+        </span>
+    </div>
 };
 
 (: Display map :)
@@ -523,9 +492,3 @@ return
     </li> 
 };
 
-(:~
- : Browse Tabs - SPEAR
-:)
-declare  %templates:wrap function browse:build-tabs-spear($node, $model){    
-    bs:build-tabs-spear($node, $model)
-};

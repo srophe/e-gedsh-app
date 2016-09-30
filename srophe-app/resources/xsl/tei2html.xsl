@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
 
  <!-- ================================================================== 
-       Copyright 2013 New York University
+       Copyright 2013 New York University  
        
        This file is part of the Syriac Reference Portal Places Application.
        
@@ -990,21 +990,7 @@
                 </li>
             </xsl:when>
             <xsl:when test="parent::t:note">
-                <xsl:choose>
-                    <xsl:when test="t:ptr">
-                        <xsl:choose>
-                            <xsl:when test="child::*">
-                                <xsl:apply-templates select="." mode="inline"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates mode="footnote"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates mode="footnote"/>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:apply-templates select="self::*" mode="inline"/>
             </xsl:when>
             <xsl:when test="child::*">
                 <xsl:apply-templates mode="footnote"/>
@@ -1157,10 +1143,12 @@
         <xsl:apply-templates/>
         <xsl:sequence select="local:do-refs(@source,ancestor::t:*[@xml:lang][1])"/>
     </xsl:template>
+    
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
      handle standard output of a listBibl element 
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <xsl:template match="t:listBibl">
+        <xsl:apply-templates select="*[not(self::t:bibl)]"/>
         <ul class="listBibl">
             <xsl:for-each select="t:bibl">
                 <li>
@@ -1195,6 +1183,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
      handle standard output of a note element 
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -1457,7 +1446,6 @@
             <!-- Output all other names -->
             <xsl:otherwise>
                 <span dir="ltr" class="label label-default pers-label">
-                    <!-- write out the persName itself, with appropriate language and directionality indicia -->
                     <span class="persName">
                         <xsl:call-template name="langattr"/>
                         <xsl:apply-templates/>
@@ -1539,6 +1527,29 @@
     <!-- NOTE: would really like to get rid of mode=cleanout -->
     <xsl:template match="t:placeName[local-name(..)='desc']" mode="cleanout">
         <xsl:apply-templates select="."/>
+    </xsl:template>
+    
+    <!-- e-gedsh templates -->
+    <xsl:template match="t:div[@type='entry']">
+        <div>
+            <h1 class="inline">
+                <xsl:apply-templates select="t:head"/>                
+            </h1>
+            <span class="inline info-box"><xsl:apply-templates select="t:ab[@type='infobox']"/></span>
+        </div>
+        <xsl:apply-templates select="t:div[@type='body']"/>
+        <xsl:apply-templates select="t:div[@type='bibl']"/>
+        <xsl:apply-templates select="t:byline"/>
+    </xsl:template>
+    <xsl:template match="t:head">
+        <xsl:choose>
+            <xsl:when test="parent::t:div[@type='entry']">
+                <h1 class="inline"><xsl:apply-templates/></h1>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3><xsl:apply-templates/></h3>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <!-- NOTE: For SPEAR, could cause issues in the future.  -->
     <xsl:template match="t:div">
@@ -2077,7 +2088,7 @@
             </xsl:choose>
         </a>
         <xsl:if test="preceding-sibling::*">,</xsl:if>
-        <!-- If footnotes exist call function do-refs pass footnotes and language variables to function -->
+        <!--  If footnotes exist call function do-refs pass footnotes and language variables to function -->
         <xsl:if test="@source">
             <xsl:sequence select="local:do-refs(@source,@xml:lang)"/>
         </xsl:if>

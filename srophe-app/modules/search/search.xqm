@@ -3,12 +3,6 @@ xquery version "3.0";
 module namespace search="http://syriaca.org/search";
 import module namespace page="http://syriaca.org/page" at "../lib/paging.xqm";
 import module namespace facets="http://syriaca.org/facets" at "../lib/facets.xqm";
-import module namespace persons="http://syriaca.org/persons" at "persons-search.xqm";
-import module namespace places="http://syriaca.org/places" at "places-search.xqm";
-import module namespace spears="http://syriaca.org/spears" at "spear-search.xqm";
-import module namespace bhses="http://syriaca.org/bhses" at "bhse-search.xqm";
-import module namespace bibls="http://syriaca.org/bibls" at "bibl-search.xqm";
-import module namespace ms="http://syriaca.org/ms" at "ms-search.xqm";
 import module namespace common="http://syriaca.org/common" at "common.xqm";
 import module namespace geo="http://syriaca.org/geojson" at "../lib/geojson.xqm";
 import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
@@ -38,14 +32,7 @@ declare variable $search:collection {request:get-parameter('collection', '') cas
 :)
 declare %templates:wrap function search:get-results($node as node(), $model as map(*), $collection as xs:string?, $view as xs:string?){
     let $coll := if($search:collection != '') then $search:collection else $collection
-    let $eval-string := 
-                        if($coll = ('sbd','q','authors','saints','persons')) then persons:query-string($coll)
-                        else if($coll ='spear') then spears:query-string()
-                        else if($coll = 'places') then places:query-string()
-                        else if($coll = 'bhse') then bhses:query-string()
-                        else if($coll = 'bibl') then bibls:query-string()
-                        else if($coll = 'manuscripts') then ms:query-string()
-                        else search:query-string($collection)
+    let $eval-string :=  search:query-string($collection)
     return                         
     map {"hits" := 
                 if(exists(request:get-parameter-names()) or ($view = 'all')) then 
@@ -78,7 +65,7 @@ if($collection !='') then
     search:idno()
     )
 else 
-concat("collection('",$global:data-root,"')//tei:body",
+concat("collection('",$global:data-root,"')//tei:div[@type='entry']",
     common:keyword($search:q),
     search:persName(),
     search:placeName(), 
@@ -149,13 +136,7 @@ declare function search:search-string(){
  : @param $collection passed from search page templates
 :)
 declare function search:search-string($collection as xs:string?){
-    if($collection = ('persons','authors','saints','sbd','q')) then persons:search-string()
-    else if($collection ='spear') then spears:search-string()
-    else if($collection = 'places') then places:search-string()
-    else if($collection = 'bhse') then bhses:search-string()
-    else if($collection = 'bibl') then bibls:search-string()
-    else if($collection = 'manuscripts') then ms:search-string()
-    else search:search-string()
+     search:search-string()
 };
 
 (:~
@@ -270,18 +251,14 @@ return
 :)
 declare %templates:wrap  function search:show-form($node as node()*, $model as map(*), $collection as xs:string?) {   
     if(exists(request:get-parameter-names())) then ''
-    else 
-        if($collection = ('persons','sbd','authors','q','saints')) then <div>{persons:search-form($collection)}</div>
-        else if($collection ='spear') then <div>{spears:search-form()}</div>
-        else if($collection ='manuscripts') then <div>{ms:search-form()}</div>
-        else if($collection ='bhse') then <div>{bhses:search-form()}</div>
-        else if($collection ='bibl') then <div>{bibls:search-form()}</div>
-        else <div>{search:search-form()}</div>
+    else  <div>{search:search-form()}</div>
 };
 
 (:~ 
  : Builds results output
-
+    if(starts-with(request:get-parameter('author', ''),$global:base-uri)) then 
+        global:display-recs-short-view($hit,'',request:get-parameter('author', ''))
+    else global:display-recs-short-view($hit,'') 
 :)
 declare 
     %templates:default("start", 1)
@@ -297,11 +274,16 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                         <span class="label label-default">{$search:start + $p - 1}</span>
                       </div>
                       <div class="col-md-9" xml:lang="en">
-                        {
-                         if(starts-with(request:get-parameter('author', ''),$global:base-uri)) then 
-                             global:display-recs-short-view($hit,'',request:get-parameter('author', ''))
-                         else global:display-recs-short-view($hit,'')
-                        } 
+                       <div class="results-list">
+                           <span class="sort-title">
+                                <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/tei:head}</a>
+                            </span>
+                            <span class="results-list-desc type">{$hit/tei:ab[@type='infobox']}</span>
+                            <span class="results-list-desc uri">
+                                <span class="srp-label">URI: </span>
+                                <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/descendant::tei:idno[@type='URI'][1]}</a>
+                            </span>
+                        </div>
                       </div>
                 </div>
             </div>

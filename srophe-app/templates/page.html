@@ -24,7 +24,7 @@
         <!-- temporary until migrate to bootstrap 3.0 -->
         <script type="text/javascript" src="$app-root/resources/js/jquery-1.9.1.min.js"/>
         <script type="text/javascript" src="$app-root/resources/js/jquery.smartmenus.min.js"/>
-        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <script src="https://www.google.com/recaptcha/api.js"/>
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -42,6 +42,7 @@
                     </button>
                     <a class="navbar-brand banner-container" href="$app-root/index.html">
                         <!--<img property="logo" class="img-responsive" alt="Syriac.org" src="$app-root/resources/img/syriaca-logo.png"/> Draft-->
+                        <!--
                         <span class="syriaca-icon syriaca-syriaca banner-icon">
                             <span class="path1"/>
                             <span class="path2"/>
@@ -49,17 +50,20 @@
                             <span class="path4"/>
                         </span>
                         <span class="banner-text">Syriaca.org</span>
+                        -->
+                        <span>e-gedsh logo</span>
                     </a>
                 </div>
                 <div class="navbar-collapse collapse pull-right">
                     <ul class="nav navbar-nav sm sm-vertical" id="main-menu">
                         <li>
-                            <a href="$app-root/index.html" style="margin-top:1em;">
-                                <span class="icon-text">Publications</span>
+                            <a href="$app-root/browse.html" style="margin-top:1em;">
+                                <span class="icon-text">Browse Entries</span>
                             </a>
                         </li>
-                        <!-- Shared drop-down menu of all submodules -->
+                        <!-- Shared drop-down menu of all submodules 
                         <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
+                        -->
                     </ul>
                     <form class="navbar-form navbar-right navbar-input-group" role="search" action="$app-root/search.html" method="get">
                         <div class="input-group">

@@ -103,26 +103,16 @@ declare %templates:wrap function app:get-nav($node as node(), $model as map(*)){
 declare function app:get-rec($node as node(), $model as map(*), $collection as xs:string?) { 
 if($app:id != '') then 
     let $id :=
-        if(contains($app:id,$global:base-uri)) then $app:id
+        if(contains($app:id,$global:base-uri) or starts-with($app:id,'http://')) then $app:id
         else if(contains(request:get-uri(),$global:nav-base)) then replace(request:get-uri(),$global:nav-base, $global:base-uri)
         else if(contains(request:get-uri(),$global:base-uri)) then request:get-uri()
         else $app:id
-    let $id := if(ends-with($id,'.html')) then substring-before($id,'.html') else $id   
+    let $id := if(ends-with($id,'.html')) then substring-before($id,'.html') else $id
+    let $rec := collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[normalize-space(.) = $id]]
     return 
-        if($collection = 'spear') then 
-            if(starts-with($app:id,'http://syriaca.org')) then  
-                    map {"data" :=  collection($global:data-root || "/spear/tei")//tei:div[descendant::*[@ref=$app:id]]}
-            else map {"data" := global:get-rec($id)}
-        else if(collection($global:data-root)//tei:idno[@type='URI'][. = concat($id,'/tei')]) then 
-            if(collection($global:data-root)//tei:idno[@type='URI'][. = concat($id,'/tei')][1]/ancestor::tei:TEI/descendant::tei:revisionDesc[@status='deprecated']) then
-                let $rec := collection($global:data-root)//tei:idno[@type='URI'][. = $id]
-                let $redirect := if($rec/parent::*/descendant::tei:idno[@type='redirect']) then 
-                                    replace(replace($rec/parent::*/descendant::tei:idno[@type='redirect'][1]/text(),'/tei',''),$global:base-uri,$global:nav-base)
-                                 else(concat($global:nav-base,'/',$collection,'/','browse.html'))
-                return response:redirect-to(xs:anyURI(concat($global:nav-base, '/301.html?redirect=',$redirect)))
-            else map {"data" := global:get-rec($id)}
-            (:map {"data" :=  collection($global:data-root)//tei:idno[@type='URI'][. = $id]/ancestor::tei:TEI}:)
-        else response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html')))
+        if(exists($rec) and $rec != '') then
+            map {"data" :=  $rec}
+        else $id (: response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html'))):)
 else map {"data" := 'Page data'}    
 };
 
@@ -213,6 +203,13 @@ declare %templates:wrap function app:rec-display($node as node(), $model as map(
                 )}  
             </div>
         </div>      
+
+    else if($model("data")/self::tei:div) then 
+        <div class="row">
+            <div class="col-md-12 column1">
+                {global:tei2html($model("data"))}
+            </div>
+        </div>
     else 
         <div class="row">
             <div class="col-md-12 column1">
@@ -260,7 +257,6 @@ declare function app:get-dc-metadata(){
     if(exists($id)) then 'get data'
     else ()
 };
-
 
 (:~
  : Generic contact form can be added to any page by calling:

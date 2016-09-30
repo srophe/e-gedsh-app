@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <!-- App title -->
-    <title>Syriaca.org: The Syriac Reference Portal</title>
+    <title>e-gedsh</title>
     <!-- App description -->
-    <description></description>
+    <description/>
     <!-- Contact email -->
-    <contact></contact>
+    <contact/>
     <!-- Logo name (assumes path to logo is $app-root/resources/img/) -->
     <logo>syriaca-logo.png</logo>
     <!-- Web Site URL -->
-    <url></url>
+    <url/>
     <!-- Root of app for building dynamic links. Default is eXist app root -->
-    <nav-base></nav-base>
+    <nav-base>/exist/apps/e-gedsh</nav-base>
     <!-- eXist app root for app deployment-->
     <app-root>e-gedsh</app-root>
     <!-- eXist data app root for gazetteer data -->
     <data-root>e-gedsh-data</data-root>
     <!-- Base URI for identifiers in app data -->
-    <base_uri>http://syriaca.org</base_uri>
+    <base_uri>http://gedsh.bethmardutho.org/</base_uri>
     <!-- Map rendering -->
     <maps>
         <option>google</option>
