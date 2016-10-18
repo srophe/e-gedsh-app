@@ -1519,7 +1519,17 @@
      handle standard output of the ref element
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <xsl:template match="t:ref">
-        <a href="{@target}">
+        <xsl:variable name="target">
+            <xsl:choose>
+                <xsl:when test="starts-with(@target, $base-uri) and $base-uri != $nav-base">
+                    <xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"></xsl:value-of>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@target"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <a href="{$target}">
             <xsl:apply-templates/>
         </a>
     </xsl:template>
@@ -1533,9 +1543,11 @@
     <xsl:template match="t:div[@type='entry']">
         <div>
             <h1 class="inline">
-                <xsl:apply-templates select="t:head"/>                
+                <xsl:apply-templates select="t:head"/>
             </h1>
-            <span class="inline info-box"><xsl:apply-templates select="t:ab[@type='infobox']"/></span>
+            <span class="inline info-box">
+                <xsl:apply-templates select="t:ab[@type='infobox']"/>
+            </span>
         </div>
         <xsl:apply-templates select="t:div[@type='body']"/>
         <xsl:apply-templates select="t:div[@type='bibl']"/>
@@ -1544,10 +1556,14 @@
     <xsl:template match="t:head">
         <xsl:choose>
             <xsl:when test="parent::t:div[@type='entry']">
-                <h1 class="inline"><xsl:apply-templates/></h1>
+                <h1 class="inline">
+                    <xsl:apply-templates/>
+                </h1>
             </xsl:when>
             <xsl:otherwise>
-                <h3><xsl:apply-templates/></h3>
+                <h3>
+                    <xsl:apply-templates/>
+                </h3>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
