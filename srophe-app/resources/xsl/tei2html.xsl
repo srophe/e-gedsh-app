@@ -1433,7 +1433,9 @@
                     <xsl:call-template name="langattr"/>
                     <xsl:choose>
                         <xsl:when test="self::t:persName[parent::t:byline]">
-                            <i><xsl:apply-templates/></i>
+                            <i>
+                                <xsl:apply-templates/>
+                            </i>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:apply-templates/>
@@ -1566,13 +1568,8 @@
     
     <!-- e-gedsh templates -->
     <xsl:template match="t:div[@type='entry']">
-        <div>
-            <h1 class="inline">
-                <xsl:apply-templates select="t:head"/>
-            </h1>
-            <span class="inline info-box">
-                <xsl:apply-templates select="t:ab[@type='infobox']"/>
-            </span>
+        <div class="entry-title">
+            <xsl:apply-templates select="t:head"/>
         </div>
         <xsl:apply-templates select="t:div[@type='body']"/>
         <xsl:apply-templates select="t:div[@type='bibl']"/>
@@ -1583,6 +1580,10 @@
             <xsl:when test="parent::t:div[@type='entry']">
                 <h1 class="inline">
                     <xsl:apply-templates/>
+                    <xsl:text> </xsl:text>
+                    <small>
+                        <xsl:apply-templates select="../t:ab[@type='infobox']"/>
+                    </small>
                 </h1>
             </xsl:when>
             <xsl:otherwise>
