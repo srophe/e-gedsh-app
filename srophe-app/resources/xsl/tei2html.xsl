@@ -852,19 +852,18 @@
     
     <!-- Generic title formating -->
     <xsl:template match="t:title">
-            <xsl:choose>
-                <xsl:when test="@ref">
-                    <a href="{@ref}">
-                        <xsl:apply-templates/>
+        <xsl:choose>
+            <xsl:when test="@ref">
+                <a href="{@ref}">
+                    <xsl:apply-templates/>
                         [<xsl:value-of select="@ref"/>]
                     </a>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates/>
-                </xsl:otherwise>
-            </xsl:choose>            
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
-    
     <xsl:template match="t:foreign">
         <xsl:choose>
             <xsl:when test="starts-with(@xml:lang,'syr') or starts-with(@xml:lang,'ar')">
@@ -1432,7 +1431,14 @@
             <xsl:otherwise>
                 <span class="{local-name(.)}">
                     <xsl:call-template name="langattr"/>
-                    <xsl:apply-templates/>
+                    <xsl:choose>
+                        <xsl:when test="self::t:persName[parent::t:byline]">
+                            <i><xsl:apply-templates/></i>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:apply-templates/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                     <xsl:sequence select="local:do-refs(@source,@xml:lang)"/>
                 </span>
             </xsl:otherwise>
@@ -1537,17 +1543,20 @@
         </xsl:variable>
         <xsl:variable name="class">
             <xsl:choose>
-                <xsl:when test="starts-with(@target, $base-uri)"><xsl:text>cross-ref</xsl:text></xsl:when>
-                <xsl:otherwise><xsl:text>ref</xsl:text></xsl:otherwise>
+                <xsl:when test="starts-with(@target, $base-uri)">
+                    <xsl:text>cross-ref</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>ref</xsl:text>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
         <a href="{$target}" class="{$class}">
             <xsl:apply-templates/>
         </a>
     </xsl:template>
-    
     <xsl:template match="t:hi">
-        <xsl:sequence select="local:rend(.)"/>        
+        <xsl:sequence select="local:rend(.)"/>
     </xsl:template>
     
     <!-- NOTE: would really like to get rid of mode=cleanout -->
