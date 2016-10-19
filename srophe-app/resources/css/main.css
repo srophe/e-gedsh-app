@@ -8,7 +8,7 @@
 @import url("syr-font-families.css");
 
 /* Main content blocks */
-body {font-family: arial, sans-serif; background-color:#385978;}
+body {font-family: times, serif; background-color:#385978;}
 #main { padding: 0; background-color:#999; }
 #content{background-color:white; padding-top: 50px;}
 
@@ -251,6 +251,9 @@ h4 {font-size: 1em; margin-top:1em;}
     color:white;
 }
 
+/* temp stye to distinguish cross refs */
+a.cross-ref {color:red;}
+
 .transparent {
     /* default fallback */
     background: rgb(255, 255, 255) transparent;
@@ -420,6 +423,7 @@ td {
 
 /*.footnote-links {float:right; overflow:hidden; clear:right;}*/
 .footnote-icon {padding-left:.5em; font-size:12px;}
+.listBibl {margin-left:2em;}
 .bibl li{line-height: 1.5em;padding-bottom:.5em;}
 .bibl-links {padding:.25em; width:25px;}
 .anchor { 
@@ -703,8 +707,9 @@ journal
 series
 unpublished
 */
-.title-journal, .title-monographic{font-style:italic;}
 
+.title-italic, .title-journal, .title-monographic{font-style:italic;}
+.title-bold{font-weight:bold;}
 
 /* Facet styles */
 .label-facet {background-color:#eee; color:#666; font-weight:normal; margin:.25em; display:inline-block;}

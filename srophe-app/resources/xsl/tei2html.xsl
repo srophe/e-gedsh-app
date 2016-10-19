@@ -852,18 +852,19 @@
     
     <!-- Generic title formating -->
     <xsl:template match="t:title">
-        <xsl:choose>
-            <xsl:when test="@ref">
-                <a href="{@ref}">
+            <xsl:choose>
+                <xsl:when test="@ref">
+                    <a href="{@ref}">
+                        <xsl:apply-templates/>
+                        [<xsl:value-of select="@ref"/>]
+                    </a>
+                </xsl:when>
+                <xsl:otherwise>
                     <xsl:apply-templates/>
-                    [<xsl:value-of select="@ref"/>]
-                </a>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:apply-templates/>
-            </xsl:otherwise>
-        </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>            
     </xsl:template>
+    
     <xsl:template match="t:foreign">
         <xsl:choose>
             <xsl:when test="starts-with(@xml:lang,'syr') or starts-with(@xml:lang,'ar')">
@@ -1149,7 +1150,7 @@
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <xsl:template match="t:listBibl">
         <xsl:apply-templates select="*[not(self::t:bibl)]"/>
-        <ul class="listBibl">
+        <ul class="listBibl list-unstyled">
             <xsl:for-each select="t:bibl">
                 <li>
                     <xsl:if test="@xml:id">
@@ -1184,7 +1185,7 @@
         </xsl:choose>
     </xsl:template>
     
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
      handle standard output of a note element 
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <xsl:template match="t:note">
@@ -1400,11 +1401,16 @@
         </xsl:if>
     </xsl:template>
     <xsl:template match="t:persName | t:region | t:settlement | t:placeName | t:author | t:editor">
-        <xsl:if test="@role">
-            <span class="srp-label">
-                <xsl:value-of select="concat(upper-case(substring(@role,1,1)),substring(@role,2))"/>: 
-            </span>
-        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="self::t:persName[parent::t:byline]">
+                <xsl:text>Author: </xsl:text>
+            </xsl:when>
+            <xsl:when test="@role">
+                <span class="srp-label">
+                    <xsl:value-of select="concat(upper-case(substring(@role,1,1)),substring(@role,2))"/>: 
+                </span>
+            </xsl:when>
+        </xsl:choose>
         <xsl:choose>
             <xsl:when test="@ref">
                 <xsl:choose>
@@ -1522,18 +1528,28 @@
         <xsl:variable name="target">
             <xsl:choose>
                 <xsl:when test="starts-with(@target, $base-uri) and $base-uri != $nav-base">
-                    <xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"></xsl:value-of>
+                    <xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="@target"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <a href="{$target}">
+        <xsl:variable name="class">
+            <xsl:choose>
+                <xsl:when test="starts-with(@target, $base-uri)"><xsl:text>cross-ref</xsl:text></xsl:when>
+                <xsl:otherwise><xsl:text>ref</xsl:text></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <a href="{$target}" class="{$class}">
             <xsl:apply-templates/>
         </a>
     </xsl:template>
-     
+    
+    <xsl:template match="t:hi">
+        <xsl:sequence select="local:rend(.)"/>        
+    </xsl:template>
+    
     <!-- NOTE: would really like to get rid of mode=cleanout -->
     <xsl:template match="t:placeName[local-name(..)='desc']" mode="cleanout">
         <xsl:apply-templates select="."/>
