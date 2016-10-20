@@ -1158,13 +1158,12 @@
                         </xsl:attribute>
                     </xsl:if>
                     <xsl:variable name="bibl-content">
-                        <xsl:apply-templates mode="biblist"/>    
+                        <xsl:apply-templates mode="biblist"/>
                     </xsl:variable>
                     <xsl:sequence select="$bibl-content"/>
                     <xsl:if test="not(ends-with($bibl-content,'.'))">
-                        <xsl:text>.</xsl:text>                        
+                        <xsl:text>.</xsl:text>
                     </xsl:if>
-
                 </li>
             </xsl:for-each>
         </ul>
@@ -1578,6 +1577,7 @@
             <xsl:apply-templates select="t:head"/>
         </div>
         <xsl:apply-templates select="t:div[@type='body']"/>
+        <xsl:apply-templates select="t:p"/>
         <xsl:apply-templates select="t:div[@type='bibl']"/>
         <xsl:apply-templates select="t:byline"/>
     </xsl:template>
