@@ -11,7 +11,6 @@ xquery version "3.0";
 
 module namespace browse="http://syriaca.org/browse";
 import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
-import module namespace facets="http://syriaca.org/facets" at "lib/facets.xqm";
 import module namespace facet="http://expath.org/ns/facet" at "lib/facet.xqm";
 import module namespace facet-defs="http://syriaca.org/facet-defs" at "facet-defs.xqm";
 import module namespace page="http://syriaca.org/page" at "lib/paging.xqm";
@@ -183,7 +182,8 @@ let $data :=
         else 
             for $hit in $hits-main
             let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
-            order by $title collation "?lang=en&lt;syr&amp;decomposition=full"
+            let $num := xs:integer($hit/tei:ab[@type="idnos"]/tei:idno[@type="entry"])
+            order by $num
             return $hit
 return map{"browse-data" := $data }
 };
@@ -361,8 +361,8 @@ declare function browse:display-hits($hits){
     <div class="results-list">
        <span class="sort-title">
             <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/tei:head}</a>
+            <span class="type">{$data/tei:ab[@type='infobox']}</span>
         </span>
-        <span class="results-list-desc type">{$data/tei:ab[@type='infobox']}</span>
         <span class="results-list-desc uri">
             <span class="srp-label">URI: </span>
             <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/descendant::tei:idno[@type='URI'][1]}</a>
