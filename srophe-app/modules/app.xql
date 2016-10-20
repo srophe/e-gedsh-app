@@ -10,7 +10,7 @@ import module namespace rel="http://syriaca.org/related" at "lib/get-related.xqm
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 
-(:~                 
+(:~                      
  : Syriaca.org URI for retrieving TEI records 
 :)
 declare variable $app:id {request:get-parameter('id', '')};
@@ -114,6 +114,27 @@ if($app:id != '') then
             map {"data" :=  $rec}
         else $id (: response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html'))):)
 else map {"data" := 'Page data'}    
+};
+
+declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
+let $current-id := xs:integer($model("data")//tei:ab[@type="idnos"]/tei:idno[@type="entry"])
+let $prev := 
+            if($current-id != 1) then 
+                    let $rec := collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[@type='entry'][xs:integer(normalize-space(.)) = $current-id - 1]]
+                    let $uri := $rec/descendant::tei:idno[@type='URI'] 
+                    return 
+                        (<a href="entry.html?id={$uri}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+            else ()
+let $next := 
+            let $rec := collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[@type='entry'][xs:integer(normalize-space(.)) = $current-id + 1]] 
+            return 
+                if(exists($rec)) then 
+                    let $uri := $rec/descendant::tei:idno[@type='URI']
+                    return 
+                        (' | ', <a href="entry.html?id={$uri}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                else ()
+return             
+<p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
 };
 
 (:~
