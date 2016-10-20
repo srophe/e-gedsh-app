@@ -223,7 +223,6 @@ footer {text-align:center; color:white;}
 .banner {font-size: 24px; color:white; background-color:#456889; margin:0 0 1em 0; padding:.5em 1em;; border-bottom:4px solid #456889;}
 /* Typography */
 h1 {font-size:1.5em; margin:.25em 0 .25em 0; color:#456889; font-weight:500;}
-
 h2 {font-size: 1.25em; margin:1em 0 .25em 0; padding-bottom:0; color:#999; font-weight:500;}
 h3 {font-size: 1.2em; margin:1em 0 .25em 0; padding-bottom:0; color:#333; font-weight:500;  padding-bottom:0; margin-bottom:1em;}
 h3.banner-solid {color:white;}
@@ -424,7 +423,14 @@ td {
 /*.footnote-links {float:right; overflow:hidden; clear:right;}*/
 .footnote-icon {padding-left:.5em; font-size:12px;}
 .listBibl {margin-left:2em;}
-.bibl li{line-height: 1.5em;padding-bottom:.5em;}
+.listBibl li {    
+    text-indent: -2em; 
+    padding-left: 2em;
+    }
+.bibl li{
+    line-height: 1.5em;
+    padding-bottom:.5em;
+}
 .bibl-links {padding:.25em; width:25px;}
 .anchor { 
     position: relative; 

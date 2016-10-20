@@ -1157,8 +1157,14 @@
                             <xsl:value-of select="@xml:id"/>
                         </xsl:attribute>
                     </xsl:if>
-                    <xsl:apply-templates mode="biblist"/>
-                    <xsl:text>.</xsl:text>
+                    <xsl:variable name="bibl-content">
+                        <xsl:apply-templates mode="biblist"/>    
+                    </xsl:variable>
+                    <xsl:sequence select="$bibl-content"/>
+                    <xsl:if test="not(ends-with($bibl-content,'.'))">
+                        <xsl:text>.</xsl:text>                        
+                    </xsl:if>
+
                 </li>
             </xsl:for-each>
         </ul>
