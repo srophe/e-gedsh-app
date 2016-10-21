@@ -113,20 +113,20 @@ if($app:id != '') then
         if(exists($rec) and $rec != '') then
             map {"data" :=  $rec}
         else $id (: response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html'))):)
-else map {"data" := 'Page data'}    
+else map {"data" := <div>'Page data'</div>}    
 };
 
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
-let $current-id := xs:integer($model("data")//tei:idno[@type="entry"])
+let $current-id := xs:integer($model("data")/descendant::tei:idno[@type="entry"])
 let $prev := 
             if($current-id != 1) then 
-                    let $rec := collection($global:data-root)//tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]
+                    let $rec := collection($global:data-root)//tei:div[descendant::tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]]
                     let $uri := $rec/descendant::tei:idno[@type='URI'] 
                     return 
                         (<a href="entry.html?id={$uri}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
             else ()
 let $next := 
-            let $rec := collection($global:data-root)//tei:idno[@type='entry'][xs:integer(.) = $current-id + 1] 
+            let $rec := collection($global:data-root)//tei:div[descendant::tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]] 
             return 
                 if(exists($rec)) then 
                     let $uri := $rec//tei:idno[@type='URI']
