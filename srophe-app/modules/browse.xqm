@@ -165,9 +165,11 @@ let $hits-main := util:eval(concat(browse:collection-path($collection),'//tei:di
 let $data := 
     if($browse:view = 'all') then
         for $hit in $hits-main/tei:head[1]
-        order by global:build-sort-string(page:add-sort-options($hit,$browse:sort-element),'') collation "?lang=en&lt;syr&amp;decomposition=full"
+        let $num := xs:integer($hit/tei:ab[@type="idnos"]/tei:idno[@type="entry"])
+        order by $num
         return $hit/ancestor::tei:div[@type='entry'][1]
-    else if($browse:view = 'facets') then
+    else 
+        if($browse:view = 'facets') then
         let $path := concat('$hits-main/',facet:facet-filter(facet-defs:facet-definition($collection)))
         for $hit in util:eval($path)
         let $title := $hit/tei:head[1]
@@ -177,7 +179,8 @@ let $data :=
         if($browse:computed-lang != '') then 
             for $hit in $hits-main[matches(substring(global:build-sort-string(tei:head[1],$browse:computed-lang),1,1),browse:get-sort(),'i')]
             let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
-            order by $title collation "?lang=en&lt;syr&amp;decomposition=full"
+            let $num := xs:integer($hit/tei:ab[@type="idnos"]/tei:idno[@type="entry"])
+            order by $num
             return $hit
         else 
             for $hit in $hits-main
@@ -186,6 +189,13 @@ let $data :=
             order by $num
             return $hit
 return map{"browse-data" := $data }
+};
+
+declare function browse:group-abc-entries($node as node(), $model as map(*)){
+let $hits := util:eval(concat(browse:collection-path(''),'//tei:div[@type="entry"]'))
+return
+facet:html-list-facets-as-buttons(facet:count($hits, facet-defs:facet-definition('e-gedsh')/child::*))
+
 };
 
 (:~

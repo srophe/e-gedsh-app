@@ -140,6 +140,46 @@ declare function facet:group-by-range($results as item()*, $facet-definitions as
          <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{string($range/@name)}" label="{string($range/@name)}"/>
 };
 
+(:~ 
+    e-gedsh alpha sort
+    if(exists($browse:sort) and $browse:sort != '') then
+        if($browse:lang = 'ar') then
+            browse:ar-sort()
+        else
+            if($browse:sort = 'A') then '(A|a|ẵ|Ẵ|ằ|Ằ|ā|Ā)'
+            else if($browse:sort = 'D') then '(D|d|đ|Đ)'
+            else if($browse:sort = 'S') then '(S|s|š|Š|ṣ|Ṣ)'
+            else if($browse:sort = 'E') then '(E|e|ễ|Ễ)'
+            else if($browse:sort = 'U') then '(U|u|ū|Ū)'
+            else if($browse:sort = 'H') then '(H|h|ḥ|Ḥ)'
+            else if($browse:sort = 'T') then '(T|t|ṭ|Ṭ)'
+            else if($browse:sort = 'I') then '(I|i|ī|Ī)'
+            else if($browse:sort = 'O') then '(O|Ō|o|Œ|œ)'
+            else $browse:sort
+    else '(A|a|ẵ|Ẵ|ằ|Ằ|ā|Ā)'
+    normalize-unicode($string,"NFKD")
+    Need a better way to normalize strings.
+:)
+declare function facet:group-by-abc($results as item()*, $facet-definitions as element(facet:facet-definition)*) as element(facet:key)*{
+    let $path := concat('$results/',$facet-definitions/facet:group-by/facet:sub-path/text())
+    let $name := $facet-definitions/@name
+    let $sort := $facet-definitions/facet:order-by
+    for $f in util:eval($path)
+    let $sort-string := translate(translate(translate(translate(upper-case(substring(global:build-sort-string($f[1],''),1,1)),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H')
+    group by $facet-grp := $sort-string
+    order by $facet-grp ascending
+    return 
+    <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$sort-string[1]}" label="{$sort-string[1]}">
+        {
+            if(contains($facet:fq, concat(';fq-',string($name),':',$sort-string))) then 
+                for $sf in $f
+                let $value := $sf/following-sibling::tei:ab/tei:idno[@type='URI']
+                return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$value[1]}" label="{$sf[1]}"/>
+            else ()
+        }
+    </key>
+};
+
 (:~
  : Adds type casting when type is specified facet:facet:group-by/@type
  : @param $value of xpath
@@ -277,7 +317,36 @@ return
                 let $new-fq := 
                     if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
                     else concat('fq=',$facet-query)
-                return <a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a> 
+                return 
+                    (<a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default 
+                    {if(contains($facet:fq, concat(';fq-',string($f/@name),':',string($key/@label)))) then 'active' else()}">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a>,
+                       if($key/facet:key) then
+                            (
+                            <div class="facet-list show">
+                                {
+                                for $sub-key in subsequence($key/facet:key, 1,5)
+                                return
+                                    <a href="entry.html?id={string($sub-key/@value)}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
+                                        {string($sub-key/@label)}
+                                    </a>
+                                } 
+                             </div>,
+                             <div class="facet-list collapse" id="{concat('show',replace(string($key/@label),' ',''))}">
+                                {
+                                for $sub-key in subsequence($key/facet:key,6,100)
+                                return
+                                    <a href="entry.html?id={string($sub-key/@value)}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
+                                        {string($sub-key/@label)}
+                                    </a>
+                                }
+                             </div>,
+                             if(count($key/facet:key) gt 5) then 
+                                 <a class="facet-label togglelink btn btn-info" data-toggle="collapse" data-target="#{concat('show',replace(string($key/@label),' ',''))}" data-text-swap="Less"> More &#160;<i class="glyphicon glyphicon-circle-arrow-right"></i></a>
+                              else())
+                                
+                       else()
+                    )
+                    
                 }
             </div>
             <div class="facet-list collapse" id="{concat('show',replace(string($f/@name),' ',''))}">{

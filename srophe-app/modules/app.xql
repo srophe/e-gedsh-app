@@ -117,19 +117,19 @@ else map {"data" := 'Page data'}
 };
 
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
-let $current-id := xs:integer($model("data")//tei:ab[@type="idnos"]/tei:idno[@type="entry"])
+let $current-id := xs:integer($model("data")//tei:idno[@type="entry"])
 let $prev := 
             if($current-id != 1) then 
-                    let $rec := collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[@type='entry'][xs:integer(normalize-space(.)) = $current-id - 1]]
+                    let $rec := collection($global:data-root)//tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]
                     let $uri := $rec/descendant::tei:idno[@type='URI'] 
                     return 
                         (<a href="entry.html?id={$uri}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
             else ()
 let $next := 
-            let $rec := collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[@type='entry'][xs:integer(normalize-space(.)) = $current-id + 1]] 
+            let $rec := collection($global:data-root)//tei:idno[@type='entry'][xs:integer(.) = $current-id + 1] 
             return 
                 if(exists($rec)) then 
-                    let $uri := $rec/descendant::tei:idno[@type='URI']
+                    let $uri := $rec//tei:idno[@type='URI']
                     return 
                         (' | ', <a href="entry.html?id={$uri}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()
