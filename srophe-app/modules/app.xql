@@ -123,15 +123,15 @@ let $prev :=
                     let $rec := collection($global:data-root)//tei:div[descendant::tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]]
                     let $uri := $rec/descendant::tei:idno[@type='URI'] 
                     return 
-                        (<a href="entry.html?id={$uri}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+                        (<a href="entry.html?id={$uri}&amp;num={$current-id - 1}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
             else ()
 let $next := 
-            let $rec := collection($global:data-root)//tei:div[descendant::tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]] 
+            let $rec := collection($global:data-root)//tei:div[descendant::tei:idno[@type='entry'][xs:integer(.) = $current-id + 1]] 
             return 
                 if(exists($rec)) then 
                     let $uri := $rec//tei:idno[@type='URI']
                     return 
-                        (' | ', <a href="entry.html?id={$uri}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                        (' | ', <a href="entry.html?id={$uri}&amp;num={$current-id + 1}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()
 return             
 <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
