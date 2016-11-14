@@ -222,7 +222,8 @@ footer {text-align:center; color:white;}
 .block {display:block;}
 .banner {font-size: 24px; color:white; background-color:#456889; margin:0 0 1em 0; padding:.5em 1em;; border-bottom:4px solid #456889;}
 /* Typography */
-h1 {font-size:1.5em; margin:.25em 0 .25em 0; color:#456889; font-weight:500;}
+h1 {font-size:1.5em; margin:.25em 0 .25em 0; color:#456889; font-weight:600;}
+h1 small {color:#456889 !important; font-weight:600; font-size:.75em;}
 h2 {font-size: 1.25em; margin:1em 0 .25em 0; padding-bottom:0; color:#999; font-weight:500;}
 h3 {font-size: 1.2em; margin:1em 0 .25em 0; padding-bottom:0; color:#333; font-weight:500;  padding-bottom:0; margin-bottom:1em;}
 h3.banner-solid {color:white;}
