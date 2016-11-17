@@ -1161,9 +1161,11 @@
                         <xsl:apply-templates mode="biblist"/>
                     </xsl:variable>
                     <xsl:sequence select="$bibl-content"/>
+                    <!-- e-gedesh should not have added punctuation. 
                     <xsl:if test="not(ends-with($bibl-content,'.'))">
                         <xsl:text>.</xsl:text>
                     </xsl:if>
+                    -->
                 </li>
             </xsl:for-each>
         </ul>
