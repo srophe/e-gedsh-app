@@ -308,10 +308,10 @@
         -->
         <xsl:choose>
             <xsl:when test="$node/@rend = 'bold'">
-                <b><xsl:apply-templates select="$node/node()|$node/text()"/></b>
+                <strong><xsl:apply-templates select="$node/node()|$node/text()"/></strong>
             </xsl:when>
             <xsl:when test="$node/@rend = 'italic'">
-                <i><xsl:apply-templates select="$node/node()|$node/text()"/></i>
+                <em><xsl:apply-templates select="$node/node()|$node/text()"/></em>
             </xsl:when>
             <xsl:when test="$node/@rend = 'superscript'">
                 <sup><xsl:apply-templates select="$node/node()|$node/text()"/></sup>
