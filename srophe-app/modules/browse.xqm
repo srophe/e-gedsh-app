@@ -160,7 +160,7 @@ declare function browse:filters($collection){
  : @param $collection collection name passed from html, should match data subdirectory name or tei series name
 :)
 declare function browse:get-all($node as node(), $model as map(*), $collection as xs:string?){
-let $hits-main := util:eval(concat(browse:collection-path($collection),'//tei:div[@type="entry"]'))
+let $hits-main := util:eval(concat(browse:collection-path($collection),'//tei:div[@type="entry" or @type="crossreference"]'))
 (:let $hits := util:eval(concat("$hits-main",browse:filters($collection))):)
 let $data := 
     if($browse:view = 'all') then
@@ -367,17 +367,29 @@ else
 
 declare function browse:display-hits($hits){
     for $data in subsequence($hits, $browse:start,$browse:perpage)
-    return (:global:display-recs-short-view($data, $browse:computed-lang):)
-    <div class="results-list">
-       <span class="sort-title">
-            <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/tei:head}</a>
-            <span class="type">{$data/tei:ab[@type='infobox']}</span>
-        </span>
-        <span class="results-list-desc uri">
-            <span class="srp-label">URI: </span>
-            <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/descendant::tei:idno[@type='URI'][1]}</a>
-        </span>
-    </div>
+    return 
+    if($data/@type='crossreference') then 
+        <div class="results-list">
+          <span class="sort-title">
+               {$data/tei:head}
+               <span class="type">{$data/tei:ab[@type='crossreference']}</span>
+           </span>
+           <span class="results-list-desc uri">
+               <span class="srp-label">URI: </span>
+               <a href="entry.html?id={string($data/descendant::tei:ref/@target)}">{string($data/descendant::tei:ref/@target)}</a>
+           </span>
+       </div>
+    else
+       <div class="results-list">
+          <span class="sort-title">
+               <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/tei:head}</a>
+               <span class="type">{$data/tei:ab[@type='infobox']}</span>
+           </span>
+           <span class="results-list-desc uri">
+               <span class="srp-label">URI: </span>
+               <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/descendant::tei:idno[@type='URI'][1]}</a>
+           </span>
+       </div>
 };
 
 (: Display map :)
