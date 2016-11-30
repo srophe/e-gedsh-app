@@ -1542,6 +1542,9 @@
     <xsl:template match="t:ref">
         <xsl:variable name="target">
             <xsl:choose>
+                <xsl:when test="starts-with(@target, $base-uri) and ($base-uri != $nav-base) and contains(@target,'/fig/')">
+                    <xsl:value-of select="@target"/>
+                </xsl:when>
                 <xsl:when test="starts-with(@target, $base-uri) and $base-uri != $nav-base">
                     <xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"/>
                 </xsl:when>
@@ -1552,6 +1555,9 @@
         </xsl:variable>
         <xsl:variable name="class">
             <xsl:choose>
+                <xsl:when test="starts-with(@target, $base-uri) and contains(@target,'/fig/')">
+                    <xsl:text>ref</xsl:text>
+                </xsl:when>
                 <xsl:when test="starts-with(@target, $base-uri)">
                     <xsl:text>cross-ref</xsl:text>
                 </xsl:when>
