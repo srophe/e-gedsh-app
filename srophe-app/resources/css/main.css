@@ -241,7 +241,7 @@ h3.syr{
     float:right !important;
 }
 h4 {font-size: 1em; margin-top:1em;}
-.infobox {font-weight:normal !important;}
+.infobox {font-size:.875em; font-weight:normal !important;}
 .hi {background-color:yellow;}
 
 .white-link{color:white;}
