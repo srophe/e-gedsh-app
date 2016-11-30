@@ -1564,7 +1564,7 @@
             <xsl:apply-templates/>
         </a>
     </xsl:template>
-    <xsl:template match="t:hi">
+    <xsl:template match="t:hi" mode="#all">
         <xsl:sequence select="local:rend(.)"/>
     </xsl:template>
     
