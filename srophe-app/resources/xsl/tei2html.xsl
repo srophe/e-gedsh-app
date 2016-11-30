@@ -1595,9 +1595,9 @@
                 <h1 class="inline">
                     <xsl:apply-templates/>
                     <xsl:text> </xsl:text>
-                    <small>
+                    <span class="infobox">
                         <xsl:apply-templates select="../t:ab[@type='infobox']"/>
-                    </small>
+                    </span>
                 </h1>
             </xsl:when>
             <xsl:otherwise>
