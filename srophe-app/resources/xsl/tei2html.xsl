@@ -594,11 +594,14 @@
             </ul>
         </li>
     </xsl:template>
-    <xsl:template match="t:offset | t:measure | t:source | t:choice">
+    <xsl:template match="t:offset | t:measure | t:source">
         <xsl:if test="preceding-sibling::*">
             <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="." mode="plain"/>
+    </xsl:template>
+    <xsl:template match="t:choice">
+        <xsl:apply-templates select="t:corr | t:reg"/>
     </xsl:template>
     
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -710,17 +713,6 @@
     <xsl:template match="t:note">
         <xsl:variable name="xmlid" select="@xml:id"/>
         <xsl:choose>
-            <xsl:when test="ancestor::t:choice">
-                <xsl:text> (</xsl:text>
-                <span>
-                    <xsl:call-template name="langattr"/>
-                    <xsl:apply-templates/>
-                </span>
-                <xsl:text>) </xsl:text>
-                <xsl:if test="@source">
-                    <xsl:sequence select="local:do-refs(@source,@xml:lang)"/>
-                </xsl:if>
-            </xsl:when>
             <!-- Adds definition list for depreciated names -->
             <xsl:when test="@type='deprecation'">
                 <li>
