@@ -1614,6 +1614,9 @@
     <xsl:template match="t:*" mode="plain">
         <xsl:apply-templates/>
     </xsl:template>
+    <xsl:template match="t:*" mode="#all">
+        <xsl:apply-templates/>
+    </xsl:template>
     <xsl:template match="text()" mode="cleanout">
         <xsl:value-of select="."/>
     </xsl:template>
