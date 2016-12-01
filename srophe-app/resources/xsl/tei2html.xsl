@@ -64,6 +64,7 @@
  <!-- set output so we get (mostly) indented HTML -->
  <!-- =================================================================== -->
     <xsl:output name="html" encoding="UTF-8" method="xhtml" indent="no" omit-xml-declaration="yes"/>
+    <xsl:preserve-space elements="*"/>
 
  <!-- =================================================================== -->
  <!--  initialize top-level variables and transform parameters -->
@@ -855,7 +856,7 @@
     <xsl:template match="t:p">
         <p>
             <xsl:call-template name="langattr"/>
-            <xsl:apply-templates/>
+            <xsl:apply-templates xml:space="preserve"/>
         </p>
     </xsl:template>
     <xsl:template match="t:quote">
@@ -1085,7 +1086,15 @@
     <xsl:template match="t:hi" mode="#all">
         <xsl:sequence select="local:rend(.)"/>
     </xsl:template>
-    
+    <xsl:template match="t:abbr">
+        <xsl:if test="preceding-sibling::node()[1][not(ends-with(.,' '))]">
+            <xsl:text> </xsl:text>
+        </xsl:if>
+        <xsl:apply-templates/>
+        <xsl:if test="following-sibling::node()[1][not(starts-with(.,' '))]">
+            <xsl:text> </xsl:text>
+        </xsl:if>
+    </xsl:template>
     <!-- NOTE: would really like to get rid of mode=cleanout -->
     <xsl:template match="t:placeName[local-name(..)='desc']" mode="cleanout">
         <xsl:apply-templates select="."/>
@@ -1129,7 +1138,9 @@
     <xsl:template match="t:*">
         <xsl:apply-templates/>
     </xsl:template>
-    
+    <xsl:template match="text()">
+        <xsl:value-of select="."/>
+    </xsl:template>
     <xsl:template match="text()" mode="cleanout">
         <xsl:value-of select="."/>
     </xsl:template>
@@ -1148,5 +1159,4 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
 </xsl:stylesheet>
