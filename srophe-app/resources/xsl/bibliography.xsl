@@ -1276,7 +1276,7 @@
      suppress otherwise unhandled descendent nodes and attibutes of bibl or 
      biblStruct in the context of a footnote 
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <xsl:template match="t:* | @*" mode="footnote bibliography biblist allbibl lastname-first"/>
+    <!-- <xsl:template match="t:* | @*" mode="footnote bibliography biblist allbibl lastname-first"/> -->
    
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
      emit the footnote number for a bibl

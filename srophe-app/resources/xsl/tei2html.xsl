@@ -283,7 +283,8 @@
             </xsl:choose>
         </xsl:for-each>
     </xsl:template>
-       
+    
+
     <!-- Named template for citation information -->
     <xsl:template name="citationInfo">
         <div class="citationinfo">
@@ -592,17 +593,11 @@
             </ul>
         </li>
     </xsl:template>
-    <xsl:template match="t:offset | t:measure | t:source">
+    <xsl:template match="t:offset | t:measure | t:source | t:choice">
         <xsl:if test="preceding-sibling::*">
             <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="." mode="plain"/>
-    </xsl:template>
-    <xsl:template match="t:choice">
-        <xsl:if test="preceding-sibling::*">
-            <xsl:text> </xsl:text>
-        </xsl:if>
-        <xsl:apply-templates/>
     </xsl:template>
     
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -714,6 +709,17 @@
     <xsl:template match="t:note">
         <xsl:variable name="xmlid" select="@xml:id"/>
         <xsl:choose>
+            <xsl:when test="ancestor::t:choice">
+                <xsl:text> (</xsl:text>
+                <span>
+                    <xsl:call-template name="langattr"/>
+                    <xsl:apply-templates/>
+                </span>
+                <xsl:text>) </xsl:text>
+                <xsl:if test="@source">
+                    <xsl:sequence select="local:do-refs(@source,@xml:lang)"/>
+                </xsl:if>
+            </xsl:when>
             <!-- Adds definition list for depreciated names -->
             <xsl:when test="@type='deprecation'">
                 <li>
@@ -1101,9 +1107,9 @@
                 <h1 class="inline">
                     <xsl:apply-templates/>
                     <xsl:text> </xsl:text>
-                    <span class="infobox">
+                    <small>
                         <xsl:apply-templates select="../t:ab[@type='infobox']"/>
-                    </span>
+                    </small>
                 </h1>
             </xsl:when>
             <xsl:otherwise>
@@ -1117,9 +1123,13 @@
     <xsl:template match="t:div">
         <xsl:apply-templates select="*[not(self::t:bibl)]"/>
     </xsl:template>
-    <xsl:template match="t:*" mode="#all">
+    <xsl:template match="t:*" mode="plain">
         <xsl:apply-templates/>
     </xsl:template>
+    <xsl:template match="t:*">
+        <xsl:apply-templates/>
+    </xsl:template>
+    
     <xsl:template match="text()" mode="cleanout">
         <xsl:value-of select="."/>
     </xsl:template>
