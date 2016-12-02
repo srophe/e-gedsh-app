@@ -600,7 +600,7 @@
         </xsl:if>
         <xsl:apply-templates select="." mode="plain"/>
     </xsl:template>
-    <xsl:template match="t:choice">
+    <xsl:template match="t:choice" mode="#all">
         <xsl:apply-templates select="t:corr | t:reg"/>
     </xsl:template>
     
