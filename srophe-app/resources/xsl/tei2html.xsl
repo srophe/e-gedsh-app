@@ -1079,11 +1079,11 @@
         <xsl:sequence select="local:rend(.)"/>
     </xsl:template>
     <xsl:template match="t:abbr">
-        <xsl:if test="preceding-sibling::node()[1][not(ends-with(.,' '))]">
+        <xsl:if test="preceding-sibling::node()[1][not(ends-with(.,' ')) and not(ends-with(.,'('))]">
             <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates/>
-        <xsl:if test="following-sibling::node()[1][not(starts-with(.,' '))]">
+        <xsl:if test="following-sibling::node()[1][not(starts-with(.,' ')) and not(ends-with(.,')'))]">
             <xsl:text> </xsl:text>
         </xsl:if>
     </xsl:template>
