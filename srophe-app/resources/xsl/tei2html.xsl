@@ -1083,7 +1083,7 @@
             <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates/>
-        <xsl:if test="following-sibling::node()[1][not(matches(.,'^(\s|\)|\.|,)'))]">
+        <xsl:if test="following-sibling::node()[1][not(matches(.,'^(\s|\)|\.|,)|\]'))]">
             <xsl:text> </xsl:text>
         </xsl:if>
     </xsl:template>
