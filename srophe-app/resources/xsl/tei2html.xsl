@@ -285,7 +285,6 @@
         </xsl:for-each>
     </xsl:template>
     
-
     <!-- Named template for citation information -->
     <xsl:template name="citationInfo">
         <div class="citationinfo">
@@ -368,15 +367,16 @@
         <xsl:choose>
             <xsl:when test="@ref">
                 <a href="{@ref}">
-                    <xsl:apply-templates/>
+                    <xsl:sequence select="local:rend(.)"/>
                         [<xsl:value-of select="@ref"/>]
                     </a>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:apply-templates/>
+                <xsl:sequence select="local:rend(.)"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
     <xsl:template match="t:foreign">
         <xsl:choose>
             <xsl:when test="starts-with(@xml:lang,'syr') or starts-with(@xml:lang,'ar')">
@@ -1079,7 +1079,7 @@
         <xsl:sequence select="local:rend(.)"/>
     </xsl:template>
     <xsl:template match="t:abbr">
-        <xsl:if test="preceding-sibling::node()[1][not(ends-with(.,' ')) and not(ends-with(.,'('))]">
+        <xsl:if test="preceding-sibling::node()[1][not(matches(.,'$(\s|\(|\.|,)|\[|'))]">
             <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates/>
