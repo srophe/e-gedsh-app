@@ -376,7 +376,6 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
     <xsl:template match="t:foreign">
         <xsl:choose>
             <xsl:when test="starts-with(@xml:lang,'syr') or starts-with(@xml:lang,'ar')">
@@ -610,6 +609,15 @@
     <!-- Descriptions without list elements or paragraph elements -->
     <xsl:template match="t:desc | t:label" mode="plain">
         <xsl:apply-templates/>
+    </xsl:template>
+    <xsl:template match="t:label">
+        <label>
+            <xsl:if test="@type">
+                <xsl:attribute name="class"><xsl:value-of select="@type"/></xsl:attribute>    
+            </xsl:if>
+            <xsl:call-template name="langattr"/>
+            <xsl:sequence select="local:rend(.)"/>            
+        </label>
     </xsl:template>
     <!-- Descriptions for place abstract  added template for abstracts, handles quotes and references.-->
     <xsl:template match="t:desc[starts-with(@xml:id, 'abstract-en')]" mode="abstract">
