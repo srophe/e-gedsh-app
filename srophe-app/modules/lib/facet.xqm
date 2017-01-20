@@ -41,8 +41,8 @@ declare function facet:count($results as item()*, $facet-definitions as element(
     return 
     <facet name="{$facet/@name}" show="{$facet/descendant::facet:max-values/@show}" max="{$facet/descendant::facet:max-values/text()}">
         {
-        let $max := if($facet/descendant::facet:max-values/text()) then $facet/descendant::facet:max-values/text() else 100
-        for $facets at $i in subsequence(facet:facet($results, $facet),1,$max)
+        let $max := if($facet/descendant::facet:max-values/text()) then $facet/descendant::facet:max-values/text() else ()
+        for $facets at $i in subsequence(facet:facet($results, $facet),1)
         return $facets
         }
     </facet>
@@ -84,24 +84,6 @@ declare function facet:group-by($results as item()*, $facet-definitions as eleme
     return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$f[1]}" label="{$f[1]}"/>
 };
 
-(:~
- : Syriaca.org specific group-by function for correctly labeling submodules.
-:)
-declare function facet:group-by-sub-module($results as item()*, $facet-definitions as element(facet:facet-definition)?) {
-    let $path := concat('$results/',$facet-definitions/facet:group-by/facet:sub-path/text())
-    let $sort := $facet-definitions/facet:order-by
-    for $f in util:eval($path)
-    let $label := 
-        if($f[1] = 'http://syriaca.org/authors') then 'Authors'
-        else if($f[1] = 'http://syriaca.org/q') then 'Saints'
-        else ()
-    group by $facet-grp := $f
-    order by 
-        if($sort/text() = 'value') then $f[1]
-        else count($f)
-        descending
-    return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$f[1]}" label="{$label[1]}"/>    
-};
 
 (:~
  : Syriaca.org specific group-by function for correctly labeling attributes with arrays.
@@ -309,59 +291,102 @@ for $f in $facets/facet:facet
 let $count := count($f/facet:key)
 return 
     if($count gt 0) then 
-    <div class="facet-grp">
-        <h4>{string($f/@name)}</h4>
-            <div class="facet-list show">{
-                for $key at $l in subsequence($f/facet:key,1,$f/@show)
-                let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
-                let $new-fq := 
-                    if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
-                    else concat('fq=',$facet-query)
-                return 
-                    (<a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default 
-                    {if(contains($facet:fq, concat(';fq-',string($f/@name),':',string($key/@label)))) then 'active' else()}">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a>,
-                       if($key/facet:key) then
-                            (
-                            <div class="facet-list show">
-                                {
-                                for $sub-key in subsequence($key/facet:key, 1,5)
-                                return
-                                    <a href="entry.html?id={string($sub-key/@value)}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
-                                        {string($sub-key/@label)}
-                                    </a>
-                                } 
-                             </div>,
-                             <div class="facet-list collapse" id="{concat('show',replace(string($key/@label),' ',''))}">
-                                {
-                                for $sub-key in subsequence($key/facet:key,6,100)
-                                return
-                                    <a href="entry.html?id={string($sub-key/@value)}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
-                                        {string($sub-key/@label)}
-                                    </a>
-                                }
-                             </div>,
-                             if(count($key/facet:key) gt 5) then 
-                                 <a class="facet-label togglelink btn btn-info" data-toggle="collapse" data-target="#{concat('show',replace(string($key/@label),' ',''))}" data-text-swap="Less"> More &#160;<i class="glyphicon glyphicon-circle-arrow-right"></i></a>
-                              else())
-                                
-                       else()
-                    )
-                    
-                }
-            </div>
-            <div class="facet-list collapse" id="{concat('show',replace(string($f/@name),' ',''))}">{
-                for $key at $l in subsequence($f/facet:key,$f/@show + 1,$f/@max)
-                let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
-                let $new-fq := 
-                    if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
-                    else concat('fq=',$facet-query)
-                return <a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a>
-                }
-            </div>
-            {if($count gt ($f/@show - 1)) then 
-                <a class="facet-label togglelink btn btn-info" data-toggle="collapse" data-target="#{concat('show',replace(string($f/@name),' ',''))}" data-text-swap="Less"> More &#160;<i class="glyphicon glyphicon-circle-arrow-right"></i></a>
-            else()}
-    </div>
+        if(string($f/@name) = 'Browse') then
+            <div class="facet-grp">
+            <h4>{string($f/@name)}</h4>
+                <div class="facet-list show">{
+                    for $key at $l in subsequence($f/facet:key,1)
+                    let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
+                    let $new-fq := 
+                        if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
+                        else concat('fq=',$facet-query)
+                    return 
+                        (<a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default 
+                        {if(contains($facet:fq, concat(';fq-',string($f/@name),':',string($key/@label)))) then 'active' else()}">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a>,
+                           if($key/facet:key) then
+                                (
+                                <div class="facet-list show">
+                                    {
+                                    for $sub-key in subsequence($key/facet:key, 1)
+                                    return
+                                        <a href="entry.html?id={string($sub-key/@value)}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
+                                            {string($sub-key/@label)}
+                                        </a>
+                                    } 
+                                 </div>)
+                                    
+                           else()
+                        )
+                        
+                    }
+                </div>
+                <div class="facet-list collapse" id="{concat('show',replace(string($f/@name),' ',''))}">{
+                    for $key at $l in subsequence($f/facet:key,$f/@show + 1,$f/@max)
+                    let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
+                    let $new-fq := 
+                        if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
+                        else concat('fq=',$facet-query)
+                    return <a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a>
+                    }
+                </div>
+                {if($count gt ($f/@show - 1)) then 
+                    <a class="facet-label togglelink btn btn-info" data-toggle="collapse" data-target="#{concat('show',replace(string($f/@name),' ',''))}" data-text-swap="Less"> More &#160;<i class="glyphicon glyphicon-circle-arrow-right"></i></a>
+                else()}
+        </div>
+        else 
+         <div class="facet-grp">
+             <h4>{string($f/@name)}</h4>
+                 <div class="facet-list show">{
+                     for $key at $l in subsequence($f/facet:key,1,$f/@show)
+                     let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
+                     let $new-fq := 
+                         if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
+                         else concat('fq=',$facet-query)
+                     return 
+                         (<a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default 
+                         {if(contains($facet:fq, concat(';fq-',string($f/@name),':',string($key/@label)))) then 'active' else()}">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a>,
+                            if($key/facet:key) then
+                                 (
+                                 <div class="facet-list show">
+                                     {
+                                     for $sub-key in subsequence($key/facet:key, 1,5)
+                                     return
+                                         <a href="entry.html?id={string($sub-key/@value)}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
+                                             {string($sub-key/@label)}
+                                         </a>
+                                     } 
+                                  </div>,
+                                  <div class="facet-list collapse" id="{concat('show',replace(string($key/@label),' ',''))}">
+                                     {
+                                     for $sub-key in subsequence($key/facet:key,6,100)
+                                     return
+                                         <a href="entry.html?id={string($sub-key/@value)}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
+                                             {string($sub-key/@label)}
+                                         </a>
+                                     }
+                                  </div>,
+                                  if(count($key/facet:key) gt 5) then 
+                                      <a class="facet-label togglelink btn btn-info" data-toggle="collapse" data-target="#{concat('show',replace(string($key/@label),' ',''))}" data-text-swap="Less"> More &#160;<i class="glyphicon glyphicon-circle-arrow-right"></i></a>
+                                   else())
+                                     
+                            else()
+                         )
+                         
+                     }
+                 </div>
+                 <div class="facet-list collapse" id="{concat('show',replace(string($f/@name),' ',''))}">{
+                     for $key at $l in subsequence($f/facet:key,$f/@show + 1,$f/@max)
+                     let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
+                     let $new-fq := 
+                         if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
+                         else concat('fq=',$facet-query)
+                     return <a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a>
+                     }
+                 </div>
+                 {if($count gt ($f/@show - 1)) then 
+                     <a class="facet-label togglelink btn btn-info" data-toggle="collapse" data-target="#{concat('show',replace(string($f/@name),' ',''))}" data-text-swap="Less"> More &#160;<i class="glyphicon glyphicon-circle-arrow-right"></i></a>
+                 else()}
+         </div>
     else()
 )    
 };
