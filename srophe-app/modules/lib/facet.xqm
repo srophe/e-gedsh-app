@@ -301,8 +301,14 @@ return
                         if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
                         else concat('fq=',$facet-query)
                     return 
-                        (<a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default 
-                        {if(contains($facet:fq, concat(';fq-',string($f/@name),':',string($key/@label)))) then 'active' else()}">{facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span></a>,
+                        (if(contains($facet:fq, concat(';fq-',string($f/@name),':',string($key/@label)))) then 
+                            <a href="?start=1{replace(facet:url-params(),'&amp;start=1','')}" class="facet-label btn btn-default active">
+                                {facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span>
+                            </a>
+                        else 
+                            <a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default">
+                                {facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span>
+                            </a>,
                            if($key/facet:key) then
                                 (
                                 <div class="facet-list show">
