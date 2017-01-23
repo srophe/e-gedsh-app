@@ -155,7 +155,9 @@ declare function facet:group-by-abc($results as item()*, $facet-definitions as e
         {
             if(contains($facet:fq, concat(';fq-',string($name),':',$sort-string))) then 
                 for $sf in $f
-                let $value := $sf/following-sibling::tei:ab/tei:idno[@type='URI']
+                let $value := if($sf/following-sibling::tei:ab/tei:idno[@type='URI']) then 
+                                $sf/following-sibling::tei:ab/tei:idno[@type='URI']
+                              else string($sf/following-sibling::tei:ab/tei:ref[1]/@target)
                 return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$value[1]}" label="{$sf[1]}"/>
             else ()
         }

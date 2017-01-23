@@ -167,7 +167,7 @@ let $data :=
         for $hit in $hits-main/tei:head[1]
         let $num := xs:integer($hit/tei:ab[@type="idnos"]/tei:idno[@type="entry"])
         order by $num
-        return $hit/ancestor::tei:div[@type='entry'][1]
+        return $hit/ancestor::tei:div[@type="entry" or @type="crossreference"][1]
     else 
         if($browse:view = 'facets') then
         let $path := concat('$hits-main/',facet:facet-filter(facet-defs:facet-definition($collection)))
@@ -180,22 +180,21 @@ let $data :=
             for $hit in $hits-main[matches(substring(global:build-sort-string(tei:head[1],$browse:computed-lang),1,1),browse:get-sort(),'i')]
             let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
             let $num := xs:integer($hit/tei:ab[@type="idnos"]/tei:idno[@type="entry"])
-            order by $num
+            order by $title
             return $hit
         else 
             for $hit in $hits-main
             let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
             let $num := xs:integer($hit/tei:ab[@type="idnos"]/tei:idno[@type="entry"])
-            order by $num
+            order by $title
             return $hit
 return map{"browse-data" := $data }
 };
 
 declare function browse:group-abc-entries($node as node(), $model as map(*)){
-let $hits := util:eval(concat(browse:collection-path(''),'//tei:div[@type="entry"]'))
+let $hits := util:eval(concat(browse:collection-path(''),'//tei:div[@type="entry" or @type="crossreference"]'))
 return
-facet:html-list-facets-as-buttons(facet:count($hits, facet-defs:facet-definition('e-gedsh')/child::*))
-
+    facet:html-list-facets-as-buttons(facet:count($hits, facet-defs:facet-definition('e-gedsh')/child::*))
 };
 
 (:~
