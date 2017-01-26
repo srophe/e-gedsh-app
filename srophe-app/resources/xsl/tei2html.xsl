@@ -39,7 +39,6 @@
           for the Institute for the Study of the Ancient World, New York
           University, under contract to Vanderbilt University for the
           NEH-funded Syriac Reference Portal project.
-        + Winona Salesky for use with eXist-db
           
        funding provided by:
         + National Endowment for the Humanities (http://www.neh.gov). Any 
@@ -613,10 +612,12 @@
     <xsl:template match="t:label">
         <label>
             <xsl:if test="@type">
-                <xsl:attribute name="class"><xsl:value-of select="@type"/></xsl:attribute>    
+                <xsl:attribute name="class">
+                    <xsl:value-of select="@type"/>
+                </xsl:attribute>
             </xsl:if>
             <xsl:call-template name="langattr"/>
-            <xsl:sequence select="local:rend(.)"/>            
+            <xsl:sequence select="local:rend(.)"/>
         </label>
     </xsl:template>
     <!-- Descriptions for place abstract  added template for abstracts, handles quotes and references.-->
@@ -1087,13 +1088,23 @@
         <xsl:sequence select="local:rend(.)"/>
     </xsl:template>
     <xsl:template match="t:abbr">
+        <!--
         <xsl:if test="preceding-sibling::node()[1][not(matches(.,'$(\s|\(|\.|,)|\[|'))]">
             <xsl:text> </xsl:text>
         </xsl:if>
+        -->
+        <xsl:if test="preceding-sibling::node()[1][matches(.,'^(\s)')]">
+            <xsl:text> </xsl:text>            
+        </xsl:if>
         <xsl:apply-templates/>
+        <xsl:if test="following-sibling::node()[1][matches(.,'^(\s)')]">
+            <xsl:text> </xsl:text>            
+        </xsl:if>
+       <!--
         <xsl:if test="following-sibling::node()[1][not(matches(.,'^(\s|\)|\.|,)|\]|;|:'))]">
             <xsl:text> </xsl:text>
         </xsl:if>
+        -->
     </xsl:template>
     <!-- NOTE: would really like to get rid of mode=cleanout -->
     <xsl:template match="t:placeName[local-name(..)='desc']" mode="cleanout">
