@@ -798,3 +798,5 @@ pre {
     }
 .caret {float:left; margin-left:.5em; margin-top:.5em;}    
 }
+/* Hide facet label, not needed for gedsh */
+.toc .label-facet {display:none;}
