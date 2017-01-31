@@ -191,3 +191,16 @@ declare function global:build-sort-string($titlestring as xs:string?, $lang as x
 declare function global:ar-sort-string($titlestring as xs:string?) as xs:string* {
     replace(replace(replace(replace($titlestring,'^\s+',''),'^(\sابن|\sإبن|\sبن)',''),'(ال|أل|ٱل)',''),'^[U064B - U0656]','')
 };
+
+declare function global:get-syriaca-refs($url as xs:string*){
+    for $r in $url
+    let $request := 
+        http:send-request(<http:request href="{concat($url,'/tei')}" method="get"/>)
+    return 
+        try{
+            <a href="{$url}">{global:display-recs-short-view($request[2]//tei:titleStmt/tei:title[1],'')}</a>
+           } catch * {
+            concat($err:code, ": ", $err:description)
+            }
+              
+};

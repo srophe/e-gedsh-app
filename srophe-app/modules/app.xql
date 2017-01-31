@@ -1,7 +1,7 @@
 xquery version "3.0";
-    
+   
 module namespace app="http://syriaca.org/templates";
-
+       
 import module namespace templates="http://exist-db.org/xquery/templates" ;
 import module namespace teiDocs="http://syriaca.org/teiDocs" at "teiDocs/teiDocs.xqm";
 import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
@@ -10,7 +10,7 @@ import module namespace rel="http://syriaca.org/related" at "lib/get-related.xqm
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 
-(:~                      
+(:~                           
  : Syriaca.org URI for retrieving TEI records 
 :)
 declare variable $app:id {request:get-parameter('id', '')};
@@ -88,9 +88,9 @@ function app:google-analytics($node as node(), $model as map(*)){
    $global:get-config//google_analytics/text() 
 };
 
-(:
+(:~     
  :NOTE: not being used
-:)
+:)       
 declare %templates:wrap function app:get-nav($node as node(), $model as map(*)){
  doc($global:data-root || 'templates/subnav.xml')/child::*
 };
@@ -224,7 +224,6 @@ declare %templates:wrap function app:rec-display($node as node(), $model as map(
                 )}  
             </div>
         </div>      
-
     else if($model("data")/self::tei:div) then 
         <div class="row">
             <div class="col-md-12 column1">
@@ -238,6 +237,48 @@ declare %templates:wrap function app:rec-display($node as node(), $model as map(
             </div>
         </div>
 };
+
+(:
+ :
+ "Syriaca.org has information on # related person/persons"
+"Syriaca.org has information on # related place/places"
+:)
+declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
+    <div class="panel panel-default" style="margin-top:3em;">
+            <div class="panel-heading"><h3 class="panel-title">Links to Syriaca.org</h3></div>
+            <div class="panel-body">
+                {
+                    for $rels in $model("data")//tei:idno[@type="subject"]
+                    group by $r-type := tokenize($rels/text(),'/')[2]
+                    return
+                        <p>{global:get-syriaca-refs($rels/text())}</p>
+                }
+                    
+            </div>
+        </div>  
+(:
+    if($model("data")//@ref[contains(.,'http://syriaca.org/')] 
+    or $model("data")//@target[contains(.,'http://syriaca.org/')] 
+    or $model("data")//tei:idno[@type="subject"][starts-with(.,'http://syriaca.org/')]
+    ) then 
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Links to Syriaca.org</h3></div>
+            <div class="panel-body">
+                <div data-template="app:wiki-menu" data-template-wiki="https://github.com/srophe/srophe-app-data/wiki"/>
+            </div>
+        </div>                
+    else ()
+:)    
+};
+(:~
+ : Syriaca.org related
+:)
+declare %templates:wrap function app:related($node as node(), $model as map(*)){
+    if($model("data")//tei:relation) then 
+           rel:build-relationships($model("data")//tei:listRelation, replace($model("data")//tei:idno[@type='URI'][starts-with(.,$global:base-uri)][1],'/tei',''))      
+    else ()
+};
+
 (:~      
  : Return teiHeader info to be used in citation
 :)
