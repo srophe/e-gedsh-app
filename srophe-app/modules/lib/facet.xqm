@@ -317,7 +317,7 @@ return
                                     {
                                     for $sub-key in subsequence($key/facet:key, 1)
                                     return
-                                        <a href="entry.html?id={string($sub-key/@value)}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
+                                        <a href="entry.html?id={string($sub-key/@value)}&amp;{$new-fq}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
                                             {string($sub-key/@label)}
                                         </a>
                                     } 
