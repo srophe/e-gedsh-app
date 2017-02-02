@@ -800,3 +800,4 @@ pre {
 }
 /* Hide facet label, not needed for gedsh */
 .toc .label-facet {display:none;}
+.cross-ref{font-style: italic; font-weight: 600;}

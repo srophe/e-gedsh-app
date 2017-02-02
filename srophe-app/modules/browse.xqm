@@ -370,8 +370,9 @@ declare function browse:display-hits($hits){
     if($data/@type='crossreference') then 
         <div class="results-list">
           <span class="sort-title">
-               {$data/tei:head}
-               <span class="type">{$data/tei:ab[@type='crossreference']}</span>
+               {$data/tei:head} 
+               <span class="browse cross-ref"> see </span>
+               <a href="entry.html?id={string($data/descendant::tei:ref/@target)}">{replace($data/tei:ab[@type='crossreference'],'see ','')}</a>
            </span>
            <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>

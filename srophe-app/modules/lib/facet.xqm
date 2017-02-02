@@ -84,7 +84,6 @@ declare function facet:group-by($results as item()*, $facet-definitions as eleme
     return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$f[1]}" label="{$f[1]}"/>
 };
 
-
 (:~
  : Syriaca.org specific group-by function for correctly labeling attributes with arrays.
 :)
@@ -158,7 +157,10 @@ declare function facet:group-by-abc($results as item()*, $facet-definitions as e
                 let $value := if($sf/following-sibling::tei:ab/tei:idno[@type='URI']) then 
                                 $sf/following-sibling::tei:ab/tei:idno[@type='URI']
                               else string($sf/following-sibling::tei:ab/tei:ref[1]/@target)
-                return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$value[1]}" label="{$sf[1]}"/>
+                let $see :=   if($sf/following-sibling::tei:ab/tei:ref) then 
+                                concat(' see ',string($sf/following-sibling::tei:ab/tei:ref[1]/text()))
+                              else () 
+                return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$value[1]}" label="{($sf[1],$see)}"/>
             else ()
         }
     </key>
@@ -318,7 +320,11 @@ return
                                     for $sub-key in subsequence($key/facet:key, 1)
                                     return
                                         <a href="entry.html?id={string($sub-key/@value)}&amp;{$new-fq}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
-                                            {string($sub-key/@label)}
+                                            {
+                                                if(contains($sub-key/@label,' see ')) then
+                                                    (substring-before($sub-key/@label,' see '), <span class="browse cross-ref"> see </span>, substring-after($sub-key/@label,' see '))
+                                                else string($sub-key/@label)
+                                            }
                                         </a>
                                     } 
                                  </div>)
