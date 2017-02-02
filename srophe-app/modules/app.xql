@@ -248,15 +248,33 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
             <div class="panel-heading"><h3 class="panel-title">Links to Syriaca.org</h3></div>
             <div class="panel-body">
                 {
-                    for $rels in $model("data")//tei:idno[@type="subject"]
-                    group by $r-type := tokenize($rels/text(),'/')[2]
-                    return
-                        <p>{global:get-syriaca-refs($rels/text())}</p>
+                    for $rels in $model("data")//tei:idno[@type="subject"] | 
+                                 $model("data")//tei:persName/@ref | 
+                                 $model("data")//tei:placeName/@ref
+                    let $type := if(contains($rels,'http://syriaca.org/person/')) then 
+                                 'Persons'
+                              else if(contains($rels,'http://syriaca.org/place/')) then 
+                                 'Places'
+                              else 'Unknown'
+                    group by $rel-grp := $type
+                    order by $rel-grp
+                    return 
+                         <div>
+                             <h4>{string($rel-grp)}</h4>
+                             <div class="indent">
+                             {
+                             for $r in $rels 
+                             return 
+                                global:get-syriaca-refs(string($r))
+                             }
+                             </div>
+                         </div>
                 }
                     
             </div>
         </div>  
 (:
+{global:get-syriaca-refs($rels/text())}
     if($model("data")//@ref[contains(.,'http://syriaca.org/')] 
     or $model("data")//@target[contains(.,'http://syriaca.org/')] 
     or $model("data")//tei:idno[@type="subject"][starts-with(.,'http://syriaca.org/')]

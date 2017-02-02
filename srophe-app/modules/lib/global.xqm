@@ -198,8 +198,13 @@ declare function global:get-syriaca-refs($url as xs:string*){
         http:send-request(<http:request href="{concat($url,'/tei')}" method="get"/>)
     return 
         try{
-            <a href="{$url}">{global:display-recs-short-view($request[2]//tei:titleStmt/tei:title[1],'')}</a>
+            (:<a href="{$url}">{global:display-recs-short-view($request[2]//tei:titleStmt/tei:title[1],'')}</a>:)
+            <p>
+            Title: <a href="{$url}">{global:tei2html($request[2]//tei:titleStmt/tei:title[1])}</a><br/>
+            URl: <a href="{$url}">{$url}</a><br/>
+            </p>
            } catch * {
             concat($err:code, ": ", $err:description)
             }
+              
 };
