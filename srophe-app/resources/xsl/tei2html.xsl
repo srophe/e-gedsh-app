@@ -1093,12 +1093,12 @@
             <xsl:text> </xsl:text>
         </xsl:if>
         -->
-        <xsl:if test="preceding-sibling::node()[1][matches(.,'^(\s)')]">
-            <xsl:text> </xsl:text>            
+        <xsl:if test="preceding-sibling::node()[1][matches(.,'$(\s)')]">
+            <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates/>
         <xsl:if test="following-sibling::node()[1][matches(.,'^(\s)')]">
-            <xsl:text> </xsl:text>            
+            <xsl:text> </xsl:text>
         </xsl:if>
        <!--
         <xsl:if test="following-sibling::node()[1][not(matches(.,'^(\s|\)|\.|,)|\]|;|:'))]">

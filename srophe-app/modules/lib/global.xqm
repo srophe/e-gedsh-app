@@ -202,5 +202,4 @@ declare function global:get-syriaca-refs($url as xs:string*){
            } catch * {
             concat($err:code, ": ", $err:description)
             }
-              
 };
