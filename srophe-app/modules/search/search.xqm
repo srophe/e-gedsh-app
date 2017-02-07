@@ -2,11 +2,10 @@ xquery version "3.0";
  
 module namespace search="http://syriaca.org/search";
 import module namespace page="http://syriaca.org/page" at "../lib/paging.xqm";
-import module namespace facets="http://syriaca.org/facets" at "../lib/facets.xqm";
 import module namespace common="http://syriaca.org/common" at "common.xqm";
-import module namespace geo="http://syriaca.org/geojson" at "../lib/geojson.xqm";
+import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
 import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
-
+import module namespace kwic="http://exist-db.org/xquery/kwic";
 import module namespace templates="http://exist-db.org/xquery/templates" ;
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -42,9 +41,6 @@ declare %templates:wrap function search:get-results($node as node(), $model as m
                         return $hit                                                     
                     else 
                         for $hit in util:eval($eval-string)
-                       (: let $expanded := util:expand($hit, "expand-xincludes=no")
-                        let $headword := count($expanded/descendant::*[contains(@syriaca-tags,'#syriaca-headword')][descendant::*:match])
-                        let $headword := if($headword gt 0) then $headword + 15 else 0:)
                         order by ft:score($hit) + (count($hit/descendant::tei:bibl) div 2) descending
                         return $hit
                 else ()                        
@@ -57,7 +53,7 @@ declare %templates:wrap function search:get-results($node as node(), $model as m
 declare function search:query-string($collection as xs:string?) as xs:string?{
 if($collection !='') then 
     concat("collection('",$global:data-root,"/",$collection,"')//tei:body",
-    common:keyword($search:q),
+    common:keyword(),
     search:persName(),
     search:placeName(), 
     search:title(),
@@ -66,7 +62,7 @@ if($collection !='') then
     )
 else 
 concat("collection('",$global:data-root,"')//tei:div[@type='entry']",
-    common:keyword($search:q),
+    common:keyword(),
     search:persName(),
     search:placeName(), 
     search:title(),
@@ -139,48 +135,6 @@ declare function search:search-string($collection as xs:string?){
      search:search-string()
 };
 
-(:~
- : Call facets on search results
- : NOTE: need better template integration
-:)
-declare %templates:wrap function search:spear-facets($hits){
-if(exists(request:get-parameter-names())) then 
-    <div>
-     <h4>Browse by</h4>
-     {
-        let $facet-nodes := $hits
-        let $facets := $facet-nodes//tei:persName | $facet-nodes//tei:placeName | $facet-nodes//tei:event 
-        | $facet-nodes/ancestor::tei:TEI/descendant::tei:title[@level='a'][parent::tei:titleStmt]
-        return facets:facets($facets)
-     }
-    </div>
-else ()    
-};
-
-(:~
- : Call facets on search results
- : NOTE: need better template integration
-:)
-declare %templates:wrap function search:facets($node as node()*, $model as map(*), $collection as xs:string*){
-<div>
-     {
-     if($collection = 'spear') then
-            <div>
-                <h4>Browse by</h4>
-                {
-                   let $facet-nodes := $model("hits")
-                   let $facets := $facet-nodes//tei:persName | $facet-nodes//tei:placeName | $facet-nodes//tei:event 
-                   | $facet-nodes/ancestor::tei:TEI/descendant::tei:title[@level='a'][parent::tei:titleStmt]
-                   return facets:facets($facets)
-                }
-            </div>
-     else 
-        let $facet-nodes := $model("hits")
-        let $facets := $facet-nodes//tei:repository | $facet-nodes//tei:country
-        return facets:facets($facets)
-     }
-</div>
-};
 
 (:~ 
  : Count total hits
@@ -208,11 +162,12 @@ declare  %templates:wrap function search:pageination($node as node()*, $model as
  : @param $node search resuls with coords
 :)
 declare function search:build-geojson($node as node()*, $model as map(*)){
-let $geo-hits := $model("hits")//tei:geo
+let $data := $model("hits")
+let $geo-hits := $data//tei:geo
 return
     if(count($geo-hits) gt 0) then
          (
-         geo:build-map($model("hits")//tei:geo, '', ''),
+         maps:build-map($data[descendant::tei:geo], count($data)),
          <div>
             <div class="modal fade" id="map-selection" tabindex="-1" role="dialog" aria-labelledby="map-selectionLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -267,6 +222,8 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
     <div>{search:build-geojson($node,$model)}</div>
     {
         for $hit at $p in subsequence($model("hits"), $search:start, $search:perpage)
+        let $kwic := kwic:summarize($hit, <config width="40" />, util:function(xs:QName("search:filter"
+), 2))
         return
             <div class="row" xmlns="http://www.w3.org/1999/xhtml" style="border-bottom:1px dotted #eee; padding-top:.5em">
                 <div class="col-md-12">
@@ -278,7 +235,7 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                            <span class="sort-title">
                                 <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/tei:head}</a>
                             </span>
-                            <span class="results-list-desc type">{$hit/tei:ab[@type='infobox']}</span>
+                            <span class="results-list-desc type">{$kwic}</span>
                             <span class="results-list-desc uri">
                                 <span class="srp-label">URI: </span>
                                 <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/descendant::tei:idno[@type='URI'][1]}</a>
@@ -289,6 +246,15 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
             </div>
        } 
 </div>
+};
+
+
+declare function search:filter($node as node(), $mode as xs:string) as xs:string? 
+{
+  if ($mode eq 'before') then 
+      concat($node, ' ')
+  else 
+      concat(' ', $node)
 };
 
 (:~          

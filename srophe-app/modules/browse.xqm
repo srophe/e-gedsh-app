@@ -14,7 +14,7 @@ import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
 import module namespace facet="http://expath.org/ns/facet" at "lib/facet.xqm";
 import module namespace facet-defs="http://syriaca.org/facet-defs" at "facet-defs.xqm";
 import module namespace page="http://syriaca.org/page" at "lib/paging.xqm";
-import module namespace geo="http://syriaca.org/geojson" at "lib/geojson.xqm";
+import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
 import module namespace templates="http://exist-db.org/xquery/templates";
 
 declare namespace xslt="http://exist-db.org/xquery/transform";
@@ -331,7 +331,7 @@ return
         }</div>)
 else if($browse:view = 'map') then 
     <div class="col-md-12 map-lg">
-        {geo:build-map($hits//tei:geo, '', '')}
+        {maps:build-map($hits[descendant::tei:geo], count($hits))}
     </div>
 else if($browse:view = 'all' or $browse:view = 'ܐ-ܬ' or $browse:view = 'ا-ي' or $browse:view = 'other') then 
     <div class="col-md-12">
@@ -396,7 +396,7 @@ declare function browse:display-hits($hits){
 declare function browse:get-map($hits){
 if($hits//tei:geo) then 
     <div class="col-md-12 map-md">
-        {geo:build-map($hits//tei:geo, '', '')}
+        {maps:build-map($hits[descendant::tei:geo], count($hits))}
     </div>
 else ()    
 };
@@ -514,3 +514,11 @@ return
     </li> 
 };
 
+
+(: e-gedsh browse functions :)
+
+declare function browse:group-abc-entries($node as node(), $model as map(*)){
+let $hits := util:eval(concat(browse:collection-path(''),'//tei:div[@type="entry" or @type="crossreference"]'))
+return
+    facet:html-list-facets-as-buttons(facet:count($hits, facet-defs:facet-definition('e-gedsh')/child::*))
+};

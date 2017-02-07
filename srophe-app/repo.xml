@@ -2,7 +2,7 @@
 <meta xmlns="http://exist-db.org/xquery/repo">
     <description>e-gedsh</description>
     <author>Winona Salesky</author>
-    <website></website>
+    <website/>
     <status>beta</status>
     <license>GNU-LGPL</license>
     <copyright>true</copyright>
@@ -10,4 +10,43 @@
     <target>e-gedsh</target>
     <prepare>pre-install.xql</prepare>
     <finish>post-install.xql</finish>
+    <deployed>2017-02-07T13:00:43.819-05:00</deployed>
+    <config>
+        <!-- App title -->
+        <title>e-gedsh</title>
+        <!-- App description -->
+        <description/>
+        <!-- Contact email -->
+        <contact/>
+        <!-- Logo name (assumes path to logo is $app-root/resources/img/) -->
+        <logo>syriaca-logo.png</logo>
+        <!-- Web Site URL -->
+        <url/>
+        <!-- Root of app for building dynamic links. Default is eXist app root -->
+        <nav-base>/exist/apps/e-gedsh</nav-base>
+        <!-- eXist app root for app deployment-->
+        <app-root>e-gedsh</app-root>
+        <!-- eXist data app root for gazetteer data -->
+        <data-root>e-gedsh-data</data-root>
+        <!-- Base URI for identifiers in app data -->
+        <base_uri>http://gedsh.bethmardutho.org/</base_uri>
+        <!-- Map rendering -->
+        <maps>
+            <option>google</option>
+            <option selected="true">leaflet</option>
+        </maps>
+        <google_analytics>var _gaq=[['_setAccount','UA-333143-26'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));</google_analytics>
+        <footer>
+            <div class="container">
+                <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">
+                    <img alt="Creative Commons License" style="border-width:0" src="$app-root/resources/img/cc.png" height="18px"/>
+                </a> This work is licensed under a 
+                <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.en_US">Creative Commons Attribution Non-Commercial 4.0 Unported License</a>.
+                <br/>Copyright Beth Mardutho: The Syriac Institute, 2011.
+            </div>
+        </footer>
+    </config>
 </meta>

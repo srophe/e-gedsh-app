@@ -17,7 +17,7 @@ if($collection = 'e-gedsh') then
         <group-by function="facet:group-by-abc">
             <sub-path>tei:head[1]</sub-path>
         </group-by>
-        <max-values show="40">40</max-values>
+        <max-values show="2000">200</max-values>
         <order-by direction="descending">value</order-by>
     </facet-definition> 
 </facets> 

@@ -4,7 +4,8 @@ module namespace api="http://syriaca.org/api";
 
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
-import module namespace geo="http://syriaca.org/geojson" at "lib/geojson.xqm";
+import module namespace geojson="http://syriaca.org/geojson" at "lib/geojson.xqm";
+import module namespace geokml="http://syriaca.org/geokml" at "lib/geokml.xqm";
 import module namespace tei2ttl="http://syriaca.org/tei2ttl" at "lib/tei2ttl.xqm";
 import module namespace feed="http://syriaca.org/atom" at "lib/atom.xqm";
 import module namespace common="http://syriaca.org/common" at "search/common.xqm";
@@ -79,6 +80,7 @@ function api:get-geo-kml($type as xs:string*, $output as xs:string*) {
     event
     desc
     location
+    idno
  @param $collection accepts:
     Gateway to the Syriac Saints
     The Syriac Biographical Dictionary
@@ -201,13 +203,26 @@ declare
     %output:media-type("text/xml")
     %output:method("xml")
 function api:get-tei($collection as xs:string, $id as xs:string){
-   (<rest:response> 
-      <http:response status="200"> 
-        <http:header name="Content-Type" value="application/xml; charset=utf-8"/> 
-      </http:response> 
-    </rest:response>, 
-     api:get-tei-rec($collection, $id)
-     )
+    let $rec := api:get-tei-rec($collection, $id)
+    return 
+        if(not(empty($rec))) then 
+            (<rest:response> 
+                <http:response status="200">
+                  <http:header name="Content-Type" value="application/xml; charset=utf-8"/>
+                  <http:header name="Access-Control-Allow-Origin" value="*"/> 
+                </http:response> 
+              </rest:response>, 
+              api:get-tei-rec($collection, $id))
+        else 
+            (<rest:response> 
+                <http:response status="400">
+                  <http:header name="Content-Type" value="application/xml; charset=utf-8"/>
+                  <http:header name="Access-Control-Allow-Origin" value="*"/> 
+                </http:response> 
+              </rest:response>,
+              <response status="error">
+                    <message>This record can not be found, please check URI and try again</message>
+              </response>)
 }; 
 
 (:~
@@ -305,9 +320,9 @@ let $geo-map :=
             let $path := concat("collection('",$global:data-root,"/places/tei')//tei:place[@type = (",$types,")]//tei:geo") 
             for $recs in util:eval($path) 
             return $recs 
-        else collection($global:data-root || "/places/tei")//tei:place[@type=$type]//tei:geo
-    else collection($global:data-root || "/places/tei")//tei:geo
+        else collection($global:data-root || "/places/tei")//tei:place[@type=$type]
+    else collection($global:data-root || "/places/tei")//tei:geo/ancestor::tei:TEI
 return
-    if($output = 'json') then xqjson:serialize-json(geo:json-wrapper(($geo-map), $type, $output))
-    else geo:kml-wrapper(($geo-map), $type, $output)
+    if($output = 'json') then geojson:geojson($geo-map)
+    else geokml:kml($geo-map)
 };
