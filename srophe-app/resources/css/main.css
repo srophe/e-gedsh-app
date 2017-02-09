@@ -772,7 +772,8 @@ pre {
   border-top:10px solid #753C28;
 }
 
-  /* Popover */
+.moreInfo {padding-left:1em;}
+/* Popover */
   .tooltip {
       padding:1em;
       overflow:visible;
@@ -781,8 +782,7 @@ pre {
     padding:1em;
     padding-left:1.5em;
     overflow:visible;
-    text-align:center;
-    border:1px solid green;
+    /*text-align:center;*/
     }
 
 /* new search */
@@ -800,5 +800,5 @@ pre {
 }
 /* Hide facet label, not needed for gedsh */
 .toc .label-facet {display:none;}
-.cross-ref{font-style: italic; font-weight: 600;}
+.toc .cross-ref, .browse.cross-ref{font-style: italic; font-weight: 600;}
 .subsection {margin-top:1.25em; margin-bottom:.25em;}
