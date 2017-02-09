@@ -1053,7 +1053,7 @@
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
      handle standard output of the ref element
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <xsl:template match="t:ref">
+    <xsl:template match="t:ref" mode="#all">
         <xsl:variable name="target">
             <xsl:choose>
                 <xsl:when test="starts-with(@target, $base-uri) and ($base-uri != $nav-base) and contains(@target,'/fig/')">
