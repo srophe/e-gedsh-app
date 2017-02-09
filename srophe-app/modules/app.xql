@@ -706,9 +706,14 @@ declare %templates:wrap function app:next-entry($node as node(), $model as map(*
 :)
 declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
     <div class="panel panel-default" style="margin-top:3em;">
-            <div class="panel-heading"><h3 class="panel-title">Links to Syriaca.org</h3></div>
+            <div class="panel-heading"><h3 class="panel-title">Additional External Resources <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
             <div class="panel-body">
                 {
+                    for $s in $model("data")//tei:idno[@type="subject"]
+                    return 
+                        <div class="indent">{global:get-syriaca-refs(string($s))}</div>
+                }
+                {(:
                     for $rels in $model("data")//tei:idno[@type="subject"] | 
                                  $model("data")//tei:persName/@ref | 
                                  $model("data")//tei:placeName/@ref
@@ -730,7 +735,7 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                              }
                              </div>
                          </div>
-                }
+                :)''}
                     
             </div>
         </div>    
