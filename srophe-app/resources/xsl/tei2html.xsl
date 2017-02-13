@@ -1080,9 +1080,15 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        <xsl:if test="preceding-sibling::node()[1][matches(.,'$(\s)')]">
+            <xsl:text> </xsl:text>
+        </xsl:if>
         <a href="{$target}" class="{$class}">
             <xsl:apply-templates/>
         </a>
+        <xsl:if test="following-sibling::node()[1][matches(.,'^(\s)')]">
+            <xsl:text> </xsl:text>
+        </xsl:if>
     </xsl:template>
     <xsl:template match="t:hi" mode="#all">
         <xsl:sequence select="local:rend(.)"/>
