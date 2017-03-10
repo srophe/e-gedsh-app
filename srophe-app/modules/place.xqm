@@ -11,7 +11,7 @@ import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 
 import module namespace templates="http://exist-db.org/xquery/templates" ;
-
+declare namespace http="http://expath.org/ns/http-client";
 declare namespace xslt="http://exist-db.org/xquery/transform";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
