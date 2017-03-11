@@ -224,12 +224,12 @@ footer {text-align:center; color:white;}
 .block {display:block;}
 .banner {font-size: 24px; color:white; background-color:#7c173e; margin:0 0 1em 0; padding:.5em 1em;; border-bottom:4px solid #7c173e;}
 /* Typography */
-h1 {font-size:1.5em; margin:.25em 0 .25em 0; color:#7c173e; font-weight:600;}
-h1 small {color:#7c173e !important; font-weight:600; font-size:.75em;}
+h1 {font-size:1.5em; margin:.25em 0 .25em 0; color:#666; font-weight:600;}
+h1 small {color:#666 !important; font-weight:600; font-size:.75em;}
 h2 {font-size: 1.25em; margin:1em 0 .25em 0; padding-bottom:0; color:#999; font-weight:500;}
 h3 {font-size: 1.2em; margin:1em 0 .25em 0; padding-bottom:0; color:#333; font-weight:500;  padding-bottom:0; margin-bottom:1em;}
 h3.banner-solid {color:white;}
-h3.underline {color:#999; border-bottom:3px solid #7c173e; padding-bottom:-.75em; margin-bottom:1em; margin-top:0;}
+h3.underline {color:#999; border-bottom:3px solid #666; padding-bottom:-.75em; margin-bottom:1em; margin-top:0;}
 h4 {font-size: 1em; margin:0 0 .25em 0; padding-bottom:0; font-weight:bold;}
 h3.label {
     background-color:#ccc;
