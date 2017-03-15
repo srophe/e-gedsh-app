@@ -152,7 +152,7 @@ declare function facet:group-by-abc($results as item()*, $facet-definitions as e
     return 
     <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$sort-string[1]}" label="{$sort-string[1]}">
         {
-            if(contains($facet:fq, concat(';fq-',string($name),':',$sort-string))) then 
+            if(contains($facet:fq, concat(';fq-',string($name[1]),':',$sort-string[1]))) then 
                 for $sf in $f
                 let $value := if($sf/following-sibling::tei:ab/tei:idno[@type='URI']) then 
                                 $sf/following-sibling::tei:ab/tei:idno[@type='URI']
@@ -160,7 +160,7 @@ declare function facet:group-by-abc($results as item()*, $facet-definitions as e
                 let $see :=   if($sf/following-sibling::tei:ab/tei:ref) then 
                                 concat(' see ',string($sf/following-sibling::tei:ab/tei:ref[1]/text()))
                               else () 
-                return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$value[1]}" label="{($sf[1],$see)}"/>
+                return <key xmlns="http://expath.org/ns/facet" count="{count($sf)}" value="{$value[1]}" label="{($sf[1],$see)}"/>
             else ()
         }
     </key>

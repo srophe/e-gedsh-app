@@ -682,7 +682,7 @@ function app:google-analytics($node as node(), $model as map(*)){
 
 (: e-gedsh functions :)
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
-   let $current-id := xs:integer($model("data")/descendant::tei:idno[@type="entry"])
+   let $current-id := xs:integer($model("data")/descendant::tei:idno[@type="entry"][1])
    let $prev := 
                if($current-id != 1) then 
                        let $rec := collection($global:data-root)//tei:div[descendant::tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]]
