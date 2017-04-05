@@ -703,6 +703,11 @@ declare %templates:wrap function app:next-entry($node as node(), $model as map(*
  : Display related Syriaca.org names
 :)
 declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
+    (
+    <div class="panel-body">
+        <a class="pull-right" href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/tei')}" rel="alternate" type="application/tei+xml">
+            <img src="/resources/img/tei-25.png" alt="The Text Encoding Initiative icon" data-toggle="tooltip" title="Click to view the TEI XML source data for this record."/></a>
+    </div>,
     <div class="panel panel-default" style="margin-top:3em;">
             <div class="panel-heading"><h3 class="panel-title">Additional External Resources <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
             <div class="panel-body">
@@ -736,5 +741,5 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                 :)''}
                     
             </div>
-        </div>    
+        </div>)
 };
