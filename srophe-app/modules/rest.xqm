@@ -18,6 +18,7 @@ declare namespace rest = "http://exquery.org/ns/restxq";
 
 (: For interacting with the TEI document :)
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace http="http://expath.org/ns/http-client";
 
 (:~
   : Use resxq to format urls for geographic API
@@ -178,16 +179,16 @@ function api:search-element($element as xs:string?, $q as xs:string*, $collectio
 :)
 declare 
     %rest:GET
-    %rest:path("/{$collection}/{$id}/ttl")
+    %rest:path("/e-gedsh/entry/{$id}/ttl")
     %output:media-type("text/turtle")
     %output:method("text")
-function api:get-ttl($collection as xs:string, $id as xs:string){
+function api:get-ttl($id as xs:string){
    (<rest:response> 
       <http:response status="200"> 
         <http:header name="Content-Type" value="text/turtle; charset=utf-8"/> 
       </http:response> 
     </rest:response>, 
-    tei2ttl:make-triples(api:get-tei-rec($collection, $id))
+    tei2ttl:make-triples(api:get-tei-rec($id))
      )
 }; 
 
@@ -199,11 +200,11 @@ function api:get-ttl($collection as xs:string, $id as xs:string){
 :)
 declare 
     %rest:GET
-    %rest:path("/{$collection}/{$id}/tei")
+    %rest:path("/e-gedsh/entry/{$id}/tei")
     %output:media-type("text/xml")
     %output:method("xml")
-function api:get-tei($collection as xs:string, $id as xs:string){
-    let $rec := api:get-tei-rec($collection, $id)
+function api:get-tei($id as xs:string){
+    let $rec := api:get-tei-rec($id)
     return 
         if(not(empty($rec))) then 
             (<rest:response> 
@@ -212,7 +213,7 @@ function api:get-tei($collection as xs:string, $id as xs:string){
                   <http:header name="Access-Control-Allow-Origin" value="*"/> 
                 </http:response> 
               </rest:response>, 
-              api:get-tei-rec($collection, $id))
+              api:get-tei-rec($id))
         else 
             (<rest:response> 
                 <http:response status="400">
@@ -233,42 +234,17 @@ function api:get-tei($collection as xs:string, $id as xs:string){
 :)
 declare 
     %rest:GET
-    %rest:path("/{$collection}/{$id}/atom")
+    %rest:path("/e-gedsh/entry/{$id}/atom")
     %output:media-type("application/atom+xml")
     %output:method("xml")
-function api:get-atom-record($collection as xs:string, $id as xs:string){
+function api:get-atom-record($id as xs:string){
    (<rest:response> 
       <http:response status="200"> 
         <http:header name="Content-Type" value="application/xml; charset=utf-8"/> 
       </http:response> 
     </rest:response>, 
-     feed:get-entry(api:get-tei-rec($collection, $id))
+     feed:get-entry(api:get-tei-rec($id))
     )
-}; 
-
-(:~
-  : Return atom feed for syrica.org subcollection
-  : @param $collection syriaca.org subcollection 
-  : Serialized as XML
-:)
-declare 
-    %rest:GET
-    %rest:path("/e-gedsh/api/{$collection}/atom")
-    %rest:query-param("start", "{$start}", 1)
-    %rest:query-param("perpage", "{$perpage}", 25)
-    %output:media-type("application/atom+xml")
-    %output:method("xml")
-function api:get-atom-feed($collection as xs:string, $start as xs:integer*, $perpage as xs:integer*){
-   (<rest:response> 
-      <http:response status="200"> 
-        <http:header name="Content-Type" value="application/xml; charset=utf-8"/> 
-      </http:response> 
-    </rest:response>, 
-    let $feed := collection(xs:anyURI($global:data-root || $collection ))//tei:TEI
-    let $total := count($feed)
-    return
-     feed:build-atom-feed($feed, $start, $perpage,'',$total)
-     )
 }; 
 
 (:~
@@ -298,13 +274,9 @@ function api:get-atom-feed($start as xs:integer*, $perpage as xs:integer*){
 (:~
  : Returns tei record for syriaca.org subcollections
 :)
-declare function api:get-tei-rec($collection as xs:string, $id as xs:string) as node()*{
-    let $uri := concat($global:base-uri,'/',$collection, '/', $id)
-    return 
-        if($collection='spear') then 
-            let $spear-id := concat('http://syriaca.org/spear/',$id)
-            return global:get-rec($spear-id)
-        else global:get-rec($uri)
+declare function api:get-tei-rec($id as xs:string) as node()*{
+    let $uri := concat($global:base-uri, $id)
+    return global:get-rec($uri)
 };
 
 (:~
