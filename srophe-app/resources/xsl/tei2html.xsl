@@ -1084,7 +1084,7 @@
             <xsl:text> </xsl:text>
         </xsl:if>
         <a href="{$target}" class="{$class}">
-            <xsl:apply-templates/>
+            <xsl:apply-templates mode="plain"/>
         </a>
         <xsl:if test="following-sibling::node()[1][matches(.,'^(\s)')]">
             <xsl:text> </xsl:text>
