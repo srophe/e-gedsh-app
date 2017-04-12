@@ -374,6 +374,12 @@ declare function browse:display-hits($hits){
                <span class="browse cross-ref"> see </span>
                <a href="entry.html?id={string($data/descendant::tei:ref/@target)}">{replace($data/tei:ab[@type='crossreference'],'see ','')}</a>
            </span>
+           {if($data/descendant::tei:byline) then
+           <span class="results-list-desc sort-title">
+               <span>Author: </span>
+               <i>{$data/descendant::tei:byline/tei:persName}</i>
+           </span>
+           else ()}
            <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>
                <a href="entry.html?id={string($data/descendant::tei:ref/@target)}">{string($data/descendant::tei:ref/@target)}</a>
@@ -385,6 +391,12 @@ declare function browse:display-hits($hits){
                <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/tei:head}</a>
                <span class="type">{$data/tei:ab[@type='infobox']}</span>
            </span>
+           {if($data/descendant::tei:byline) then
+           <span class="results-list-desc sort-title">
+               <span>Author: </span>
+               <i>{$data/descendant::tei:byline/tei:persName}</i>
+           </span>
+           else ()}
            <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>
                <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/descendant::tei:idno[@type='URI'][1]}</a>
