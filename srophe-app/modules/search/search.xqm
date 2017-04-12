@@ -222,8 +222,8 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
     <div>{search:build-geojson($node,$model)}</div>
     {
         for $hit at $p in subsequence($model("hits"), $search:start, $search:perpage)
-        let $kwic := kwic:summarize($hit, <config width="40" />, util:function(xs:QName("search:filter"
-), 2))
+        let $kwic := (:kwic:summarize($hit, <config width="40" />, util:function(xs:QName("search:filter"), 2)):)
+                      kwic:summarize($hit, <config width="40"/>)
         return
             <div class="row" xmlns="http://www.w3.org/1999/xhtml" style="border-bottom:1px dotted #eee; padding-top:.5em">
                 <div class="col-md-12">
@@ -255,8 +255,7 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
 };
 
 
-declare function search:filter($node as node(), $mode as xs:string) as xs:string? 
-{
+declare function search:filter($node, $mode){
   if ($mode eq 'before') then 
       concat($node, ' ')
   else 
