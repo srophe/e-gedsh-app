@@ -241,7 +241,7 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                                  <i>{$hit/descendant::tei:byline/tei:persName}</i>
                              </span>
                              else ()}
-                            <span class="results-list-desc type">{$kwic}</span>
+                            <span class="results-list-desc type">{subsequence($kwic, 1, 5)}</span>
                             <span class="results-list-desc uri">
                                 <span class="srp-label">URI: </span>
                                 <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/descendant::tei:idno[@type='URI'][1]}</a>
