@@ -232,15 +232,15 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                       </div>
                       <div class="col-md-9" xml:lang="en">
                        <div class="results-list">
+                           <span class="sort-title">
+                                <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/tei:head}</a>
+                            </span>
                             {if($hit/descendant::tei:byline) then
                              <span class="results-list-desc sort-title">
                                  <span>Author: </span>
                                  <i>{$hit/descendant::tei:byline/tei:persName}</i>
                              </span>
                              else ()}
-                           <span class="sort-title">
-                                <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/tei:head}</a>
-                            </span>
                             <span class="results-list-desc type">{$kwic}</span>
                             <span class="results-list-desc uri">
                                 <span class="srp-label">URI: </span>
