@@ -931,6 +931,21 @@
                 </span>
             </xsl:when>
         </xsl:choose>
+        <span class="{local-name(.)}">
+            <xsl:call-template name="langattr"/>
+            <xsl:choose>
+                <xsl:when test="self::t:persName[parent::t:byline]">
+                    <i>
+                        <xsl:apply-templates/>
+                    </i>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:sequence select="local:do-refs(@source,@xml:lang)"/>
+        </span>
+        <!--
         <xsl:choose>
             <xsl:when test="@ref">
                 <xsl:choose>
@@ -966,6 +981,7 @@
                 </span>
             </xsl:otherwise>
         </xsl:choose>
+        -->
     </xsl:template>
     <xsl:template match="t:persName" mode="title">
         <span class="persName">
