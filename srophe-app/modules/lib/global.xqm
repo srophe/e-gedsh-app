@@ -163,20 +163,8 @@ return $final-id
  : @param $id syriaca.org uri for record or part. 
 :)
 declare function global:get-rec($id as xs:string){  
-    if(contains($id,'/spear/')) then 
-        for $rec in collection($global:data-root)//tei:div[@uri = $id]
-        return 
-            <tei:TEI xmlns="http://www.tei-c.org/ns/1.0">{$rec}</tei:TEI>   
-    else if(contains($id,'/manuscript/')) then
-    (: Descrepency in how id's are handled, why dont the msPart id's have '/tei'?  :)
-        for $rec in collection($global:data-root)//tei:idno[@type='URI'][. = $id]
-        return 
-            if($rec/ancestor::tei:msPart) then
-               <tei:TEI xmlns="http://www.tei-c.org/ns/1.0">{$rec/ancestor::tei:msPart}</tei:TEI>
-            else $rec/ancestor::tei:TEI
-    else 
-        for $rec in collection($global:data-root)//tei:TEI[.//tei:idno[@type='URI'][text() = concat($id,'/tei')]]
-        return $rec 
+    for $rec in collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[normalize-space(.) = $id]]
+    return <tei:TEI xmlns="http://www.tei-c.org/ns/1.0">{$rec}</tei:TEI>  
 };
 
 (:~ 
@@ -241,15 +229,15 @@ declare function global:keyboard-select-menu($input-id as xs:string){
 };
 
 declare function global:get-syriaca-refs($url as xs:string*){
-    for $r in $url
+    for $r in tokenize(normalize-space($url),'\s|\n')
     let $request := 
-        http:send-request(<http:request href="{concat($url,'/tei')}" method="get"/>)
+        http:send-request(<http:request href="{concat($r,'/tei')}" method="get"/>)
     return 
         try{
             (:<a href="{$url}">{global:display-recs-short-view($request[2]//tei:titleStmt/tei:title[1],'')}</a>:)
             <p>
-            Title: <a href="{$url}">{global:tei2html($request[2]//tei:titleStmt/tei:title[1])}</a><br/>
-            URl: <a href="{$url}">{$url}</a><br/>
+            Title: <a href="{$r}">{global:tei2html($request[2]//tei:titleStmt/tei:title[1])}</a><br/>
+            URl: <a href="{$r}">{$r}</a><br/>
             </p>
            } catch * {
             concat($err:code, ": ", $err:description)
