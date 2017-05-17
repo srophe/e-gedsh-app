@@ -1037,15 +1037,22 @@
                 </xsl:attribute>
                 <xsl:for-each select="./node()">
                     <xsl:if test="not(self::text()) or string-length(normalize-space(.))&gt;0 or count(following-sibling::node())=0">
-                        <bdi>
-                            <xsl:for-each select="ancestor-or-self::t:*[@xml:lang][1]">
-                                <xsl:attribute name="dir">
-                                    <xsl:call-template name="getdirection"/>
-                                </xsl:attribute>
-                                <xsl:call-template name="langattr"/>
-                            </xsl:for-each>
-                            <xsl:apply-templates select="." mode="footnote"/>
-                        </bdi>
+                        <xsl:choose>
+                            <xsl:when test="ancestor-or-self::t:*[@xml:lang][1]">
+                                <bdi>
+                                    <xsl:for-each select="ancestor-or-self::t:*[@xml:lang][1]">
+                                        <xsl:attribute name="dir">
+                                            <xsl:call-template name="getdirection"/>
+                                        </xsl:attribute>
+                                        <xsl:call-template name="langattr"/>
+                                    </xsl:for-each>
+                                    <xsl:apply-templates select="." mode="footnote"/>
+                                </bdi>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                    <xsl:apply-templates select="." mode="footnote"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:if>
                 </xsl:for-each>
             </span>
