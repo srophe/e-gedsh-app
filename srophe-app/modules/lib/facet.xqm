@@ -150,15 +150,15 @@ declare function facet:group-by-abc($results as item()*, $facet-definitions as e
     group by $facet-grp := $sort-string
     order by $facet-grp ascending
     return 
-    <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$sort-string[1]}" label="{$sort-string[1]}">
+    <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$facet-grp}" label="{$facet-grp}">
         {
-            if(contains($facet:fq, concat(';fq-',string($name[1]),':',$sort-string[1]))) then 
+            if(contains($facet:fq, concat(';fq-',string($name[1]),':',$facet-grp))) then 
                 for $sf in $f
-                let $value := if($sf/following-sibling::tei:ab/tei:idno[@type='URI']) then 
-                                $sf/following-sibling::tei:ab/tei:idno[@type='URI']
-                              else string($sf/following-sibling::tei:ab/tei:ref[1]/@target)
+                let $value := if($sf/following-sibling::tei:ab[1]/tei:idno[@type='URI']) then 
+                                $sf/following-sibling::tei:ab[1]/tei:idno[@type='URI'][1]
+                              else string($sf/following-sibling::tei:ab[1]/tei:ref[1]/@target)
                 let $see :=   if($sf/following-sibling::tei:ab/tei:ref) then 
-                                concat(' see ',string($sf/following-sibling::tei:ab/tei:ref[1]/text()))
+                                concat(' see ',string($sf/following-sibling::tei:ab[1]/tei:ref[1]))
                               else () 
                 return <key xmlns="http://expath.org/ns/facet" count="{count($sf)}" value="{$value[1]}" label="{($sf[1],$see)}"/>
             else ()
