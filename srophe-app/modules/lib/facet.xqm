@@ -301,9 +301,7 @@ return
                 <div class="facet-list show">{
                     for $key at $l in subsequence($f/facet:key,1)
                     let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
-                    let $new-fq := 
-                        if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
-                        else concat('fq=',$facet-query)
+                    let $new-fq := concat('fq=',$facet-query)
                     return 
                         (if(contains($facet:fq, concat(';fq-',string($f/@name),':',string($key/@label)))) then 
                             <a href="?start=1{replace(facet:url-params(),'&amp;start=1','')}" class="facet-label btn btn-default active">
