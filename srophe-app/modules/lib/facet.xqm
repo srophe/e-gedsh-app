@@ -78,10 +78,10 @@ declare function facet:group-by($results as item()*, $facet-definitions as eleme
     for $f in util:eval($path)
     group by $facet-grp := $f
     order by 
-        if($sort/text() = 'value') then $f[1]
+        if($sort/text() = 'value') then $facet-grp
         else count($f)
         descending
-    return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$f[1]}" label="{$f[1]}"/>
+    return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$facet-grp}" label="{$facet-grp}"/>
 };
 
 (:~
@@ -94,10 +94,10 @@ declare function facet:group-by-array($results as item()*, $facet-definitions as
     for $f in $d
     group by $facet-grp := tokenize($f,' ')
     order by 
-        if($sort/text() = 'value') then $f[1]
+        if($sort/text() = 'value') then $facet-grp
         else count($f)
         descending
-    return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$f[1]}" label="{$f[1]}"/>
+    return <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$facet-grp}" label="{$facet-grp}"/>
 };
 
 (:~

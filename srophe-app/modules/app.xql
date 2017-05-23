@@ -42,7 +42,7 @@ if(request:get-parameter('id', '') != '') then
 else map {"data" := <div>'Page data'</div>}
 };
 
-(:~   
+(:~    
  : Default record display. Runs full TEI record through global:tei2html($data/child::*) for HTML display 
  : For more complicated displays page can be configured using eXistdb templates. See a persons or place html page.
  : Or the page can be organized using templates and Srophe functions to extend TEI visualiation to include 
@@ -681,18 +681,15 @@ function app:google-analytics($node as node(), $model as map(*)){
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
    let $current-id := xs:integer($model("data")/descendant::tei:idno[@type="entry"][1])
    let $prev := 
-               if($current-id != 1) then 
-                       let $rec := collection($global:data-root)//tei:div[descendant::tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]]
-                       let $uri := $rec/descendant::tei:idno[@type='URI'] 
+               if($current-id != 1) then
+                       let $uri := collection($global:data-root)//tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]/preceding-sibling::tei:idno[@type='URI']
                        return 
                            (<a href="entry.html?id={$uri}&amp;num={$current-id - 1}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
                else ()
    let $next := 
-               let $rec := collection($global:data-root)//tei:div[descendant::tei:idno[@type='entry'][xs:integer(.) = $current-id + 1]] 
+               let $uri := collection($global:data-root)//tei:idno[@type='entry'][xs:integer(.) = $current-id + 1]/preceding-sibling::tei:idno[@type='URI']  
                return 
-                   if(exists($rec)) then 
-                       let $uri := $rec//tei:idno[@type='URI']
-                       return 
+                   if(exists($uri)) then 
                            (' | ', <a href="entry.html?id={$uri}&amp;num={$current-id + 1}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                    else ()
    return             
@@ -708,38 +705,55 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
         <a class="pull-right" href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/tei')}" rel="alternate" type="application/tei+xml">
             <img src="/resources/img/tei-25.png" alt="The Text Encoding Initiative icon" data-toggle="tooltip" title="Click to view the TEI XML source data for this record."/></a>
     </div>,
-    <div class="panel panel-default" style="margin-top:3em;">
-            <div class="panel-heading"><h3 class="panel-title">Additional External Resources <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
+    <div class="panel panel-default" style="margin-top:1em;">
+            <div class="panel-heading"><h3 class="panel-title">Syriaca.org Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
             <div class="panel-body">
+                
                 {
-                    for $s in $model("data")//tei:idno[@type="subject"]
+                    let $sURI := $model("data")//tei:idno[@type="subject"]
+                    let $aTitle := $model('data')/tei:head[1]
+                    let $otherResources := $model("data")//@ref[contains(.,'http://syriaca.org/')]
+                    let $subject := count(util:eval(concat("collection('/db/apps/srophe-data/data')
+                                                        //tei:TEI[descendant::tei:relation[
+                                                        @passive[matches(.,'",$sURI,"(\W.*)?$')] or 
+                                                        @mutual[matches(.,'",$sURI,"(\W.*)?$')]]]")))
+                    let $citations := 
+                        for $r in collection('/db/apps/srophe-data/data')//tei:idno[. = $sURI]
+                        let $bibl := count(distinct-values($r/ancestor::tei:body/descendant::tei:bibl/descendant::tei:ptr/@target))
+                        let $idnos := count(distinct-values($r/ancestor::tei:body/descendant::tei:idno[not(. = $sURI)]))
+                        return ($bibl + $idnos) 
                     return 
-                        <div class="indent">{global:get-syriaca-refs(string($s))}</div>
+                        <div>
+                            <h4>Resources related to  <a href="{$sURI}">{$model('data')/tei:head[1]}</a></h4>
+                            <ul class="list-unstyled">
+                                <li class="indent">{$citations} related citations</li>
+                                <li class="indent">{$subject} related subjects</li>
+                            </ul>
+                            {
+                            if(count($otherResources) gt 0) then
+                                <div>
+                                    <h4>Resources related to {count($otherResources)} other subjects.  
+                                        <a href="#" class="togglelink" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide">Show...</a>
+                                    </h4>
+                                    <div class="collapse" id="showOtherResources">
+                                        {
+                                            for $r in $otherResources
+                                            return 
+                                                (<h4>Resources related to <a href="{$r}">{$r/parent::*[1]/text()}</a></h4>,
+                                                <ul class="list-unstyled">
+                                                    <li class="indent">{util:random(20)} related citations</li>
+                                                    <li class="indent">{util:random(20)} related subjects</li>
+                                                </ul>)
+                                        }
+                                    </div>
+                                </div>
+                            else()    
+                            }
+                        </div>
                 }
-                {(:
-                    for $rels in $model("data")//tei:idno[@type="subject"] | 
-                                 $model("data")//tei:persName/@ref | 
-                                 $model("data")//tei:placeName/@ref
-                    let $type := if(contains($rels,'http://syriaca.org/person/')) then 
-                                 'Persons'
-                              else if(contains($rels,'http://syriaca.org/place/')) then 
-                                 'Places'
-                              else 'Unknown'
-                    group by $rel-grp := $type
-                    order by $rel-grp
-                    return 
-                         <div>
-                             <h4>{string($rel-grp)}</h4>
-                             <div class="indent">
-                             {
-                             for $r in $rels 
-                             return 
-                                global:get-syriaca-refs(string($r))
-                             }
-                             </div>
-                         </div>
-                :)''}
                     
             </div>
-        </div>)
+    </div>
+        )
+        
 };
