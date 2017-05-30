@@ -127,6 +127,57 @@
         <xsl:call-template name="citationInfo"/>
     </xsl:template>
    
+    <xsl:template match="t:titlePage">
+        <div>
+            <xsl:apply-templates/>
+        </div>
+    </xsl:template>
+    <xsl:template match="t:imprimatur | t:byline | t:docImprint | t:figDesc">
+        <p class="{name(.)}"><xsl:apply-templates/></p>
+    </xsl:template>
+    <xsl:template match="t:titlePart">
+        <xsl:choose>
+            <xsl:when test="@type='main'">
+                <h2><xsl:apply-templates/></h2>        
+            </xsl:when>
+            <xsl:when test="@type='sub'">
+                <h3><xsl:apply-templates/></h3> 
+            </xsl:when>
+            <xsl:otherwise>
+                <h4><xsl:apply-templates/></h4>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template match="t:table">
+        <table>
+           <xsl:apply-templates/>
+        </table>
+    </xsl:template>
+    <xsl:template match="t:row">
+        <tr>
+            <xsl:apply-templates/>
+        </tr>
+    </xsl:template>
+    <xsl:template match="t:cell">
+        <td>
+            <xsl:apply-templates/>
+        </td>
+    </xsl:template>
+    <xsl:template match="t:pb">
+        <div class="strike"><span><xsl:value-of select="@n"/></span></div>
+    </xsl:template>
+    <xsl:template match="t:figure">
+        <div class="figure">
+            <xsl:apply-templates/>
+        </div>
+    </xsl:template>
+    <xsl:template match="t:graphic">
+        <xsl:choose>
+            <xsl:when test="@url"><img src="@url"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     <!-- Template for page titles -->
     <xsl:template match="t:srophe-title | t:titleStmt">
         <xsl:call-template name="h1"/>
@@ -949,7 +1000,7 @@
         <xsl:choose>
             <xsl:when test="@ref">
                 <xsl:choose>
-                    <xsl:when test="string-length(@ref) &lt; 1">
+                    <xsl:when test="string-length(@ref) < 1">
                         <span>
                             <xsl:call-template name="langattr"/>
                             <xsl:apply-templates/>

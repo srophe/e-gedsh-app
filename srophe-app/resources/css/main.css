@@ -804,3 +804,37 @@ pre {
 .toc .label-facet {display:none;}
 .toc .cross-ref, .browse.cross-ref{font-style: italic; font-weight: 600;}
 .subsection {margin-top:1.25em; margin-bottom:.25em;}
+.figure {display:block; margin:1em; text-align:center;}
+.figDesc {display: block; text-align:center; font-style:italic;}
+.strike {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height:3em;
+}
+
+.strike > span {
+    position: relative;
+    display: inline-block;
+}
+
+.strike > span:before,
+.strike > span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9999px;
+    height: 1px;
+    background: grey;
+}
+
+.strike > span:before {
+    right: 100%;
+    margin-right: 15px;
+}
+
+.strike > span:after {
+    left: 100%;
+    margin-left: 15px;
+}

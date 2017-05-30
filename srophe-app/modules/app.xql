@@ -17,7 +17,7 @@ declare namespace http="http://expath.org/ns/http-client";
 declare namespace html="http://www.w3.org/1999/xhtml";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-(:~   
+(:~    
  : Simple get record function, get tei record based on tei:idno
  : Builds URL from the following URL patterns defined in the controller.xql or uses the id paramter
  : Retuns 404 page if record is not found, or has been @depreciated
@@ -28,7 +28,12 @@ declare function app:get-rec($node as node(), $model as map(*), $collection as x
 if(request:get-parameter('id', '') != '') then 
     let $id := global:resolve-id()   
     return 
-        let $rec := collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[normalize-space(.) = $id]]
+        let $rec := 
+                    if(request:get-parameter('id', '') = 'front') then 
+                        collection($global:data-root)//tei:front
+                    else if(request:get-parameter('id', '') = 'back') then 
+                        collection($global:data-root)//tei:back
+                    else collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[normalize-space(.) = $id]]
         return 
             if(empty($rec)) then response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html')))
             else 
