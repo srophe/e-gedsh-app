@@ -308,19 +308,37 @@
         -->
         <xsl:choose>
             <xsl:when test="$node/@rend = 'bold'">
-                <strong><xsl:apply-templates select="$node/node()|$node/text()"/></strong>
+                <strong>
+                    <xsl:apply-templates select="$node/node()|$node/text()"/>
+                </strong>
             </xsl:when>
             <xsl:when test="$node/@rend = 'italic'">
-                <em><xsl:apply-templates select="$node/node()|$node/text()"/></em>
+                <em>
+                    <xsl:apply-templates select="$node/node()|$node/text()"/>
+                </em>
             </xsl:when>
             <xsl:when test="$node/@rend = 'superscript'">
-                <sup><xsl:apply-templates select="$node/node()|$node/text()"/></sup>
+                <sup>
+                    <xsl:apply-templates select="$node/node()|$node/text()"/>
+                </sup>
             </xsl:when>
             <xsl:when test="$node/@rend = 'subscript'">
-                <sub><xsl:apply-templates select="$node/node()|$node/text()"/></sub>
+                <sub>
+                    <xsl:apply-templates select="$node/node()|$node/text()"/>
+                </sub>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:apply-templates select="$node/node()|$node/text()"/>
+                <xsl:choose>
+                    <xsl:when test="$node/@rend">
+                        <span class="{$node/@rend}">
+                            <xsl:apply-templates select="$node/node()|$node/text()"/>                    
+                        </span>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="$node/node()|$node/text()"/>                    
+                    </xsl:otherwise>
+                </xsl:choose>
+                
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>

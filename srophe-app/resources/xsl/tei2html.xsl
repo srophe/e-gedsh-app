@@ -133,18 +133,26 @@
         </div>
     </xsl:template>
     <xsl:template match="t:imprimatur | t:byline | t:docImprint | t:figDesc">
-        <p class="{name(.)}"><xsl:apply-templates/></p>
+        <p class="{name(.)}">
+            <xsl:apply-templates/>
+        </p>
     </xsl:template>
     <xsl:template match="t:titlePart">
         <xsl:choose>
             <xsl:when test="@type='main'">
-                <h2><xsl:apply-templates/></h2>        
+                <h2>
+                    <xsl:apply-templates/>
+                </h2>        
             </xsl:when>
             <xsl:when test="@type='sub'">
-                <h3><xsl:apply-templates/></h3> 
+                <h3>
+                    <xsl:apply-templates/>
+                </h3> 
             </xsl:when>
             <xsl:otherwise>
-                <h4><xsl:apply-templates/></h4>
+                <h4>
+                    <xsl:apply-templates/>
+                </h4>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -164,7 +172,26 @@
         </td>
     </xsl:template>
     <xsl:template match="t:pb">
-        <div class="strike"><span><xsl:value-of select="@n"/></span></div>
+        <xsl:choose>
+            <xsl:when test="parent::t:table">
+                <tr>
+                    <td colspan="{parent::t:table/@cols}">        
+                        <div class="strike">
+                        <span>
+                            <xsl:value-of select="@n"/>
+                        </span>
+                        </div>
+                    </td>
+                </tr>
+            </xsl:when>
+            <xsl:otherwise>
+                <div class="strike">
+                    <span>
+                        <xsl:value-of select="@n"/>
+                    </span>
+                </div>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <xsl:template match="t:figure">
         <div class="figure">
@@ -173,8 +200,12 @@
     </xsl:template>
     <xsl:template match="t:graphic">
         <xsl:choose>
-            <xsl:when test="@url"><img src="@url"/></xsl:when>
-            <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+            <xsl:when test="@url">
+                <img src="@url"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="."/>
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     
@@ -555,7 +586,19 @@
                 <xsl:apply-templates select="self::*" mode="inline"/>
             </xsl:when>
             <xsl:when test="child::*">
-                <xsl:apply-templates mode="footnote"/>
+                    <li>
+                        <xsl:if test="@xml:id">
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="@xml:id"/>
+                            </xsl:attribute>
+                        </xsl:if>
+                        <xsl:variable name="bibl-content">
+                            <xsl:apply-templates mode="biblist"/>
+                        </xsl:variable>
+                        <xsl:sequence select="$bibl-content"/>
+                    </li>
+                <!--<xsl:apply-templates mode="footnote"/>-->
+                    
             </xsl:when>
             <xsl:otherwise>
                 <xsl:apply-templates/>
@@ -724,8 +767,11 @@
      handle standard output of a listBibl element 
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <xsl:template match="t:listBibl">
-        <xsl:apply-templates select="*[not(self::t:bibl)]"/>
+        <!--<xsl:apply-templates select="*[not(self::t:bibl)]"/>-->
+        <xsl:apply-templates select="t:head"/>
         <ul class="listBibl list-unstyled">
+            <xsl:apply-templates select="*[not(self::t:head)]"/>
+            <!--
             <xsl:for-each select="t:bibl">
                 <li>
                     <xsl:if test="@xml:id">
@@ -737,15 +783,12 @@
                         <xsl:apply-templates mode="biblist"/>
                     </xsl:variable>
                     <xsl:sequence select="$bibl-content"/>
-                    <!-- e-gedesh should not have added punctuation. 
-                    <xsl:if test="not(ends-with($bibl-content,'.'))">
-                        <xsl:text>.</xsl:text>
-                    </xsl:if>
-                    -->
                 </li>
             </xsl:for-each>
+            -->
         </ul>
     </xsl:template>
+    
     <xsl:template match="t:listBibl[parent::t:note]">
         <xsl:choose>
             <xsl:when test="t:bibl/t:msIdentifier">
@@ -864,7 +907,7 @@
                 </li>
             </xsl:when>
             <xsl:otherwise>
-                <li>
+                <p class="note">
                     <xsl:choose>
                         <xsl:when test="t:quote">
                             <xsl:apply-templates/>
@@ -881,7 +924,7 @@
                     <xsl:if test="@source">
                         <xsl:sequence select="local:do-refs(@source,@xml:lang)"/>
                     </xsl:if>
-                </li>
+                </p>   
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -1206,7 +1249,7 @@
                 </h1>
             </xsl:when>
             <xsl:otherwise>
-                <h3>
+                <h3 class="head {name(parent::*[1])}">
                     <xsl:apply-templates/>
                 </h3>
             </xsl:otherwise>

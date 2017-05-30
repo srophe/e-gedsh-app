@@ -838,3 +838,11 @@ pre {
     left: 100%;
     margin-left: 15px;
 }
+
+.small-caps {font-variant: small-caps;}
+
+.head.figure {font-size: 1em; font-weight:500;}
+.head.div1 {font-size: 1.5em; font-weight:500;}
+.head.div2 {font-size: 1.25em; font-weight:500;}
+.head.div3 {font-size: 1.15em; font-weight:500;}
+.note {font-size:.85em;}
