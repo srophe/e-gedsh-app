@@ -104,6 +104,9 @@
                             <xsl:apply-templates mode="footnote"/>
                         </a>
                     </xsl:when>
+                    <xsl:when test="child::text()">
+                        <span class="bibl-inline"><xsl:apply-templates/></span>
+                    </xsl:when>
                     <xsl:otherwise>
                         <xsl:call-template name="footnote"/>
                     </xsl:otherwise>
