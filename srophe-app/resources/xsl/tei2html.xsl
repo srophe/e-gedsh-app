@@ -158,6 +158,10 @@
     </xsl:template>
     <xsl:template match="t:table">
         <table>
+            <xsl:variable name="col-width" select="100 div count(t:row[1]/t:cell)"/>
+            <xsl:for-each select="t:row[1]/t:cell">
+                <col width="{$col-width}"/>
+            </xsl:for-each>
            <xsl:apply-templates/>
         </table>
     </xsl:template>

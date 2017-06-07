@@ -264,7 +264,7 @@ a.cross-ref {color:red;}
     
 }
 /* Table styles*/
-table {width:98% !important;border-collapse:collapse; font-size:1em; margin-top:1.5em;}
+table {width:95% !important;border-collapse:collapse; font-size:1em; margin-top:1.5em; margin-left:1em;}
 th {
     vertical-align:top;
     padding-bottom:.25em;
