@@ -89,64 +89,6 @@ declare %templates:wrap function app:display-sources($node as node(), $model as 
     return global:tei2html(<sources xmlns="http://www.tei-c.org/ns/1.0">{$sources}</sources>)
 };
 
-(:~    
- : Return teiHeader info to be used in citation
-:)
-declare %templates:wrap function app:display-work($node as node(), $model as map(*)){
-        <div class="row">
-            <div class="col-md-8 column1">
-                {
-                    let $data := $model("data")/descendant::tei:body/tei:bibl
-                    let $infobox := 
-                        <bibl xmlns="http://www.tei-c.org/ns/1.0">
-                        {(
-                            $data/@*,
-                            $data/tei:title,
-                            $data/tei:author,
-                            $data/tei:editor,
-                            $data/tei:desc[@type='abstract' or starts-with(@xml:id, 'abstract-en')],
-                            $data/tei:note[@type='abstract'],
-                            $data/tei:date,
-                            $data/tei:extent,
-                            $data/tei:idno
-                         )}
-                        </bibl>
-                     let $allData := 
-                     <bibl xmlns="http://www.tei-c.org/ns/1.0">
-                        {(
-                            $data/@*,
-                            $data/child::*
-                            [not(self::tei:title)]
-                            [not(self::tei:author)]
-                            [not(self::tei:editor)]
-                            [not(self::tei:desc[@type='abstract' or starts-with(@xml:id, 'abstract-en')])]
-                            [not(self::tei:note[@type='abstract'])]
-                            [not(self::tei:date)]
-                            [not(self::tei:extent)]
-                            [not(self::tei:idno)])}
-                        </bibl>
-                     return 
-                        (global:tei2html($infobox),
-                        app:display-related-inline($model("data"),'dct:isPartOf'),
-                        app:display-related-inline($model("data"),'syriaca:part-of-tradition'),
-                        global:tei2html($allData))  
-                } 
-            </div>
-            <div class="col-md-4 column2">
-                {(
-                app:rec-status($node, $model,''),
-                <div class="info-btns">  
-                    <button class="btn btn-default" data-toggle="modal" data-target="#feedback">Corrections/Additions?</button>&#160;
-                    <a href="#" class="btn btn-default" data-toggle="modal" data-target="#selection" data-ref="../documentation/faq.html" id="showSection">Is this record complete?</a>
-                </div>,                
-                if($model("data")//tei:body/child::*/tei:listRelation) then 
-                rel:build-relationships($model("data")//tei:body/child::*/tei:listRelation, replace($model("data")//tei:idno[@type='URI'][starts-with(.,$global:base-uri)][1],'/tei',''))
-                else ()
-                )}  
-            </div>
-        </div>
-};
-
 (:~
  : Passes any tei:geo coordinates in record to map function. 
  : Suppress map if no coords are found. 
@@ -194,7 +136,7 @@ declare function app:subject-headings($node as node(), $model as map(*)){
 };
 
 (:~
- : bibl modulerelationships
+ : bibl 
 :)                   
 declare function app:cited($node as node(), $model as map(*)){
     rel:cited($model("data")//tei:idno[@type='URI'][ends-with(.,'/tei')], request:get-parameter('start', 1),request:get-parameter('perpage', 5))
@@ -718,21 +660,24 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                     let $sURI := $model("data")//tei:idno[@type="subject"]
                     let $aTitle := $model('data')/tei:head[1]
                     let $otherResources := $model("data")//@ref[contains(.,'http://syriaca.org/')]
-                    let $subject := count(util:eval(concat("collection('/db/apps/srophe-data/data')
-                                                        //tei:TEI[descendant::tei:relation[
-                                                        @passive[matches(.,'",$sURI,"(\W.*)?$')] or 
-                                                        @mutual[matches(.,'",$sURI,"(\W.*)?$')]]]")))
+                    let $subjects := 
+                               try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$sURI}" method="GET"/>)
+                                } catch * {
+                                    <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                }
+                    let $subject-count := $subjects/descendant::*:literal/text()            
                     let $citations := 
-                        for $r in collection('/db/apps/srophe-data/data')//tei:idno[. = $sURI]
-                        let $bibl := count(distinct-values($r/ancestor::tei:body/descendant::tei:bibl/descendant::tei:ptr/@target))
-                        let $idnos := count(distinct-values($r/ancestor::tei:body/descendant::tei:idno[not(. = $sURI)]))
-                        return ($bibl + $idnos) 
+                                try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$sURI}" method="GET"/>)
+                                } catch * {
+                                    <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                }
+                    let $citations-count := $citations/descendant::*:literal/text()                                
                     return 
                         <div>
                             <h4>Resources related to  <a href="{$sURI}">{$model('data')/tei:head[1]}</a></h4>
                             <ul class="list-unstyled">
-                                <li class="indent">{$citations} related citations</li>
-                                <li class="indent">{$subject} related subjects</li>
+                                <li class="indent">{$citations-count} related citations</li>
+                                <li class="indent">{$subject-count} related subjects</li>
                             </ul>
                             {
                             if(count($otherResources) gt 0) then
@@ -743,11 +688,23 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                     <div class="collapse" id="showOtherResources">
                                         {
                                             for $r in $otherResources
+                                            let $subjects := 
+                                                     try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$r}" method="GET"/>)
+                                                      } catch * {
+                                                          <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                                      }
+                                            let $subject-count := $subjects/descendant::*:literal/text()            
+                                            let $citations := 
+                                                      try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$r}" method="GET"/>)
+                                                      } catch * {
+                                                          <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                                      }
+                                            let $citations-count := $citations/descendant::*:literal/text()   
                                             return 
                                                 (<h4>Resources related to <a href="{$r}">{$r/parent::*[1]/text()}</a></h4>,
                                                 <ul class="list-unstyled">
-                                                    <li class="indent">{util:random(20)} related citations</li>
-                                                    <li class="indent">{util:random(20)} related subjects</li>
+                                                    <li class="indent">{$citations-count} related citations</li>
+                                                    <li class="indent">{$subject-count} related subjects</li>
                                                 </ul>)
                                         }
                                     </div>
