@@ -338,7 +338,7 @@
             </span>
         </xsl:if>
         <xsl:for-each select="distinct-values(t:seriesStmt/t:biblScope/t:title)">
-            <xsl:text>&#160; </xsl:text>
+            <xsl:text>  </xsl:text>
             <xsl:choose>
                 <xsl:when test=". = 'The Syriac Biographical Dictionary'"/>
                 <xsl:when test=". = 'A Guide to Syriac Authors'">
@@ -830,6 +830,13 @@
                     </xsl:if>
                 </li>
             </xsl:when>
+            <xsl:when test="@rend='footer'">
+                <span class="footnote-refs" dir="ltr">
+                    <span class="footnote-ref">
+                        <a href="{concat('#note',@n)}"><xsl:value-of select="@n"/></a>
+                    </span>
+                </span>
+            </xsl:when>
             <xsl:otherwise>
                 <p class="note">
                     <xsl:choose>
@@ -851,6 +858,30 @@
                 </p>   
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    <xsl:template match="t:note" mode="footnote">
+        <p class="footnote">
+            <xsl:if test="@n">
+                <xsl:attribute name="id" select="concat('note',@n)"/>
+                <span class="notes footnote-refs"><span class="footnote-ref"><xsl:value-of select="@n"/></span>&#160;</span>
+            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="t:quote">
+                    <xsl:apply-templates/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <span>
+                        <xsl:call-template name="langattr"/>
+                        <xsl:apply-templates/>
+                        <!-- Check for ending punctuation, if none, add . -->
+                        <!-- Do not have this working -->
+                    </span>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:if test="@source">
+                <xsl:sequence select="local:do-refs(@source,@xml:lang)"/>
+            </xsl:if>
+        </p>   
     </xsl:template>
     <xsl:template match="t:note" mode="abstract">
         <p>
@@ -1179,9 +1210,14 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    <!-- NOTE: For SPEAR, could cause issues in the future.  -->
-    <xsl:template match="t:div">
-        <xsl:apply-templates select="*[not(self::t:bibl)]"/>
+    <xsl:template match="t:div | t:div1">
+        <xsl:apply-templates/>
+        <xsl:if test="descendant::t:note">
+            <hr width="40%" align="left"/>
+            <div class="footnotes">
+                <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
+            </div>    
+        </xsl:if>
     </xsl:template>
     <xsl:template match="t:*" mode="plain">
         <xsl:apply-templates/>
