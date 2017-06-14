@@ -33,7 +33,7 @@ if(request:get-parameter('id', '') != '') then
                         collection($global:data-root)//tei:front
                     else if(request:get-parameter('id', '') = 'back') then 
                         collection($global:data-root)//tei:back
-                    else collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[normalize-space(.) = $id]]
+                    else collection($global:data-root)//tei:div[descendant::tei:idno[normalize-space(.) = $id]]
         return 
             if(empty($rec)) then response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html')))
             else 
@@ -43,7 +43,7 @@ if(request:get-parameter('id', '') != '') then
                                 replace(replace($rec/descendant::tei:idno[@type='redirect'][1]/text(),'/tei',''),$global:base-uri,$global:nav-base)
                             else concat($global:nav-base,'/',$collection,'/','browse.html')
                     return response:redirect-to(xs:anyURI(concat($global:nav-base, '/301.html?redirect=',$redirect)))
-                else map {"data" := $rec }                    
+                else map {"data" := $rec }
 else map {"data" := <div>'Page data'</div>}
 };
 
@@ -626,19 +626,32 @@ function app:google-analytics($node as node(), $model as map(*)){
 
 (: e-gedsh functions :)
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
-   let $current-id := xs:integer($model("data")/descendant::tei:idno[@type="entry"][1])
-   let $prev := 
-               if($current-id != 1) then
-                       let $uri := collection($global:data-root)//tei:idno[@type='entry'][xs:integer(.) = $current-id - 1]/preceding-sibling::tei:idno[@type='URI']
-                       return 
-                           (<a href="entry.html?id={$uri}&amp;num={$current-id - 1}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+if($model("data")/descendant::tei:note[@type='type'] = ('back','front')) then 
+    let $c := $model("data")/descendant::tei:idno[1]
+    let $nID := $model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1]
+    let $pID := $model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1]
+    let $prev := 
+               if($pID != '') then
+                    (<a href="entry.html?id={$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
                else ()
+    let $next := 
+                if($nID != '') then 
+                    (' | ', <a href="entry.html?id={$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                else ()  
+    return 
+    <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
+else
+   let $current-id := xs:integer($model("data")/descendant::tei:idno[@type="entry"][1])
+   let $nID := $model("data")/following-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1]
+   let $pID := $model("data")/preceding-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1]
+   let $prev := 
+                if($current-id != 1) then
+                        (<a href="entry.html?id={$pID}&amp;num={$current-id - 1}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+                else ()
    let $next := 
-               let $uri := collection($global:data-root)//tei:idno[@type='entry'][xs:integer(.) = $current-id + 1]/preceding-sibling::tei:idno[@type='URI']  
-               return 
-                   if(exists($uri)) then 
-                           (' | ', <a href="entry.html?id={$uri}&amp;num={$current-id + 1}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
-                   else ()
+                if($nID != '') then 
+                   (' | ', <a href="entry.html?id={$nID}&amp;num={$current-id + 1}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                else ()
    return             
    <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
 };
@@ -652,70 +665,71 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
         <a class="pull-right" href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/tei')}" rel="alternate" type="application/tei+xml">
             <img src="/resources/img/tei-25.png" alt="The Text Encoding Initiative icon" data-toggle="tooltip" title="Click to view the TEI XML source data for this record."/></a>
     </div>,
-    <div class="panel panel-default" style="margin-top:1em;">
-            <div class="panel-heading"><h3 class="panel-title">Syriaca.org Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
-            <div class="panel-body">
-                
-                {
-                    let $sURI := $model("data")//tei:idno[@type="subject"]
-                    let $aTitle := $model('data')/tei:head[1]
-                    let $otherResources := $model("data")//@ref[contains(.,'http://syriaca.org/')]
-                    let $subjects := 
-                               try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$sURI}" method="GET"/>)
-                                } catch * {
-                                    <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
-                                }
-                    let $subject-count := $subjects/descendant::*:literal/text()            
-                    let $citations := 
-                                try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$sURI}" method="GET"/>)
-                                } catch * {
-                                    <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
-                                }
-                    let $citations-count := $citations/descendant::*:literal/text()                                
-                    return 
-                        <div>
-                            <h4>Resources related to  <a href="{$sURI}">{$model('data')/tei:head[1]}</a></h4>
-                            <ul class="list-unstyled">
-                                <li class="indent">{$citations-count} related citations</li>
-                                <li class="indent">{$subject-count} related subjects</li>
-                            </ul>
-                            {
-                            if(count($otherResources) gt 0) then
-                                <div>
-                                    <h4>Resources related to {count($otherResources)} other subjects.  
-                                        <a href="#" class="togglelink" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide">Show...</a>
-                                    </h4>
-                                    <div class="collapse" id="showOtherResources">
-                                        {
-                                            for $r in $otherResources
-                                            let $subjects := 
-                                                     try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$r}" method="GET"/>)
-                                                      } catch * {
-                                                          <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
-                                                      }
-                                            let $subject-count := $subjects/descendant::*:literal/text()            
-                                            let $citations := 
-                                                      try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$r}" method="GET"/>)
-                                                      } catch * {
-                                                          <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
-                                                      }
-                                            let $citations-count := $citations/descendant::*:literal/text()   
-                                            return 
-                                                (<h4>Resources related to <a href="{$r}">{$r/parent::*[1]/text()}</a></h4>,
-                                                <ul class="list-unstyled">
-                                                    <li class="indent">{$citations-count} related citations</li>
-                                                    <li class="indent">{$subject-count} related subjects</li>
-                                                </ul>)
-                                        }
-                                    </div>
-                                </div>
-                            else()    
-                            }
-                        </div>
-                }
+    if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then 
+        <div class="panel panel-default" style="margin-top:1em;">
+                <div class="panel-heading"><h3 class="panel-title">Syriaca.org Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
+                <div class="panel-body">
                     
-            </div>
-    </div>
-        )
-        
+                    {
+                        let $sURI := $model("data")//tei:idno[@type="subject"]
+                        let $aTitle := $model('data')/tei:head[1]
+                        let $otherResources := $model("data")//@ref[contains(.,'http://syriaca.org/')]
+                        let $subjects := 
+                                   try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$sURI}" method="GET"/>)
+                                    } catch * {
+                                        <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                    }
+                        let $subject-count := $subjects/descendant::*:literal/text()            
+                        let $citations := 
+                                    try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$sURI}" method="GET"/>)
+                                    } catch * {
+                                        <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                    }
+                        let $citations-count := $citations/descendant::*:literal/text()                                
+                        return 
+                            <div>
+                                <h4>Resources related to  <a href="{$sURI}">{$model('data')/tei:head[1]}</a></h4>
+                                <ul class="list-unstyled">
+                                    <li class="indent">{$citations-count} related citations</li>
+                                    <li class="indent">{$subject-count} related subjects</li>
+                                </ul>
+                                {
+                                if(count($otherResources) gt 0) then
+                                    <div>
+                                        <h4>Resources related to {count($otherResources)} other subjects.  
+                                            <a href="#" class="togglelink" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide">Show...</a>
+                                        </h4>
+                                        <div class="collapse" id="showOtherResources">
+                                            {
+                                                for $r in $otherResources
+                                                let $subjects := 
+                                                         try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$r}" method="GET"/>)
+                                                          } catch * {
+                                                              <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                                          }
+                                                let $subject-count := $subjects/descendant::*:literal/text()            
+                                                let $citations := 
+                                                          try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$r}" method="GET"/>)
+                                                          } catch * {
+                                                              <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                                          }
+                                                let $citations-count := $citations/descendant::*:literal/text()   
+                                                return 
+                                                    (<h4>Resources related to <a href="{$r}">{$r/parent::*[1]/text()}</a></h4>,
+                                                    <ul class="list-unstyled">
+                                                        <li class="indent">{$citations-count} related citations</li>
+                                                        <li class="indent">{$subject-count} related subjects</li>
+                                                    </ul>)
+                                            }
+                                        </div>
+                                    </div>
+                                else()    
+                                }
+                            </div>
+                    }
+                        
+                </div>
+        </div>
+    else () 
+        )  
 };
