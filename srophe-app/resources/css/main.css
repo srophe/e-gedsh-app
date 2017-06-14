@@ -840,6 +840,7 @@ pre {
 }
 
 .small-caps {font-variant: small-caps;}
+.bold {font-weight:bold;}
 
 .head.figure {font-size: 1em; font-weight:500;}
 .head.div1 {font-size: 1.5em; font-weight:500;}
