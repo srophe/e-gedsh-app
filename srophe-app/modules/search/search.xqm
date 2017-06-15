@@ -61,7 +61,7 @@ if($collection !='') then
     search:idno()
     )
 else 
-concat("collection('",$global:data-root,"')//tei:div[@type='entry']",
+concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossreference','section')]",
     common:keyword(),
     search:persName(),
     search:placeName(), 

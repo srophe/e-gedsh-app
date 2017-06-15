@@ -113,11 +113,7 @@ declare function browse:filters($collection){
  : @param $collection collection name passed from html, should match data subdirectory name or tei series name
 :)
 declare function browse:get-all($node as node(), $model as map(*), $collection as xs:string?){
-let $hits-main := if($browse:sort = ('front','Front')) then
-                        util:eval(concat(browse:collection-path($collection),'//tei:div[descendant::tei:note[@type="type"] = "front"]'))
-                   else if($browse:sort = ('back','Back')) then
-                        util:eval(concat(browse:collection-path($collection),'//tei:div[descendant::tei:note[@type="type"] = "back"]'))
-                   else util:eval(concat(browse:collection-path($collection),'//tei:div[@type="entry" or @type="crossreference"]'))
+let $hits-main := util:eval(concat(browse:collection-path($collection),'//tei:div[@type=("entry","crossreference","section")]'))                  
 let $data := 
     if($browse:view = 'all') then
         for $hit in $hits-main/tei:head[1]
@@ -131,19 +127,19 @@ let $data :=
         order by global:build-sort-string(page:add-sort-options($title,$browse:sort-element),'')
         return $hit
     else if($browse:sort = ('Front','front')) then   
-        for $hit in $hits-main
+        for $hit in $hits-main[descendant::tei:idno[@type="front"]]
         let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
         let $num := $hit/tei:milestone/@n
         order by $num
         return $hit
     else if($browse:sort = ('Back','back'))  then 
-        for $hit in $hits-main
+        for $hit in $hits-main[descendant::tei:idno[@type="back"]]
         let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
         let $num := $hit/tei:milestone/@n
         order by $num
         return $hit        
     else if($browse:computed-lang != '') then 
-        for $hit in $hits-main[matches(substring(global:build-sort-string(tei:head[1],$browse:computed-lang),1,1),browse:get-sort(),'i')]
+        for $hit in $hits-main[@type=('entry','crossreference')][matches(substring(global:build-sort-string(tei:head[1],$browse:computed-lang),1,1),browse:get-sort(),'i')]
         let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
         let $num := xs:integer($hit/tei:ab[@type="idnos"]/tei:idno[@type="entry"])
         order by $title
@@ -158,7 +154,7 @@ return map{"browse-data" := $data }
 };
 
 declare function browse:group-abc-entries($node as node(), $model as map(*)){
-let $hits := util:eval(concat(browse:collection-path(''),'//tei:div[@type="entry" or @type="crossreference"]'))
+let $hits := util:eval(concat(browse:collection-path(''),'//tei:div[@type=("entry","crossreference","section")]'))
 return
     facet:html-list-facets-as-buttons(facet:count($hits, facet-defs:facet-definition('e-gedsh')/child::*))
 };
@@ -460,11 +456,3 @@ return
     </li> 
 };
 
-
-(: e-gedsh browse functions :)
-
-declare function browse:group-abc-entries($node as node(), $model as map(*)){
-let $hits := util:eval(concat(browse:collection-path(''),'//tei:div[@type="entry" or @type="crossreference"]'))
-return
-    facet:html-list-facets-as-buttons(facet:count($hits, facet-defs:facet-definition('e-gedsh')/child::*))
-};

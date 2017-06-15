@@ -56,10 +56,11 @@ declare function facet:count($results as item()*, $facet-definitions as element(
  : @param $results results to be faceted on. 
  : @param $facet-definitions one or more facet:facet-definition element
 :) 
-(:  TODO: Handle nested facet-definition  :)
 declare function facet:facet($results as item()*, $facet-definitions as element(facet:facet-definition)?) as item()*{
     if($facet-definitions/facet:range) then
         facet:group-by-range($results, $facet-definitions)
+    else if($facet-definitions/facet:facet-definition) then
+        facet:group-by-subfacet($results, $facet-definitions)    
     else if ($facet-definitions/facet:group-by/@function) then
         util:eval(concat($facet-definitions/facet:group-by/@function,'($results,$facet-definitions)'))
     else facet:group-by($results, $facet-definitions)
@@ -121,38 +122,57 @@ declare function facet:group-by-range($results as item()*, $facet-definitions as
          <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{string($range/@name)}" label="{string($range/@name)}"/>
 };
 
+declare function facet:group-by-subfacet($results as item()*, $facet-definitions as element(facet:facet-definition)*) as element(facet:key)*{
+    let $facets := $facet-definitions/facet:facet-definition
+    for $facet in $facets
+    return 
+        if ($facet/facet:group-by/@function) then
+            util:eval(concat($facet/facet:group-by/@function,'($results,$facet)'))
+        else facet:group-by($results, $facet-definitions)
+};
+
+(:~ 
+    e-gedsh front/back matter sort
+:)
+declare function facet:group-front-back($results as item()*, $facet-definitions as element()*) as element(facet:key)*{
+    let $path := concat('$results/',$facet-definitions/descendant::facet:sub-path/text())
+    let $name := $facet-definitions/@name
+    let $parent := $facet-definitions/parent::*[1]/@name 
+    let $facet-name := concat($parent,';',$name)
+    for $f in util:eval($path)
+    group by $facet-grp := $f
+    return 
+        <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$facet-name[1]}" label="{$name[1]}">
+             {
+                if(contains($facet:fq, concat(':',$facet-name[1]))) then 
+                    for $sf in $f
+                    let $value := if($sf/parent::*[1]/preceding-sibling::tei:idno[@type='URI']) then 
+                                    $sf/parent::*[1]/preceding-sibling::tei:idno[@type='URI'][1]
+                                  else string($sf/parent::*[1]/following-sibling::tei:idno[@type='URI'][1])
+                    let $label := $sf/ancestor-or-self::tei:ab[1]/parent::tei:div[1]/tei:head[1] 
+                    return <key xmlns="http://expath.org/ns/facet" count="{count($sf)}" value="{$value[1]}" label="{$label}"/>
+                else ()
+            }
+        </key>   
+};
+
+
 (:~ 
     e-gedsh alpha sort
-    if(exists($browse:sort) and $browse:sort != '') then
-        if($browse:lang = 'ar') then
-            browse:ar-sort()
-        else
-            if($browse:sort = 'A') then '(A|a|ẵ|Ẵ|ằ|Ằ|ā|Ā)'
-            else if($browse:sort = 'D') then '(D|d|đ|Đ)'
-            else if($browse:sort = 'S') then '(S|s|š|Š|ṣ|Ṣ)'
-            else if($browse:sort = 'E') then '(E|e|ễ|Ễ)'
-            else if($browse:sort = 'U') then '(U|u|ū|Ū)'
-            else if($browse:sort = 'H') then '(H|h|ḥ|Ḥ)'
-            else if($browse:sort = 'T') then '(T|t|ṭ|Ṭ)'
-            else if($browse:sort = 'I') then '(I|i|ī|Ī)'
-            else if($browse:sort = 'O') then '(O|Ō|o|Œ|œ)'
-            else $browse:sort
-    else '(A|a|ẵ|Ẵ|ằ|Ằ|ā|Ā)'
-    normalize-unicode($string,"NFKD")
-    Need a better way to normalize strings.
 :)
-declare function facet:group-by-abc($results as item()*, $facet-definitions as element(facet:facet-definition)*) as element(facet:key)*{
-    let $path := concat('$results/',$facet-definitions/facet:group-by/facet:sub-path/text())
+declare function facet:group-by-abc($results as item()*, $facet-definitions as element()*) as element(facet:key)*{
+    let $path := concat('$results/',$facet-definitions/descendant::facet:sub-path/text())
     let $name := $facet-definitions/@name
-    let $sort := $facet-definitions/facet:order-by
+    let $parent := $facet-definitions/parent::*[1]/@name 
+    let $facet-name := concat($parent,';',$name)
     for $f in util:eval($path)
     let $sort-string := translate(translate(translate(translate(upper-case(substring(global:build-sort-string($f[1],''),1,1)),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H')
     group by $facet-grp := $sort-string
     order by $facet-grp ascending
     return 
-    <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{$facet-grp}" label="{$facet-grp}">
+    <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{concat($parent[1],';',$facet-grp)}" label="{$facet-grp}">
         {
-            if(contains($facet:fq, concat(';fq-',string($name[1]),':',$facet-grp))) then 
+            if(contains($facet:fq, concat(':',concat($parent[1],';',$facet-grp)))) then 
                 for $sf in $f
                 let $value := if($sf/following-sibling::tei:ab[1]/tei:idno[@type='URI']) then 
                                 $sf/following-sibling::tei:ab[1]/tei:idno[@type='URI'][1]
@@ -282,7 +302,7 @@ return
     if($facet != '') then
         for $f in $facets/facet:facet[@name = $facet-name]
         let $fn := string($f/@name)
-        let $label := string($f/facet:key[@value = substring-after($facet,concat($facet-name,':'))]/@label)
+        let $label := string($f/facet:key[@value = substring-after($facet,concat($facet-name,':'))][1]/@label)
         let $value := if(starts-with($label,'http://syriaca.org/')) then 
                          facet:get-label($label)   
                       else $label
@@ -303,7 +323,7 @@ return
                     let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
                     let $new-fq := concat('fq=',$facet-query)
                     return 
-                        (if(contains($facet:fq, concat(';fq-',string($f/@name),':',string($key/@label)))) then 
+                        (if(contains($facet:fq, concat(':',string($key/@value)))) then 
                             <a href="?start=1{replace(facet:url-params(),'&amp;start=1','')}" class="facet-label btn btn-default active">
                                 {facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span>
                             </a>
@@ -325,11 +345,9 @@ return
                                             }
                                         </a>
                                     } 
-                                 </div>)
-                                    
+                                 </div>)     
                            else()
                         )
-                        
                     }
                 </div>
                 <div class="facet-list collapse" id="{concat('show',replace(string($f/@name),' ',''))}">{
