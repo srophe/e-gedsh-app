@@ -138,7 +138,7 @@ declare function facet:group-front-back($results as item()*, $facet-definitions 
     let $path := concat('$results/',$facet-definitions/descendant::facet:sub-path/text())
     let $name := $facet-definitions/@name
     let $parent := $facet-definitions/parent::*[1]/@name 
-    let $facet-name := concat($parent,';',$name)
+    let $facet-name := concat($parent,';',$name,';')
     for $f in util:eval($path)
     group by $facet-grp := $f
     return 
@@ -164,15 +164,14 @@ declare function facet:group-by-abc($results as item()*, $facet-definitions as e
     let $path := concat('$results/',$facet-definitions/descendant::facet:sub-path/text())
     let $name := $facet-definitions/@name
     let $parent := $facet-definitions/parent::*[1]/@name 
-    let $facet-name := concat($parent,';',$name)
     for $f in util:eval($path)
     let $sort-string := translate(translate(translate(translate(upper-case(substring(global:build-sort-string($f[1],''),1,1)),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H')
     group by $facet-grp := $sort-string
     order by $facet-grp ascending
     return 
-    <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{concat($parent[1],';',$facet-grp)}" label="{$facet-grp}">
+    <key xmlns="http://expath.org/ns/facet" count="{count($f)}" value="{concat($parent[1],';',$facet-grp,';')}" label="{$facet-grp}">
         {
-            if(contains($facet:fq, concat(':',concat($parent[1],';',$facet-grp)))) then 
+            if(contains($facet:fq, concat(':',concat($parent[1],';',$facet-grp,';')))) then 
                 for $sf in $f
                 let $value := if($sf/following-sibling::tei:ab[1]/tei:idno[@type='URI']) then 
                                 $sf/following-sibling::tei:ab[1]/tei:idno[@type='URI'][1]
