@@ -175,28 +175,8 @@
             <xsl:apply-templates/>
         </td>
     </xsl:template>
-    <xsl:template match="t:pb">
-        <xsl:choose>
-            <xsl:when test="parent::t:table">
-                <tr>
-                    <td colspan="{parent::t:table/@cols}">        
-                        <div class="strike">
-                        <span>
-                            <xsl:value-of select="@n"/>
-                        </span>
-                        </div>
-                    </td>
-                </tr>
-            </xsl:when>
-            <xsl:otherwise>
-                <div class="strike">
-                    <span>
-                        <xsl:value-of select="@n"/>
-                    </span>
-                </div>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
+    
+
     <xsl:template match="t:figure">
         <div class="figure">
             <xsl:apply-templates/>
@@ -863,7 +843,7 @@
         <p class="footnote">
             <xsl:if test="@n">
                 <xsl:attribute name="id" select="concat('note',@n)"/>
-                <span class="notes footnote-refs"><span class="footnote-ref"><xsl:value-of select="@n"/></span>&#160;</span>
+                <span class="notes footnote-refs"><span class="footnote-ref"><xsl:value-of select="@n"/></span> </span>
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="t:quote">
@@ -1218,6 +1198,12 @@
                 <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
             </div>    
         </xsl:if>
+    </xsl:template>
+    <xsl:template match="t:ab">
+        <xsl:choose>
+            <xsl:when test="parent::t:div[@type=('section','subsection')]"/>
+            <xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <xsl:template match="t:*" mode="plain">
         <xsl:apply-templates/>
