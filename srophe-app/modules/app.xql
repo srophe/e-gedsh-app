@@ -626,7 +626,7 @@ function app:google-analytics($node as node(), $model as map(*)){
 
 (: e-gedsh functions :)
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
-if($model("data")/descendant::tei:note[@type='type'] = ('back','front')) then 
+if($model("data")/descendant::tei:idno[@type=('back','front')]) then 
     let $c := $model("data")/descendant::tei:idno[1]
     let $nID := $model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1]
     let $pID := $model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1]
