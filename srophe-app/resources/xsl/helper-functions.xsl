@@ -204,10 +204,12 @@
             <xsl:when test="$ccount=1 and $moded='biblist'">
                 <xsl:apply-templates select="$current-node[1]" mode="lastname-first"/>
             </xsl:when>
+            <!--
             <xsl:when test="$ccount &gt; $maxauthors and $moded='footnote'">
                 <xsl:apply-templates select="$current-node[1]" mode="footnote"/>
                 <xsl:text> et al.</xsl:text>
             </xsl:when>
+            -->
             <xsl:when test="$ccount &gt; $maxauthors and $moded='biblist'">
                 <xsl:apply-templates select="$current-node[1]" mode="lastname-first"/>
                 <xsl:text> et al.</xsl:text>

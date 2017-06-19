@@ -86,7 +86,7 @@
     <!-- Hard coded values-->
     <xsl:param name="normalization">NFKC</xsl:param>
     <xsl:param name="editoruriprefix">http://syriaca.org/documentation/editors.xml#</xsl:param>
-    <xsl:variable name="editorssourcedoc" select="concat($app-root,'/documentation/editors.xml')"/>
+    <xsl:variable name="editorssourcedoc" select="'http://syriaca.org/documentation/editors.xml'"/>
     <!-- Resource id -->
     <xsl:variable name="resource-id">
         <xsl:choose>
@@ -126,7 +126,11 @@
         <!-- Citation Information -->
         <xsl:call-template name="citationInfo"/>
     </xsl:template>
-   
+    
+   <xsl:template match="t:teiHeader">
+       <xsl:call-template name="citationInfo"/>
+   </xsl:template>
+    
     <xsl:template match="t:titlePage">
         <div>
             <xsl:apply-templates/>
@@ -176,7 +180,6 @@
         </td>
     </xsl:template>
     
-
     <xsl:template match="t:figure">
         <div class="figure">
             <xsl:apply-templates/>
@@ -349,34 +352,36 @@
             </xsl:choose>
         </xsl:for-each>
     </xsl:template>
+    <xsl:template match="t:citation">
+        <xsl:call-template name="citationInfo"/>
+        <xsl:for-each select="//t:div[@type='entry']"/>
+    </xsl:template>
     
     <!-- Named template for citation information -->
     <xsl:template name="citationInfo">
-        <div class="citationinfo">
+        <hr/>
+        <div>
             <h3>How to Cite This Entry</h3>
             <div id="citation-note" class="well">
-                <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt" mode="cite-foot"/>
+                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="//t:head[1]"/>" 
+                in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
+                edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
+                last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                 <div class="collapse" id="showcit">
                     <div id="citation-bibliography">
                         <h4>Bibliography:</h4>
-                        <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt" mode="cite-biblist"/>
+                        <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="//t:head[1]"/>" 
+                        in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
+                        edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
+                        Digitized by <xsl:value-of select="local:emit-responsible-persons(//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt/t:name[1],'footnote',4)"/>
+                        last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                     </div>
-                    <xsl:call-template name="aboutEntry"/>
-                    <div id="license">
-                        <h3>Copyright and License for Reuse</h3>
-                        <div>
-                            <xsl:text>Except otherwise noted, this page is © </xsl:text>
-                            <xsl:choose>
-                                <xsl:when test="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date[1]/text() castable as xs:date">
-                                    <xsl:value-of select="format-date(xs:date(//t:teiHeader/t:fileDesc/t:publicationStmt/t:date[1]), '[Y]')"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date[1]"/>
-                                </xsl:otherwise>
-                            </xsl:choose>.
-                        </div>
-                        <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:availability/t:licence"/>
-                    </div>
+                    <div>
+                        <h4>About This Entry:</h4>
+                        <p>Authorial Responsibility: <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/></p>
+                        <p>Editorial Responsibility: <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/></p>
+                        <p>Additional Credit: <xsl:value-of select="local:emit-responsible-persons-all(//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt/t:name,'footnote')"/></p>
+                    </div>    
                 </div>
                 <a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide citation">Show full citation information...</a>
             </div>
