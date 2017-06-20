@@ -245,14 +245,7 @@ return
  : @param request:get-parameter('id', '') if id is present find TEI title, otherwise use title of sub-module
 :)
 declare %templates:wrap function app:app-title($node as node(), $model as map(*), $collection as xs:string?){
-if(request:get-parameter('id', '')) then normalize-space($model("data")/descendant::tei:head[1])
-else if($collection = 'places') then 'The Syriac Gazetteer'  
-else if($collection = 'persons') then 'The Syriac Biographical Dictionary'
-else if($collection = 'saints')then 'Gateway to the Syriac Saints'
-else if($collection = 'q') then 'Gateway to the Syriac Saints: Volume II: Qadishe'
-else if($collection = 'bhse') then 'Gateway to the Syriac Saints: Volume I: Bibliotheca Hagiographica Syriaca Electronica'
-else if($collection = 'spear') then 'A Digital Catalogue of Syriac Manuscripts in the British Library'
-else if($collection = 'mss') then concat('http://syriaca.org/manuscript/',request:get-parameter('id', ''))
+if(request:get-parameter('id', '')) then normalize-space(string-join($model("data")/tei:head[1]/text()))
 else $global:app-title
 };  
 
@@ -270,7 +263,7 @@ declare function app:metadata($node as node(), $model as map(*)) {
     :)
     <meta name="DC.title " property="dc.title " content="{$model("data")/descendant::tei:head[1]}"/>,
     if($model("data")/descendant::tei:note[@type='abstract']) then 
-        <meta name="DC.description " property="dc.description " content="{normalize-space($model("data")/descendant::tei:note[@type='abstract'])}"/>
+        <meta name="DC.description " property="dc.description " content="{normalize-space($model("data")/descendant::tei:note[@type='abstract'][1])}"/>
     else (),
     <link xmlns="http://www.w3.org/1999/xhtml" type="text/html" href="{request:get-parameter('id', '')}.html" rel="alternate"/>,
     <link xmlns="http://www.w3.org/1999/xhtml" type="text/xml" href="{request:get-parameter('id', '')}/tei" rel="alternate"/>,

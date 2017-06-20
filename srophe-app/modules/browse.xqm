@@ -127,13 +127,13 @@ let $data :=
         order by global:build-sort-string(page:add-sort-options($title,$browse:sort-element),'')
         return $hit
     else if($browse:sort = ('Front','front')) then   
-        for $hit in $hits-main[descendant::tei:idno[@type="front"]]
+        for $hit in $hits-main[descendant::tei:idno[@type="front"]] | $hits-main//tei:div[descendant::tei:idno[@type="front"]]
         let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
         let $num := $hit/tei:milestone/@n
         order by $num
         return $hit
     else if($browse:sort = ('Back','back'))  then 
-        for $hit in $hits-main[descendant::tei:idno[@type="back"]]
+        for $hit in $hits-main[descendant::tei:idno[@type="back"]] | $hits-main//tei:div[descendant::tei:idno[@type="back"]]
         let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
         let $num := $hit/tei:milestone/@n
         order by $num
