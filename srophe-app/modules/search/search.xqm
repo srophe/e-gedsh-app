@@ -224,6 +224,9 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
         for $hit at $p in subsequence($model("hits"), $search:start, $search:perpage)
         let $kwic := (:kwic:summarize($hit, <config width="40" />, util:function(xs:QName("search:filter"), 2)):)
                       kwic:summarize($hit, <config width="40"/>)
+        let $uri := if($hit/@type='crossreference') then
+                        string($hit/descendant::tei:ref/@target)
+                    else string($hit/descendant::tei:idno[@type='URI'][1])
         return
             <div class="row" xmlns="http://www.w3.org/1999/xhtml" style="border-bottom:1px dotted #eee; padding-top:.5em">
                 <div class="col-md-12">
@@ -233,7 +236,12 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                       <div class="col-md-9" xml:lang="en">
                        <div class="results-list">
                            <span class="sort-title">
-                                <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/tei:head}</a>
+                                {
+                                if($hit/@type='crossreference') then
+                                    ($hit/tei:head, <span class="browse cross-ref"> see </span>,
+                                    <a href="entry.html?id={string($uri)}">{replace($hit/tei:ab[@type='crossreference'],'see ','')}</a>)
+                                else <a href="entry.html?id={$uri}">{$hit/tei:head}</a>
+                                }
                             </span>
                             {if($hit/descendant::tei:byline) then
                              <span class="results-list-desc sort-title">
@@ -244,7 +252,7 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                             <span class="results-list-desc type">{subsequence($kwic, 1, 5)}</span>
                             <span class="results-list-desc uri">
                                 <span class="srp-label">URI: </span>
-                                <a href="entry.html?id={$hit/descendant::tei:idno[@type='URI'][1]}">{$hit/descendant::tei:idno[@type='URI'][1]}</a>
+                                <a href="entry.html?id={$uri}">{$uri}</a>
                             </span>
                         </div>
                       </div>
