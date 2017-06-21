@@ -225,8 +225,8 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
         let $kwic := (:kwic:summarize($hit, <config width="40" />, util:function(xs:QName("search:filter"), 2)):)
                       kwic:summarize($hit, <config width="40"/>)
         let $uri := if($hit/@type='crossreference') then
-                        string($hit/descendant::tei:ref/@target)
-                    else string($hit/descendant::tei:idno[@type='URI'][1])
+                        tokenize($hit/descendant::tei:ref/@target,'/')[last()]
+                    else tokenize($hit/descendant::tei:idno[@type='URI'][1],'/')[last()]
         return
             <div class="row" xmlns="http://www.w3.org/1999/xhtml" style="border-bottom:1px dotted #eee; padding-top:.5em">
                 <div class="col-md-12">
@@ -239,8 +239,8 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                                 {
                                 if($hit/@type='crossreference') then
                                     ($hit/tei:head, <span class="browse cross-ref"> see </span>,
-                                    <a href="entry.html?id={string($uri)}">{replace($hit/tei:ab[@type='crossreference'],'see ','')}</a>)
-                                else <a href="entry.html?id={$uri}">{$hit/tei:head}</a>
+                                    <a href="{$global:nav-base}/entry/{$uri}">{replace($hit/tei:ab[@type='crossreference'],'see ','')}</a>)
+                                else <a href="{$global:nav-base}/entry/{$uri}">{$hit/tei:head}</a>
                                 }
                             </span>
                             {if($hit/descendant::tei:byline) then
@@ -252,7 +252,7 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                             <span class="results-list-desc type">{subsequence($kwic, 1, 5)}</span>
                             <span class="results-list-desc uri">
                                 <span class="srp-label">URI: </span>
-                                <a href="entry.html?id={$uri}">{$uri}</a>
+                                <a href="{$global:nav-base}/entry/{$uri}">{$uri}</a>
                             </span>
                         </div>
                       </div>

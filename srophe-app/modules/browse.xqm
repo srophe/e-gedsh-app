@@ -302,7 +302,7 @@ declare function browse:display-hits($hits){
           <span class="sort-title">
                {$data/tei:head} 
                <span class="browse cross-ref"> see </span>
-               <a href="entry.html?id={string($data/descendant::tei:ref/@target)}">{replace($data/tei:ab[@type='crossreference'],'see ','')}</a>
+               <a href="{$global:nav-base}/entry/{tokenize($data/descendant::tei:ref/@target,'/')[last()]}">{replace($data/tei:ab[@type='crossreference'],'see ','')}</a>
            </span>
            {if($data/descendant::tei:byline) then
            <span class="results-list-desc sort-title">
@@ -312,13 +312,13 @@ declare function browse:display-hits($hits){
            else ()}
            <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>
-               <a href="entry.html?id={string($data/descendant::tei:ref/@target)}">{string($data/descendant::tei:ref/@target)}</a>
+               <a href="{$global:nav-base}/entry/{tokenize($data/descendant::tei:ref/@target,'/')[last()]}">{string($data/descendant::tei:ref/@target)}</a>
            </span>
        </div>
     else
        <div class="results-list">
           <span class="sort-title">
-               <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/tei:head}</a>
+               <a href="{$global:nav-base}/entry/{tokenize($data/descendant::tei:idno[@type='URI'][1],'/')[last()]}">{$data/tei:head}</a>
                <span class="type">{$data/tei:ab[@type='infobox']}</span>
            </span>
            {if($data/descendant::tei:byline) then
@@ -329,7 +329,7 @@ declare function browse:display-hits($hits){
            else ()}
            <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>
-               <a href="entry.html?id={$data/descendant::tei:idno[@type='URI'][1]}">{$data/descendant::tei:idno[@type='URI'][1]}</a>
+               <a href="{$global:nav-base}/entry/{tokenize($data/descendant::tei:idno[@type='URI'][1],'/')[last()]}">{$data/descendant::tei:idno[@type='URI'][1]}</a>
            </span>
        </div>
 };

@@ -323,11 +323,11 @@ return
                     let $new-fq := concat('fq=',$facet-query)
                     return 
                         (if(contains($facet:fq, concat(':',string($key/@value)))) then 
-                            <a href="?start=1{replace(facet:url-params(),'&amp;start=1','')}" class="facet-label btn btn-default active">
+                            <a href="?start=1" class="facet-label btn btn-default active">
                                 {facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span>
                             </a>
                         else 
-                            <a href="?{$new-fq}{facet:url-params()}" class="facet-label btn btn-default">
+                            <a href="?{$new-fq}" class="facet-label btn btn-default">
                                 {facet:get-label(string($key/@label))} <span class="count"> ({string($key/@count)})</span>
                             </a>,
                            if($key/facet:key) then
@@ -336,7 +336,7 @@ return
                                     {
                                     for $sub-key in subsequence($key/facet:key, 1)
                                     return
-                                        <a href="entry.html?id={string($sub-key/@value)}&amp;{$new-fq}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
+                                        <a href="{tokenize(string($sub-key/@value),'/')[last()]}?{$new-fq}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
                                             {
                                                 if(contains($sub-key/@label,' see ')) then
                                                     (substring-before($sub-key/@label,' see '), <span class="browse cross-ref"> see </span>, substring-after($sub-key/@label,' see '))
@@ -367,7 +367,7 @@ return
              <h4>{string($f/@name)}</h4>
                  <div class="facet-list show">{
                      for $key at $l in subsequence($f/facet:key,1,$f/@show)
-                     let $facet-query := replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ','')
+                     let $facet-query := (:replace(replace(concat(';fq-',string($f/@name),':',string($key/@value)),';fq-;fq-;',';fq-'),';fq- ',''):)''
                      let $new-fq := 
                          if($facet:fq) then concat('fq=',$facet:fq,$facet-query)
                          else concat('fq=',$facet-query)

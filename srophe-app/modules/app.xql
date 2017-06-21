@@ -628,29 +628,28 @@ function app:google-analytics($node as node(), $model as map(*)){
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
 if($model("data")/descendant::tei:idno[@type=('back','front')]) then 
     let $c := $model("data")/descendant::tei:idno[1]
-    let $nID := $model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1]
-    let $pID := $model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1]
+    let $nID := tokenize($model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1],'/')[last()]
+    let $pID := tokenize($model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1],'/')[last()]
     let $prev := 
                if($pID != '') then
-                    (<a href="entry.html?id={$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+                    (<a href="{$global:nav-base}/entry/{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
                else ()
     let $next := 
                 if($nID != '') then 
-                    (' | ', <a href="entry.html?id={$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                    (' | ', <a href="{$global:nav-base}/entry/{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()  
     return 
     <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
 else
-   let $current-id := xs:integer($model("data")/descendant::tei:idno[@type="entry"][1])
-   let $nID := $model("data")/following-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1]
-   let $pID := $model("data")/preceding-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1]
+   let $nID := tokenize($model("data")/following-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],'/')[last()]
+   let $pID := tokenize($model("data")/preceding-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],'/')[last()]
    let $prev := 
-                if($current-id != 1) then
-                        (<a href="entry.html?id={$pID}&amp;num={$current-id - 1}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+                if($pID != '') then
+                        (<a href="{$global:nav-base}/entry/{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
                 else ()
    let $next := 
                 if($nID != '') then 
-                   (' | ', <a href="entry.html?id={$nID}&amp;num={$current-id + 1}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                   (' | ', <a href="{$global:nav-base}/entry/{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()
    return             
    <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
