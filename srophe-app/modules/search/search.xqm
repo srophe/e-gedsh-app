@@ -107,7 +107,7 @@ declare function search:bibl(){
 (: NOTE add additional idno locations, ptr/@target @ref, others? :)
 declare function search:idno(){
     if($search:idno != '') then 
-         concat("[ft:query(descendant::tei:idno, '&quot;",$search:idno,"&quot;')]") 
+         concat("[descendant::tei:idno =  '",$search:idno,"']") 
     else () 
 };
 
