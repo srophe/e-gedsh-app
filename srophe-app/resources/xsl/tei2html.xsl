@@ -891,6 +891,9 @@
     <xsl:template match="t:p">
         <p>
             <xsl:call-template name="langattr"/>
+            <xsl:if test="child::node()[1][self::t:idno]">
+                <span class="indent"></span>
+            </xsl:if>
             <xsl:apply-templates xml:space="preserve"/>
         </p>
     </xsl:template>
