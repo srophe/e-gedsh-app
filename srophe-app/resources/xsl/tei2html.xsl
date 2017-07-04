@@ -364,23 +364,30 @@
             <h3>How to Cite This Entry</h3>
             <div id="citation-note" class="well">
                 <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="//t:head[1]"/>" 
-                in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
+                in <em>
+                    <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
+                </em>, 
                 edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
                 last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                 <div class="collapse" id="showcit">
                     <div id="citation-bibliography">
                         <h4>Bibliography:</h4>
                         <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="//t:head[1]"/>" 
-                        in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
+                        in <em>
+                            <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
+                        </em>, 
                         edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
                         Digitized by <xsl:value-of select="local:emit-responsible-persons(//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt/t:name[1],'footnote',4)"/>
                         last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                     </div>
                     <div>
                         <h4>About This Entry:</h4>
-                        <p>Authorial Responsibility: <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/></p>
-                        <p>Editorial Responsibility: <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/></p>
-                        <p>Additional Credit: <xsl:value-of select="local:emit-responsible-persons-all(//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt/t:name,'footnote')"/></p>
+                        <p>Authorial Responsibility: <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
+                        </p>
+                        <p>Editorial Responsibility: <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
+                        </p>
+                        <p>Additional Credit: <xsl:value-of select="local:emit-responsible-persons-all(//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt/t:name,'footnote')"/>
+                        </p>
                     </div>    
                 </div>
                 <a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide citation">Show full citation information...</a>
@@ -818,7 +825,9 @@
             <xsl:when test="@rend='footer'">
                 <span class="footnote-refs" dir="ltr">
                     <span class="footnote-ref">
-                        <a href="{concat('#note',@n)}"><xsl:value-of select="@n"/></a>
+                        <a href="{concat('#note',@n)}">
+                            <xsl:value-of select="@n"/>
+                        </a>
                     </span>
                 </span>
             </xsl:when>
@@ -848,7 +857,10 @@
         <p class="footnote">
             <xsl:if test="@n">
                 <xsl:attribute name="id" select="concat('note',@n)"/>
-                <span class="notes footnote-refs"><span class="footnote-ref"><xsl:value-of select="@n"/></span> </span>
+                <span class="notes footnote-refs">
+                    <span class="footnote-ref">
+                        <xsl:value-of select="@n"/>
+                    </span> </span>
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="t:quote">
@@ -892,7 +904,7 @@
         <p>
             <xsl:call-template name="langattr"/>
             <xsl:if test="child::node()[1][self::t:idno]">
-                <span class="indent"></span>
+                <span class="indent"/>
             </xsl:if>
             <xsl:apply-templates xml:space="preserve"/>
         </p>
@@ -958,16 +970,11 @@
         </xsl:if>
     </xsl:template>
     <xsl:template match="t:persName | t:region | t:settlement | t:placeName | t:author | t:editor">
-        <xsl:choose>
-            <xsl:when test="self::t:persName[parent::t:byline]">
-                <xsl:text>Author: </xsl:text>
-            </xsl:when>
-            <xsl:when test="@role">
-                <span class="srp-label">
-                    <xsl:value-of select="concat(upper-case(substring(@role,1,1)),substring(@role,2))"/>: 
-                </span>
-            </xsl:when>
-        </xsl:choose>
+        <xsl:if test="@role">
+            <span class="srp-label">
+                <xsl:value-of select="concat(upper-case(substring(@role,1,1)),substring(@role,2))"/>: 
+            </span>    
+        </xsl:if>
         <span class="{local-name(.)}">
             <xsl:call-template name="langattr"/>
             <xsl:choose>
@@ -1210,7 +1217,9 @@
     <xsl:template match="t:ab">
         <xsl:choose>
             <xsl:when test="parent::t:div[@type=('section','subsection')]"/>
-            <xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
+            <xsl:otherwise>
+                <xsl:apply-templates/>
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     <xsl:template match="t:*" mode="plain">
