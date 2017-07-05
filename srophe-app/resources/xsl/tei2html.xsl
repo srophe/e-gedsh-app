@@ -371,7 +371,7 @@
                 last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                 <div class="collapse" id="showcit">
                     <div id="citation-bibliography">
-                        <h4>Bibliography:</h4>
+                        <h4>Bibliography</h4>
                         <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="//t:head[1]"/>" 
                         in <em>
                             <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
@@ -381,13 +381,21 @@
                         last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                     </div>
                     <div>
-                        <h4>About This Entry:</h4>
-                        <p>Authorial Responsibility: <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
+                        <h4>About This Entry</h4>                        
+                        <p><strong>Authorial Responsibility: </strong> <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
                         </p>
-                        <p>Editorial Responsibility: <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
+                        <p><strong>Editorial Responsibility: </strong> <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
                         </p>
-                        <p>Additional Credit: <xsl:value-of select="local:emit-responsible-persons-all(//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt/t:name,'footnote')"/>
-                        </p>
+                        <p><strong>Additional Credit: </strong></p>
+                        <ul>
+                            <xsl:for-each select="//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt">
+                                <li>
+                                    <xsl:value-of select="t:resp"/>
+                                    <xsl:text> </xsl:text>
+                                    <xsl:apply-templates select="t:name" mode="footnote"/>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
                     </div>    
                 </div>
                 <a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide citation">Show full citation information...</a>
