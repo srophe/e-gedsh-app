@@ -1207,7 +1207,7 @@
     </xsl:template>
     <xsl:template match="t:div | t:div1">
         <xsl:apply-templates/>
-        <xsl:if test="descendant::t:note and @type='section'">
+        <xsl:if test="descendant::t:note and @type='subsection'">
             <hr width="40%" align="left"/>
             <div class="footnotes">
                 <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
