@@ -321,7 +321,7 @@
             </span>
         </xsl:if>
         <xsl:for-each select="distinct-values(t:seriesStmt/t:biblScope/t:title)">
-            <xsl:text>  </xsl:text>
+            <xsl:text>&#160; </xsl:text>
             <xsl:choose>
                 <xsl:when test=". = 'The Syriac Biographical Dictionary'"/>
                 <xsl:when test=". = 'A Guide to Syriac Authors'">
@@ -860,7 +860,7 @@
                 <span class="notes footnote-refs">
                     <span class="footnote-ref">
                         <xsl:value-of select="@n"/>
-                    </span> </span>
+                    </span>&#160;</span>
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="t:quote">
@@ -1207,7 +1207,7 @@
     </xsl:template>
     <xsl:template match="t:div | t:div1">
         <xsl:apply-templates/>
-        <xsl:if test="descendant::t:note">
+        <xsl:if test="descendant::t:note and @type='section'">
             <hr width="40%" align="left"/>
             <div class="footnotes">
                 <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
