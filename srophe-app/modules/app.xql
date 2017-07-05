@@ -93,7 +93,7 @@ declare %templates:wrap function app:display-sources($node as node(), $model as 
  : Return tei:body/descendant/tei:bibls for use in sources
 :)
 declare %templates:wrap function app:display-citation($node as node(), $model as map(*)){
-    global:tei2html(<citation xmlns="http://www.tei-c.org/ns/1.0">{$model("data")/ancestor::tei:TEI/descendant::tei:teiHeader | $model("data")}</citation>) 
+    global:tei2html(<citation xmlns="http://www.tei-c.org/ns/1.0">{$model("data")/ancestor::tei:TEI/descendant::tei:teiHeader | $model("data")/tei:head[1] | $model("data")/tei:ab | $model("data")/tei:byline[1]}</citation>) 
 
 };
 (:~

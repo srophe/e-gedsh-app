@@ -363,7 +363,7 @@
         <div>
             <h3>How to Cite This Entry</h3>
             <div id="citation-note" class="well">
-                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="//t:head[1]"/>" 
+                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="child::t:head[1]"/>" 
                 in <em>
                     <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                 </em>, 
