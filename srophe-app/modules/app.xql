@@ -674,13 +674,13 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                         let $aTitle := $model('data')/tei:head[1]
                         let $otherResources := $model("data")//@ref[contains(.,'http://syriaca.org/')]
                         let $subjects := 
-                                   try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$sURI}" method="GET"/>)
+                                   try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$sURI}" method="GET"/>)
                                     } catch * {
                                         <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
                                     }
                         let $subject-count := $subjects/descendant::*:literal/text()            
                         let $citations := 
-                                    try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$sURI}" method="GET"/>)
+                                    try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$sURI}" method="GET"/>)
                                     } catch * {
                                         <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
                                     }
@@ -702,13 +702,13 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                             {
                                                 for $r in $otherResources
                                                 let $subjects := 
-                                                         try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$r}" method="GET"/>)
+                                                         try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$r}" method="GET"/>)
                                                           } catch * {
                                                               <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
                                                           }
                                                 let $subject-count := $subjects/descendant::*:literal/text()            
                                                 let $citations := 
-                                                          try{http:send-request(<http:request href="http://localhost:8080/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$r}" method="GET"/>)
+                                                          try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$r}" method="GET"/>)
                                                           } catch * {
                                                               <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
                                                           }
