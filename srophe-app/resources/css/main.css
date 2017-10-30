@@ -254,7 +254,7 @@ h4 {font-size: 1em; margin-top:1em;}
 }
 
 /* temp stye to distinguish cross refs */
-a.cross-ref {color:red;}
+a.cross-ref {/*color:red; */}
 
 .transparent {
     /* default fallback */
