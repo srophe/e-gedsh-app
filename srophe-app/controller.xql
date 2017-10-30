@@ -41,12 +41,41 @@ else if (contains($exist:path, "/$shared/")) then
             <set-header name="Cache-Control" value="max-age=3600, must-revalidate"/>
         </forward>
     </dispatch>    
-else if(contains($exist:path,"/entry/")) then
-    let $id := 
+
+(: Checks for any record uri patterns as defined in repo.xml :)    
+else if(contains($exist:path,"/entry/") or ends-with($exist:path, ("/atom","/tei","/rdf","/ttl",'.tei','.atom','.rdf','.ttl'))) then
+    (: Sends to restxql to handle /atom, /tei,/rdf:)
+    if (ends-with($exist:path, ("/atom","/tei","/rdf","/ttl",'.tei','.atom','.rdf','.ttl'))) then
+        let $path := 
+            if(ends-with($exist:path, (".atom",".tei",".rdf",".ttl"))) then 
+                replace($exist:path, "\.(atom|tei|rdf|ttl)", "/$1")
+            else $exist:path
+        return 
+            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                <forward url="{concat('/restxq/e-gedsh', $path)}" absolute="yes"/>
+            </dispatch>
+    (: Special handling for collections with app-root that matches record-URI-pattern sends html pages to html, others are assumed to be records :)
+    else if($exist:resource = ('index.html','search.html','browse.html','about.html')) then 
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+           <view>
+               <forward url="{$exist:controller}/modules/view.xql"/>
+           </view>
+   		<error-handler>
+   			<forward url="{$exist:controller}/error-page.html" method="get"/>
+   			<forward url="{$exist:controller}/modules/view.xql"/>
+   		</error-handler>
+       </dispatch>
+    (: parses out record id to be passed to correct collection view, based on values in repo.xml :)       
+    else if($exist:resource = '') then 
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <redirect url="index.html"/>
+        </dispatch>
+    else 
+       let $id := 
         if(matches($exist:resource,"\*.html")) then substring-before($exist:resource,'.html')
         else $exist:resource
-    let $html-path := '/entry.html'
-    return 
+        let $html-path := '/entry.html'
+        return 
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <forward url="{$exist:controller}{$html-path}"></forward>
                 <view>

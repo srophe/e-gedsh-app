@@ -275,7 +275,7 @@ function api:get-atom-feed($start as xs:integer*, $perpage as xs:integer*){
  : Returns tei record for syriaca.org subcollections
 :)
 declare function api:get-tei-rec($id as xs:string) as node()*{
-    let $uri := concat($global:base-uri, $id)
+    let $uri := concat($global:base-uri,'/', $id)
     return global:get-rec($uri)
 };
 

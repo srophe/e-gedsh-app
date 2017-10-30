@@ -665,7 +665,7 @@ else
 declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
     (
     <div class="panel-body">
-        <a class="pull-right" href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/tei')}" rel="alternate" type="application/tei+xml">
+        <a class="pull-right" href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/tei')}" rel="alternate" type="application/tei+xml">
             <img src="/resources/img/tei-25.png" alt="The Text Encoding Initiative icon" data-toggle="tooltip" title="Click to view the TEI XML source data for this record."/></a>
     </div>,
     if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then 
