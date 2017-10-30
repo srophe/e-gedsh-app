@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
 
  <!-- ================================================================== 
@@ -321,7 +320,7 @@
             </span>
         </xsl:if>
         <xsl:for-each select="distinct-values(t:seriesStmt/t:biblScope/t:title)">
-            <xsl:text>&#160; </xsl:text>
+            <xsl:text>  </xsl:text>
             <xsl:choose>
                 <xsl:when test=". = 'The Syriac Biographical Dictionary'"/>
                 <xsl:when test=". = 'A Guide to Syriac Authors'">
@@ -363,16 +362,28 @@
         <div>
             <h3>How to Cite This Entry</h3>
             <div id="citation-note" class="well">
-                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="child::t:head[1]"/>" 
-                in <em>
-                    <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
+                <xsl:choose>
+                    <xsl:when test="//t:byline/t:persName">
+                        <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
+                    </xsl:otherwise>
+                </xsl:choose>, "<xsl:value-of select="child::t:head[1]"/>" in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                 </em>, 
                 edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
                 last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                 <div class="collapse" id="showcit">
                     <div id="citation-bibliography">
                         <h4>Bibliography</h4>
-                        <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, "<xsl:value-of select="//t:head[1]"/>" 
+                        <xsl:choose>
+                            <xsl:when test="//t:byline/t:persName">
+                                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
+                            </xsl:otherwise>
+                        </xsl:choose>, "<xsl:value-of select="//t:head[1]"/>" 
                         in <em>
                             <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                         </em>, 
@@ -381,12 +392,20 @@
                         last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                     </div>
                     <div>
-                        <h4>About This Entry</h4>                        
-                        <p><strong>Authorial Responsibility: </strong> <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
+                        <h4>About This Entry</h4> 
+                        <xsl:if test="//t:byline/t:persName">
+                            <p>
+                                <strong>Authorial Responsibility: </strong> <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
+                            </p>                            
+                        </xsl:if>
+                        <xsl:if test="//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor">
+                            <p>
+                                <strong>Editorial Responsibility: </strong> <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
+                            </p>    
+                        </xsl:if>
+                        <p>
+                            <strong>Additional Credit: </strong>
                         </p>
-                        <p><strong>Editorial Responsibility: </strong> <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
-                        </p>
-                        <p><strong>Additional Credit: </strong></p>
                         <ul>
                             <xsl:for-each select="//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt">
                                 <li>
@@ -868,7 +887,7 @@
                 <span class="notes footnote-refs">
                     <span class="footnote-ref">
                         <xsl:value-of select="@n"/>
-                    </span>&#160;</span>
+                    </span> </span>
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="t:quote">
