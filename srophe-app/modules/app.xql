@@ -658,16 +658,56 @@ else
    return             
    <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
 };
+(: Data formats and sharing:)
+declare %templates:wrap function app:other-data-formats($node as node(), $model as map(*), $formats as xs:string?){
+    if($formats) then
+        <div class="container" style="width:100%;clear:both;margin-bottom:1em; text-align:right;">
+            {
+                for $f in tokenize($formats,',')
+                return 
+                    if($f = 'tei') then
+                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/tei')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the TEI XML data for this record." >
+                             <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> TEI/XML
+                        </a>, '&#160;')
+                    else if($f = 'print') then                        
+                        (<a href="javascript:window.print();" type="button" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to send this page to the printer." >
+                             <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                        </a>, '&#160;')  
+                   else if($f = 'rdf') then
+                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/rdf')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-XML data for this record." >
+                             <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/XML
+                        </a>, '&#160;')
+                  else if($f = 'ttl') then
+                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/ttl')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-Turtle data for this record." >
+                             <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/TTL
+                        </a>, '&#160;')                        
+                   else () 
+                
+            }
+            <br/>
+        </div>
+    else ()
+};
+(:
+
+<a href="/exist/apps/srophe/person/1534/tei" rel="alternate" type="application/tei+xml">
+<img src="/exist/apps/srophe/resources/img/tei-25.png" alt="The Text Encoding Initiative icon" data-toggle="tooltip" 
+title="Click to view the TEI XML source data for this record."></a>
+
+<a href="/exist/apps/srophe/person/1534/atom" rel="alternate" type="application/atom+xml">
+<img src="/exist/apps/srophe/resources/img/atom-25.png" alt="The Atom format icon" 
+data-toggle="tooltip" title="Click to view this data in Atom XML format.">
+</a>
+<a href="javascript:window.print();">
+<img src="/exist/apps/srophe/resources/img/icons-print.png" alt="The Print format icon" 
+data-toggle="tooltip" title="Click to send this page to the printer.">
+</a>
+:)
 
 (:
  : Display related Syriaca.org names
 :)
 declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
-    (
-    <div class="panel-body">
-        <a class="pull-right" href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/tei')}" rel="alternate" type="application/tei+xml">
-            <img src="/resources/img/tei-25.png" alt="The Text Encoding Initiative icon" data-toggle="tooltip" title="Click to view the TEI XML source data for this record."/></a>
-    </div>,
     if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then 
         <div class="panel panel-default" style="margin-top:1em;">
                 <div class="panel-heading"><h3 class="panel-title">Syriaca.org Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
@@ -745,6 +785,5 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                         
                 </div>
         </div>
-    else () 
-        )  
+    else()
 };
