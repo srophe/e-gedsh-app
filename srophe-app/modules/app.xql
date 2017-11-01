@@ -731,55 +731,63 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                         let $citations-count := $citations/descendant::*:literal/text()                                
                         return 
                             <div>
-                                <h4>Resources related to  <a href="{$sURI}">{$model('data')/tei:head[1]}</a></h4>
-                                <ul class="list-unstyled">
-                                    {
-                                        if(xs:integer($citations-count) gt 0) then
-                                            <li class="indent">{$citations-count} related citations</li>
-                                        else (),
-                                        if(xs:integer($subject-count) gt 0) then
-                                            <li class="indent">{$subject-count} related subjects</li>
-                                        else ()
-                                    }
-                                </ul>
-                                {
-                                if(count($otherResources) gt 0) then
-                                    <div>
-                                        <h4>Resources related to {count($otherResources)} other subjects.  
-                                            <a href="#" class="togglelink" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide">Show...</a>
-                                        </h4>
-                                        <div class="collapse" id="showOtherResources">
+                                {(
+                                    if(xs:integer($citations-count) gt 0 or xs:integer($subject-count) gt 0) then
+                                        (<h4>Resources related to
+                                        {
+                                            if(contains($sURI,'http://syriaca.org/')) then 
+                                                <a href="{$sURI}">{$model('data')/tei:head[1]}</a>
+                                            else $model('data')/tei:head[1]
+                                        }
+                                        </h4>,
+                                        <ul class="list-unstyled">
                                             {
-                                                for $r in $otherResources
-                                                let $subjects := 
-                                                         try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$r}" method="GET"/>)
-                                                          } catch * {
-                                                              <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
-                                                          }
-                                                let $subject-count := $subjects/descendant::*:literal/text()            
-                                                let $citations := 
-                                                          try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$r}" method="GET"/>)
-                                                          } catch * {
-                                                              <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
-                                                          }
-                                                let $citations-count := $citations/descendant::*:literal/text()   
-                                                return 
-                                                    (<h4>Resources related to <a href="{$r}">{$r/parent::*[1]/text()}</a></h4>,
-                                                    <ul class="list-unstyled">
-                                                        {
-                                                            if(xs:integer($citations-count) gt 0) then
-                                                                <li class="indent">{$citations-count} related citations</li>
-                                                            else (),
-                                                            if(xs:integer($subject-count) gt 0) then
-                                                                <li class="indent">{$subject-count} related subjects</li>
-                                                            else ()
-                                                        }
-                                                    </ul>)
+                                                if(xs:integer($citations-count) gt 0) then
+                                                    <li class="indent">{$citations-count} related citations</li>
+                                                else (),
+                                                if(xs:integer($subject-count) gt 0) then
+                                                    <li class="indent">{$subject-count} related subjects</li>
+                                                else ()
                                             }
+                                        </ul>)
+                                    else(),
+                                    if(count($otherResources) gt 0) then
+                                        <div>
+                                            <h4>Resources related to {count($otherResources)} other subjects.  
+                                                <a href="#" class="togglelink" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide">Show...</a>
+                                            </h4>
+                                            <div class="collapse" id="showOtherResources">
+                                                {
+                                                    for $r in $otherResources
+                                                    let $subjects := 
+                                                             try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$r}" method="GET"/>)
+                                                              } catch * {
+                                                                  <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                                              }
+                                                    let $subject-count := $subjects/descendant::*:literal/text()            
+                                                    let $citations := 
+                                                              try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$r}" method="GET"/>)
+                                                              } catch * {
+                                                                  <error>Caught error {$err:code}: {$err:description} {$sURI}</error>
+                                                              }
+                                                    let $citations-count := $citations/descendant::*:literal/text()   
+                                                    return 
+                                                        (<h4>Resources related to <a href="{$r}">{$r/parent::*[1]/text()}</a></h4>,
+                                                        <ul class="list-unstyled">
+                                                            {
+                                                                if(xs:integer($citations-count) gt 0) then
+                                                                    <li class="indent">{$citations-count} related citations</li>
+                                                                else (),
+                                                                if(xs:integer($subject-count) gt 0) then
+                                                                    <li class="indent">{$subject-count} related subjects</li>
+                                                                else ()
+                                                            }
+                                                        </ul>)
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
-                                else()    
-                                }
+                                    else()    
+                                )}
                             </div>
                     }
                         
