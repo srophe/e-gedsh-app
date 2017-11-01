@@ -163,7 +163,7 @@ return $final-id
  : @param $id syriaca.org uri for record or part. 
 :)
 declare function global:get-rec($id as xs:string){  
-    for $rec in collection($global:data-root)//tei:div[@type='entry'][descendant::tei:idno[normalize-space(.) = $id]]
+    for $rec in collection($global:data-root)//tei:div[tei:ab/tei:idno[normalize-space(.) = $id]]
     let $header := $rec/ancestor::tei:TEI/tei:teiHeader
     return <tei:TEI xmlns="http://www.tei-c.org/ns/1.0">{$header, $rec}</tei:TEI>  
 };
