@@ -774,8 +774,8 @@
             <xsl:when test="@ref and starts-with(@ref, $editoruriprefix)">
                 <xsl:variable name="sought" select="substring-after(@ref, $editoruriprefix)"/>
                 <xsl:choose>
-                    <xsl:when test="exists(document($editorssourcedoc)/descendant::t:body/t:listPerson[1]/t:person[@xml:id=$sought][1])">
-                        <xsl:if test="doc-available($editorssourcedoc)">
+                    <xsl:when test="doc-available($editorssourcedoc)">
+                        <xsl:if test="exists(document($editorssourcedoc)/descendant::t:body/t:listPerson[1]/t:person[@xml:id=$sought][1])">
                             <xsl:apply-templates select="document($editorssourcedoc)/descendant::t:body/t:listPerson[1]/t:person[@xml:id=$sought][1]" mode="footnote"/>
                         </xsl:if>
                     </xsl:when>

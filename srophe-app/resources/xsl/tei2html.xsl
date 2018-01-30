@@ -1,4 +1,4 @@
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:local="http://syriaca.org/ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs t x saxon local" version="2.0">
 
  <!-- ================================================================== 
        Copyright 2013 New York University  
@@ -187,7 +187,17 @@
     <xsl:template match="t:graphic">
         <xsl:choose>
             <xsl:when test="@url">
-                <img src="@url"/>
+                <xsl:choose>
+                    <xsl:when test="starts-with(@url,'http://cantaloupe.dh.tamu.edu/iiif')"> 
+                        <div style="width:90% !important;margin:1em;">
+                            <img src="{concat(@url,'/full/650,/0/default.jpg')}"/>
+                            <p class="text-center"><a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a></p>
+                        </div>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <img src="{@url}"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="."/>
@@ -369,7 +379,8 @@
                     <xsl:otherwise>
                         <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
                     </xsl:otherwise>
-                </xsl:choose>, "<xsl:value-of select="child::t:head[1]"/>" in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
+                </xsl:choose>, "<xsl:value-of select="child::t:head[1]"/>" in <em>
+                    <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                 </em>, 
                 edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
                 last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
