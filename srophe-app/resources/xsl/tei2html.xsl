@@ -1,4 +1,4 @@
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:local="http://syriaca.org/ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs t x saxon local" version="2.0">
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
 
  <!-- ================================================================== 
        Copyright 2013 New York University  
@@ -191,7 +191,9 @@
                     <xsl:when test="starts-with(@url,'http://cantaloupe.dh.tamu.edu/iiif')"> 
                         <div style="width:90% !important;margin:1em;">
                             <img src="{concat(@url,'/full/650,/0/default.jpg')}"/>
-                            <p class="text-center"><a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a></p>
+                            <p class="text-center">
+                                <a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a>
+                            </p>
                         </div>
                     </xsl:when>
                     <xsl:otherwise>
@@ -1224,6 +1226,12 @@
         <xsl:apply-templates select="t:p"/>
         <xsl:apply-templates select="t:div[@type='bibl']"/>
         <xsl:apply-templates select="t:byline"/>
+        <xsl:if test="descendant::t:note[@rend='footer']">
+            <hr width="40%" align="left"/>
+            <div class="footnotes">
+                <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
+            </div>    
+        </xsl:if>
     </xsl:template>
     <xsl:template match="t:head">
         <xsl:choose>
@@ -1245,7 +1253,7 @@
     </xsl:template>
     <xsl:template match="t:div | t:div1">
         <xsl:apply-templates/>
-        <xsl:if test="descendant::t:note and @type='subsection'">
+        <xsl:if test="descendant::t:note[@rend='footer']">
             <hr width="40%" align="left"/>
             <div class="footnotes">
                 <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
