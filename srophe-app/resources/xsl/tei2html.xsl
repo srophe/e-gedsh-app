@@ -1,4 +1,4 @@
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:local="http://syriaca.org/ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs t x saxon local" version="2.0">
 
  <!-- ================================================================== 
        Copyright 2013 New York University  
@@ -189,11 +189,9 @@
             <xsl:when test="@url">
                 <xsl:choose>
                     <xsl:when test="starts-with(@url,'http://cantaloupe.dh.tamu.edu/iiif')"> 
+                        <h5 class="text-center"><a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a></h5>
                         <div style="width:90% !important;margin:1em;">
                             <img src="{concat(@url,'/full/650,/0/default.jpg')}"/>
-                            <p class="text-center">
-                                <a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a>
-                            </p>
                         </div>
                     </xsl:when>
                     <xsl:otherwise>
@@ -1236,6 +1234,11 @@
     <xsl:template match="t:head">
         <xsl:choose>
             <xsl:when test="parent::t:div[@type='entry']">
+                <xsl:if test="parent::t:div/t:ab[1]/t:idno[1]/text()">
+                    <xsl:attribute name="id">
+                        <xsl:value-of select="concat('uri:',tokenize(parent::t:div/t:ab[1]/t:idno[1]/text(),'/')[last()])"></xsl:value-of>
+                    </xsl:attribute>
+                </xsl:if>
                 <h1 class="inline">
                     <xsl:apply-templates/>
                     <xsl:text> </xsl:text>
@@ -1246,6 +1249,11 @@
             </xsl:when>
             <xsl:otherwise>
                 <h3 class="head {name(parent::*[1])}">
+                    <xsl:if test="parent::t:div/t:ab[1]/t:idno[1]/text()">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="concat('uri:',tokenize(parent::t:div/t:ab[1]/t:idno[1]/text(),'/')[last()])"></xsl:value-of>
+                        </xsl:attribute>
+                    </xsl:if>
                     <xsl:apply-templates/>
                 </h3>
             </xsl:otherwise>

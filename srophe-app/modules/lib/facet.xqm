@@ -336,7 +336,7 @@ return
                                     {
                                     for $sub-key in subsequence($key/facet:key, 1)
                                     return
-                                        <a href="{tokenize(string($sub-key/@value),'/')[last()]}?{$new-fq}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
+                                        <a href="{concat($global:nav-base,'/entry',substring-after($sub-key/@value,$global:base-uri))}?{$new-fq}" class="facet-label btn btn-default sub-menu" style="background-color:#f9f9f9;">
                                             {
                                                 if(contains($sub-key/@label,' see ')) then
                                                     (substring-before($sub-key/@label,' see '), <span class="browse cross-ref"> see </span>, substring-after($sub-key/@label,' see '))

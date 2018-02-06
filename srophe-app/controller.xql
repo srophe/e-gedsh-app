@@ -70,12 +70,30 @@ else if(contains($exist:path,"/entry/") or ends-with($exist:path, ("/atom","/tei
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="index.html"/>
         </dispatch>
+    else if(contains($exist:path,"/map/")) then 
+       let $id := 
+            if(matches($exist:resource,"\*.html")) then substring-before($exist:resource,'.html')
+            else $exist:resource
+       let $html-path := '/entry.html'
+       return 
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <forward url="{$exist:controller}{$html-path}"></forward>
+                <view>
+                    <forward url="{$exist:controller}/modules/view.xql">
+                         <add-parameter name="id" value="{concat('http://gedsh.bethmardutho.org/map/',$id)}"/>
+                    </forward>
+                </view>
+                <error-handler>
+                    <forward url="{$exist:controller}/error-page.html" method="get"/>
+                    <forward url="{$exist:controller}/modules/view.xql"/>
+                </error-handler>
+         </dispatch>
     else 
        let $id := 
-        if(matches($exist:resource,"\*.html")) then substring-before($exist:resource,'.html')
-        else $exist:resource
-        let $html-path := '/entry.html'
-        return 
+            if(matches($exist:resource,"\*.html")) then substring-before($exist:resource,'.html')
+            else $exist:resource
+       let $html-path := '/entry.html'
+       return 
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <forward url="{$exist:controller}{$html-path}"></forward>
                 <view>

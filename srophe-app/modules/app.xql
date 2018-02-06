@@ -35,7 +35,8 @@ if(request:get-parameter('id', '') != '') then
                         collection($global:data-root)//tei:back
                     else collection($global:data-root)//tei:div[tei:ab/tei:idno[normalize-space(.) = $id]]
         return 
-            if(empty($rec)) then response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html')))
+            if(empty($rec)) then request:get-parameter('id', '')
+            (:response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html'))):)
             else 
                 if($rec/descendant::tei:revisionDesc[@status='deprecated']) then 
                     let $redirect := 
@@ -634,28 +635,28 @@ function app:google-analytics($node as node(), $model as map(*)){
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
 if($model("data")/descendant::tei:idno[@type=('back','front')]) then 
     let $c := $model("data")/descendant::tei:idno[1]
-    let $nID := tokenize($model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1],'/')[last()]
-    let $pID := tokenize($model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1],'/')[last()]
+    let $nID := substring-after($model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1], $global:base-uri) 
+    let $pID := substring-after($model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1], $global:base-uri)
     let $prev := 
                if($pID != '') then
-                    (<a href="{$global:nav-base}/entry/{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+                    (<a href="{$global:nav-base}/entry{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
                else ()
     let $next := 
                 if($nID != '') then 
-                    (' | ', <a href="{$global:nav-base}/entry/{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                    (' | ', <a href="{$global:nav-base}/entry{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()  
     return 
     <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
 else
-   let $nID := tokenize($model("data")/following-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],'/')[last()]
-   let $pID := tokenize($model("data")/preceding-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],'/')[last()]
+   let $nID := substring-after($model("data")/following-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],$global:base-uri)
+   let $pID := substring-after($model("data")/preceding-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],$global:base-uri)
    let $prev := 
                 if($pID != '') then
-                        (<a href="{$global:nav-base}/entry/{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+                        (<a href="{$global:nav-base}/entry{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
                 else ()
    let $next := 
                 if($nID != '') then 
-                   (' | ', <a href="{$global:nav-base}/entry/{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                   (' | ', <a href="{$global:nav-base}/entry{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()
    return             
    <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
@@ -690,21 +691,6 @@ declare %templates:wrap function app:other-data-formats($node as node(), $model 
         </div>
     else ()
 };
-(:
-
-<a href="/exist/apps/srophe/person/1534/tei" rel="alternate" type="application/tei+xml">
-<img src="/exist/apps/srophe/resources/img/tei-25.png" alt="The Text Encoding Initiative icon" data-toggle="tooltip" 
-title="Click to view the TEI XML source data for this record."></a>
-
-<a href="/exist/apps/srophe/person/1534/atom" rel="alternate" type="application/atom+xml">
-<img src="/exist/apps/srophe/resources/img/atom-25.png" alt="The Atom format icon" 
-data-toggle="tooltip" title="Click to view this data in Atom XML format.">
-</a>
-<a href="javascript:window.print();">
-<img src="/exist/apps/srophe/resources/img/icons-print.png" alt="The Print format icon" 
-data-toggle="tooltip" title="Click to send this page to the printer.">
-</a>
-:)
 
 (:
  : Display related Syriaca.org names
