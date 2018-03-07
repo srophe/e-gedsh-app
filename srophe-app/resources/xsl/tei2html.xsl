@@ -189,7 +189,9 @@
             <xsl:when test="@url">
                 <xsl:choose>
                     <xsl:when test="starts-with(@url,'http://cantaloupe.dh.tamu.edu/iiif')"> 
-                        <h5 class="text-center"><a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a></h5>
+                        <h5 class="text-center">
+                            <a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a>
+                        </h5>
                         <div style="width:90% !important;margin:1em;">
                             <img src="{concat(@url,'/full/650,/0/default.jpg')}"/>
                         </div>
@@ -536,7 +538,7 @@
     <xsl:template match="t:bibl" mode="title"/>
     <xsl:template match="t:bibl">
         <xsl:choose>
-            <xsl:when test="parent::t:note">
+            <xsl:when test="parent::t:note or ancestor-or-self::t:figure">
                 <xsl:apply-templates select="self::*" mode="inline"/>
             </xsl:when>
             <xsl:when test="child::*">
@@ -926,7 +928,7 @@
             </xsl:if>
         </p>
     </xsl:template>
-    <!-- Handles t:link elements for deperciated notes, pulls value from matching element, output element and footnotes -->
+    <!-- Handles t:link elements for depricated notes, pulls value from matching element, output element and footnotes -->
     <xsl:template match="t:link">
         <xsl:variable name="elementID" select="substring-after(substring-before(@target,' '),'#')"/>
         <xsl:for-each select="/descendant-or-self::*[@xml:id=$elementID]">
@@ -1155,10 +1157,12 @@
         <xsl:variable name="target">
             <xsl:choose>
                 <xsl:when test="starts-with(@target, $base-uri) and ($base-uri != $nav-base) and contains(@target,'/fig/')">
-                    <xsl:value-of select="@target"/>
+                    <xsl:value-of select="replace(@target,$base-uri, $nav-base)"/>
+                    <!-- <xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"/>-->
                 </xsl:when>
                 <xsl:when test="starts-with(@target, $base-uri) and $base-uri != $nav-base">
-                    <xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"/>
+                    <!--<xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"/>-->
+                    <xsl:value-of select="replace(@target,$base-uri, concat($nav-base,'/entry'))"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="@target"/>
@@ -1236,7 +1240,7 @@
             <xsl:when test="parent::t:div[@type='entry']">
                 <xsl:if test="parent::t:div/t:ab[1]/t:idno[1]/text()">
                     <xsl:attribute name="id">
-                        <xsl:value-of select="concat('uri:',tokenize(parent::t:div/t:ab[1]/t:idno[1]/text(),'/')[last()])"></xsl:value-of>
+                        <xsl:value-of select="concat('uri:',tokenize(parent::t:div/t:ab[1]/t:idno[1]/text(),'/')[last()])"/>
                     </xsl:attribute>
                 </xsl:if>
                 <h1 class="inline">
@@ -1251,7 +1255,7 @@
                 <h3 class="head {name(parent::*[1])}">
                     <xsl:if test="parent::t:div/t:ab[1]/t:idno[1]/text()">
                         <xsl:attribute name="id">
-                            <xsl:value-of select="concat('uri:',tokenize(parent::t:div/t:ab[1]/t:idno[1]/text(),'/')[last()])"></xsl:value-of>
+                            <xsl:value-of select="concat('uri:',tokenize(parent::t:div/t:ab[1]/t:idno[1]/text(),'/')[last()])"/>
                         </xsl:attribute>
                     </xsl:if>
                     <xsl:apply-templates/>
