@@ -13,7 +13,7 @@
 body {font-family: times, serif; background-color:#333;}
 #main { padding: 0; background-color:#999; }
 #content{background-color:white; padding-top: 50px;}
-
+.entry {text-align: justify; text-justify: inter-word;}
 /* Removed extra padding introduced by Bootstrap for rows. Was causing issues with background images */
 .row { margin-left: 0px; margin-right: 0px;}
 .container{width:95%; padding:0;}
