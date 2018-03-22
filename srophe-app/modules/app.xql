@@ -633,7 +633,7 @@ function app:google-analytics($node as node(), $model as map(*)){
 
 (: e-gedsh functions :)
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
-if($model("data")/descendant::tei:idno[@type=('back','front')]) then 
+if($model("data")/descendant::tei:idno[@type=('back','front')] or $model("data")/descendant-or-self::*/@type='figure') then 
     let $c := $model("data")/descendant::tei:idno[1]
     let $nID := substring-after($model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1], $global:base-uri) 
     let $pID := substring-after($model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1], $global:base-uri)
@@ -646,7 +646,7 @@ if($model("data")/descendant::tei:idno[@type=('back','front')]) then
                     (' | ', <a href="{$global:nav-base}/entry{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()  
     return 
-    <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
+    <p>{($prev, ' ', if($model("data")/descendant-or-self::*/@type='figure') then $c else $model("data")/tei:head[1], ' ', $next)}</p>
 else
    let $nID := substring-after($model("data")/following-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],$global:base-uri)
    let $pID := substring-after($model("data")/preceding-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],$global:base-uri)
