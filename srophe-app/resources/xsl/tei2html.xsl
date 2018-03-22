@@ -1186,7 +1186,14 @@
             <xsl:text> </xsl:text>
         </xsl:if>
         <a href="{$target}" class="{$class}">
-            <xsl:apply-templates mode="plain"/>
+            <xsl:choose>
+                <xsl:when test="child::t:persName | child::t:placeName">
+                    <xsl:value-of select="normalize-space(.)"/>        
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates mode="plain"/>                    
+                </xsl:otherwise>
+            </xsl:choose>
         </a>
         <xsl:if test="following-sibling::node()[1][matches(.,'^(\s)')]">
             <xsl:text> </xsl:text>
