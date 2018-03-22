@@ -318,7 +318,7 @@ declare function browse:display-hits($hits){
            </span>
        </div>
     else
-       <div class="results-list">
+       <div class="results-list {if($data[@type = ('subsection','subSubsection')]) then 'indent' else ()}">
           <span class="sort-title">  
                <a href="{$global:nav-base}/entry{$entryLink}">{$data/tei:head}</a>
                <span class="type">{$data/tei:ab[@type='infobox']}</span>
