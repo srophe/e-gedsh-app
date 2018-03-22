@@ -223,6 +223,7 @@ footer {text-align:center; color:white;}
 .top-padding {margin-top:2em;}
 .block {display:block;}
 .banner {font-size: 24px; color:white; background-color:#7c173e; margin:0 0 1em 0; padding:.5em 1em;; border-bottom:4px solid #7c173e;}
+
 /* Typography */
 h1 {font-size:1.5em; margin:.25em 0 .25em 0; color:#666; font-weight:600;}
 h1 small {color:#666 !important; font-weight:600; font-size:.75em;}
@@ -243,6 +244,7 @@ h3.syr{
     float:right !important;
 }
 h4 {font-size: 1em; margin-top:1em;}
+.byline {text-align:right;}
 .infobox {font-size:.875em; font-weight:normal !important;}
 .hi {background-color:yellow;}
 
