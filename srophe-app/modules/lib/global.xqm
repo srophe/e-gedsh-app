@@ -22,7 +22,7 @@ declare variable $global:app-root :=
         substring-before($modulePath, "/modules")
     ;
 (: Get repo.xml to parse global varaibles :)
-declare variable $global:get-config := doc($global:app-root || '/repo.xml');
+declare variable $global:get-config := doc($global:app-root || '/repo-config.xml');
 
 (: Establish data app root :)
 declare variable $global:data-root := 
