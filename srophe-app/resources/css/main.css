@@ -805,7 +805,7 @@ pre {
 .toc .cross-ref, .browse.cross-ref{font-style: italic; font-weight: 600;}
 .subsection {margin-top:1.25em; margin-bottom:.25em;}
 .figure {display:block; margin:1em; text-align:center;}
-.figDesc {display: block; margin:1em;}
+.figDesc {display: block; margin:2.5em; padding-left:3em; text-align:left;}
 .strike {
     display: block;
     text-align: center;
