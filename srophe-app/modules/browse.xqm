@@ -296,7 +296,11 @@ else
 
 declare function browse:display-hits($hits){
     for $data in subsequence($hits, $browse:start,$browse:perpage)
-    let $entryLink := substring-after($data/descendant::tei:idno[@type='URI'][1], $global:base-uri)
+    let $entryLink := if($data[@type='crossreference']) then
+                        if($data/descendant::tei:ref/@target) then
+                            substring-after($data/descendant::tei:ref/@target, $global:base-uri)
+                        else ()
+                      else substring-after($data/descendant::tei:idno[@type='URI'][1], $global:base-uri)
     let $entryLink := if(starts-with($entryLink,'/')) then $entryLink else concat('/',$entryLink)
     return 
     if($data/@type='crossreference') then 
@@ -304,18 +308,26 @@ declare function browse:display-hits($hits){
           <span class="sort-title">
                {$data/tei:head} 
                <span class="browse cross-ref"> see </span>
-               <a href="{$global:nav-base}/entry{$entryLink}">{replace($data/tei:ab[@type='crossreference'],'see ','')}</a>
+               {
+                if($entryLink != '' and $entryLink != '/') then 
+                    <a href="{$global:nav-base}/entry{$entryLink}">{replace($data/tei:ab[@type='crossreference'],'see ','')}</a>
+                else replace($data/tei:ab[@type='crossreference'],'see ','')
+               }
            </span>
-           {if($data/descendant::tei:byline) then
-           <span class="results-list-desc sort-title">
+           {(if($data/descendant::tei:byline) then
+            <span class="results-list-desc sort-title">
                <span>Author: </span>
                <i>{$data/descendant::tei:byline/tei:persName}</i>
-           </span>
-           else ()}
-           <span class="results-list-desc uri">
+            </span>
+           else (),
+           if($entryLink != '' and $entryLink != '/') then
+             <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>
                <a href="{$global:nav-base}/entry{$entryLink}">{string($data/descendant::tei:ref/@target)}</a>
-           </span>
+             </span>
+           else ()
+           )}
+
        </div>
     else
        <div class="results-list {if($data[@type = ('subsection','subSubsection')]) then 'indent' else ()}">
