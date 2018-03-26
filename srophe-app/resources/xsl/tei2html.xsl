@@ -944,6 +944,12 @@
     <xsl:template match="t:p">
         <p>
             <xsl:call-template name="langattr"/>
+            <xsl:if test="parent::t:div[@type='subsection']">
+                <xsl:choose>
+                    <xsl:when test="t:label"><xsl:attribute name="class">subsection-label</xsl:attribute></xsl:when>
+                    <xsl:otherwise><xsl:attribute name="class">indent</xsl:attribute></xsl:otherwise>
+                </xsl:choose>    
+            </xsl:if>
             <xsl:if test="child::node()[1][self::t:idno]">
                 <span class="indent"/>
             </xsl:if>
@@ -1272,13 +1278,20 @@
         </xsl:choose>
     </xsl:template>
     <xsl:template match="t:div | t:div1">
-        <xsl:apply-templates/>
-        <xsl:if test="descendant::t:note[@rend='footer']">
-            <hr width="40%" align="left"/>
-            <div class="footnotes">
-                <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
-            </div>    
-        </xsl:if>
+        <div>
+            <xsl:if test="@type">
+                <xsl:attribute name="class">
+                    <xsl:value-of select="@type"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:apply-templates/>
+            <xsl:if test="descendant::t:note[@rend='footer']">
+                <hr width="40%" align="left"/>
+                <div class="footnotes">
+                    <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
+                </div>    
+            </xsl:if>
+        </div>
     </xsl:template>
     <xsl:template match="t:ab">
         <xsl:choose>
