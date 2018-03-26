@@ -266,9 +266,9 @@ declare function app:metadata($node as node(), $model as map(*)) {
     <link type="text/plain" href="id.nt" rel="alternate"/>
     <link type="application/json+ld" href="id.jsonld" rel="alternate"/>
     :)
-    <meta name="DC.title " property="dc.title " content="{$model("data")/descendant::tei:head[1]}"/>,
+    <meta name="DC.title" property="dc.title " content="{normalize-space($model("data")/descendant::tei:head[1])}"/>,
     if($model("data")/descendant::tei:note[@type='abstract']) then 
-        <meta name="DC.description " property="dc.description " content="{normalize-space($model("data")/descendant::tei:note[@type='abstract'][1])}"/>
+        <meta name="DC.description" property="dc.description " content="{normalize-space($model("data")/descendant::tei:note[@type='abstract'][1])}"/>
     else (),
     <link xmlns="http://www.w3.org/1999/xhtml" type="text/html" href="{request:get-parameter('id', '')}.html" rel="alternate"/>,
     <link xmlns="http://www.w3.org/1999/xhtml" type="text/xml" href="{request:get-parameter('id', '')}/tei" rel="alternate"/>,
