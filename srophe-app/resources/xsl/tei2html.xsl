@@ -382,7 +382,7 @@
                     <xsl:otherwise>
                         <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
                     </xsl:otherwise>
-                </xsl:choose>, "<xsl:value-of select="child::t:head[1]"/>" in <em>
+                </xsl:choose>, "<xsl:sequence select="local:rend(child::t:head[1])"/>" in <em>
                     <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                 </em>, 
                 edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
@@ -397,10 +397,8 @@
                             <xsl:otherwise>
                                 <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
                             </xsl:otherwise>
-                        </xsl:choose>, "<xsl:value-of select="//t:head[1]"/>" 
-                        in <em>
-                            <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
-                        </em>, 
+                        </xsl:choose>, "<xsl:sequence select="local:rend(//t:head[1])"/>" 
+                        in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
                         edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
                         Digitized by <xsl:value-of select="local:emit-responsible-persons(//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt/t:name[1],'footnote',4)"/>
                         last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
@@ -1194,7 +1192,7 @@
         </xsl:if>
         <a href="{$target}" class="{$class}">
             <xsl:choose>
-                <xsl:when test="child::t:persName | child::t:placeName">
+                <xsl:when test="child::t:persName | child::t:placeName | child::text()">
                     <xsl:value-of select="normalize-space(.)"/>        
                 </xsl:when>
                 <xsl:otherwise>
@@ -1258,7 +1256,8 @@
                     </xsl:attribute>
                 </xsl:if>
                 <h1 class="inline">
-                    <xsl:apply-templates/>
+                    <xsl:sequence select="local:rend(.)"/>
+                    <!--<xsl:apply-templates/>-->
                     <xsl:text> </xsl:text>
                     <small>
                         <xsl:apply-templates select="../t:ab[@type='infobox']"/>
@@ -1272,7 +1271,8 @@
                             <xsl:value-of select="concat('uri:',tokenize(parent::t:div/t:ab[1]/t:idno[1]/text(),'/')[last()])"/>
                         </xsl:attribute>
                     </xsl:if>
-                    <xsl:apply-templates/>
+                    <xsl:sequence select="local:rend(.)"/>
+                    <!--<xsl:apply-templates/>-->
                 </h3>
             </xsl:otherwise>
         </xsl:choose>

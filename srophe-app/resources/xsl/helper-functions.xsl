@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
     
     <!-- Function to add correct ordinal suffix to numbers used in citation creation.  -->
@@ -205,7 +204,7 @@
                 <xsl:apply-templates select="$current-node[1]" mode="lastname-first"/>
             </xsl:when>
             <!--
-            <xsl:when test="$ccount &gt; $maxauthors and $moded='footnote'">
+            <xsl:when test="$ccount > $maxauthors and $moded='footnote'">
                 <xsl:apply-templates select="$current-node[1]" mode="footnote"/>
                 <xsl:text> et al.</xsl:text>
             </xsl:when>
@@ -309,39 +308,14 @@
             <xsl:param name="mode"/>
         -->
         <xsl:choose>
-            <xsl:when test="$node/@rend = 'bold'">
-                <strong>
-                    <xsl:apply-templates select="$node/node()|$node/text()"/>
-                </strong>
-            </xsl:when>
-            <xsl:when test="$node/@rend = 'italic'">
-                <em>
-                    <xsl:apply-templates select="$node/node()|$node/text()"/>
-                </em>
-            </xsl:when>
-            <xsl:when test="$node/@rend = 'superscript'">
-                <sup>
-                    <xsl:apply-templates select="$node/node()|$node/text()"/>
-                </sup>
-            </xsl:when>
-            <xsl:when test="$node/@rend = 'subscript'">
-                <sub>
-                    <xsl:apply-templates select="$node/node()|$node/text()"/>
-                </sub>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:choose>
-                    <xsl:when test="$node/@rend">
-                        <span class="{$node/@rend}">
-                            <xsl:apply-templates select="$node/node()|$node/text()"/>                    
-                        </span>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates select="$node/node()|$node/text()"/>                    
-                    </xsl:otherwise>
-                </xsl:choose>
-                
-            </xsl:otherwise>
+            <xsl:when test="$node/@rend = 'bold'"><strong><xsl:apply-templates select="$node/node()|$node/text()"/></strong></xsl:when>
+            <xsl:when test="$node/@rend = 'italic'"><em><xsl:apply-templates select="$node/node()|$node/text()"/></em></xsl:when>
+            <xsl:when test="$node/@rend = 'superscript'"><sup><xsl:apply-templates select="$node/node()|$node/text()"/></sup></xsl:when>
+            <xsl:when test="$node/@rend = 'subscript'"><sub><xsl:apply-templates select="$node/node()|$node/text()"/></sub></xsl:when>
+            <xsl:otherwise><xsl:choose>
+                    <xsl:when test="$node/@rend"><span class="{$node/@rend}"><xsl:apply-templates select="$node/node()|$node/text()"/></span></xsl:when>
+                    <xsl:otherwise><xsl:apply-templates select="$node/node()|$node/text()"/></xsl:otherwise>
+                </xsl:choose></xsl:otherwise>
         </xsl:choose>
     </xsl:function>
     <!-- Text normalization functions -->
