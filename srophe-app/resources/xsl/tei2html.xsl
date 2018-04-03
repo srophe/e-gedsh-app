@@ -375,34 +375,24 @@
         <div>
             <h3>How to Cite This Entry</h3>
             <div id="citation-note" class="well">
-                <xsl:choose>
-                    <xsl:when test="//t:byline/t:persName">
-                        <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
-                    </xsl:otherwise>
-                </xsl:choose>, "<xsl:sequence select="local:rend(child::t:head[1])"/>" in <em>
-                    <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
-                </em>, 
-                edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
-                last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
+                    <xsl:if test="//t:byline/t:persName">
+                        <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
+                    </xsl:if>"<xsl:sequence select="local:rend(child::t:head[1])"/>" in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
+                edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                 <div class="collapse" id="showcit">
                     <div id="citation-bibliography">
-                        <h4>Bibliography</h4>
-                        <xsl:choose>
-                            <xsl:when test="//t:byline/t:persName">
-                                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
-                            </xsl:otherwise>
-                        </xsl:choose>, "<xsl:sequence select="local:rend(//t:head[1])"/>" 
+                        <h4>Bibliography Entry Citation:</h4>
+                        <p><xsl:if test="//t:byline/t:persName">
+                                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
+                            </xsl:if>"<xsl:sequence select="local:rend(//t:head[1])"/>" 
                         in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
                         edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
-                        Digitized by <xsl:value-of select="local:emit-responsible-persons(//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt/t:name[1],'footnote',4)"/>
-                        last modified <xsl:value-of select="//t:teiHeader/t:fileDesc/t:publicationStmt/t:date"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
+                            Digital edition prepared by Ute S. Posssekel and Daniel L. Schwartz, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
+                        </p>
+                        <p>A TEI-XML record with complete metadata is available here <a href="{replace(concat(//t:ab/t:idno[@type='URI'][1],'/tei'),$base-uri,$nav-base)}"><xsl:value-of select="concat(//t:ab/t:idno[@type='URI'][1],'/tei')"/></a>.</p>
+                        
                     </div>
+                    <!--
                     <div>
                         <h4>About This Entry</h4> 
                         <xsl:if test="//t:byline/t:persName">
@@ -427,9 +417,9 @@
                                 </li>
                             </xsl:for-each>
                         </ul>
-                    </div>    
+                    </div> -->   
                 </div>
-                <a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide citation">Show full citation information...</a>
+                <a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide">See more information about this entry...</a>
             </div>
         </div>
     </xsl:template>
@@ -944,8 +934,12 @@
             <xsl:call-template name="langattr"/>
             <xsl:if test="parent::t:div[@type='subsection']">
                 <xsl:choose>
-                    <xsl:when test="t:label"><xsl:attribute name="class">subsection-label</xsl:attribute></xsl:when>
-                    <xsl:otherwise><xsl:attribute name="class">indent</xsl:attribute></xsl:otherwise>
+                    <xsl:when test="t:label">
+                        <xsl:attribute name="class">subsection-label</xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="class">indent</xsl:attribute>
+                    </xsl:otherwise>
                 </xsl:choose>    
             </xsl:if>
             <xsl:if test="child::node()[1][self::t:idno]">
