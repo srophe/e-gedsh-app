@@ -56,7 +56,6 @@ if($collection !='') then
     common:keyword(),
     search:persName(),
     search:placeName(), 
-    search:title(),
     search:bibl(),
     search:idno()
     )
@@ -65,7 +64,6 @@ concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossrefere
     common:keyword(),
     search:persName(),
     search:placeName(), 
-    search:title(),
     search:bibl(),
     search:idno()
     )
@@ -73,41 +71,32 @@ concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossrefere
 
 declare function search:persName(){
     if($search:persName != '') then 
-        common:element-search('persName',$search:persName) 
-    else '' 
+        concat("[ft:query(descendant::tei:persName,'",$search:persName,"',common:options()) or ft:query(descendant::tei:head,'",$search:persName,"',common:options())]")
+    else () 
 };
 
 declare function search:placeName(){
     if($search:placeName != '') then 
-        common:element-search('placeName',$search:placeName) 
-    else '' 
-};
-
-declare function search:title(){
-    if($search:title != '') then 
-        common:element-search('placeName',$search:title) 
-    else '' 
+        concat("[ft:query(descendant::tei:placeName,'",$search:placeName,"',common:options()) or ft:query(descendant::tei:head,'",$search:placeName,"',common:options())]")
+    else () 
 };
 
 declare function search:bibl(){
     if($search:bibl != '') then  
-        let $terms := common:clean-string($search:bibl)
-        let $ids := 
-            if(matches($search:bibl,'^http://syriaca.org/')) then
-                normalize-space($search:bibl)
-            else 
-                string-join(distinct-values(
-                for $r in collection($global:data-root || '/bibl')//tei:body[ft:query(.,$terms, common:options())]/ancestor::tei:TEI/descendant::tei:publicationStmt/tei:idno[starts-with(.,'http://syriaca.org')][1]
-                return concat(substring-before($r,'/tei'),'(\s|$)')),'|')
-        return concat("[descendant::tei:bibl/tei:ptr[@target[matches(.,'",$ids,"')]]]")
+        concat("[ft:query(descendant::tei:div[@type='bibl'],'",$search:bibl,"',common:options())]")
     else ()
-       (: common:element-search('bibl',$search:bibl):)  
 };
 
 (: NOTE add additional idno locations, ptr/@target @ref, others? :)
 declare function search:idno(){
     if($search:idno != '') then 
-         concat("[descendant::tei:idno =  '",$search:idno,"']") 
+    concat("
+        [descendant::tei:idno =  '",$search:idno,"' or  
+            .//@ref[matches(.,'",$search:idno,"(\W.*)?$')]
+            or 
+            .//@target[matches(.,'",$search:idno,"(\W.*)?$')]
+        ]")
+    (:     concat("[descendant::tei:idno =  '",$search:idno,"']") :) 
     else () 
 };
 
@@ -307,12 +296,6 @@ declare function search:search-form() {
                     <div class="col-sm-10 col-md-9 ">
                         <input type="text" id="persName" name="persName" class="form-control"/>
                     </div>
-                  </div>
-                <div class="form-group">
-                    <label for="title" class="col-sm-2 col-md-3  control-label">Title: </label>
-                    <div class="col-sm-10 col-md-9 ">
-                        <input type="text" id="title" name="title" class="form-control"/>
-                    </div>
                   </div> 
                 <div class="form-group">
                     <label for="bibl" class="col-sm-2 col-md-3  control-label">Citation: </label>
@@ -321,7 +304,7 @@ declare function search:search-form() {
                     </div>
                </div> 
                 <div class="form-group">
-                    <label for="uri" class="col-sm-2 col-md-3  control-label">Syriaca.org URI: </label>
+                    <label for="uri" class="col-sm-2 col-md-3  control-label">URI (e-GEDSH, Syriaca.org, etc.): </label>
                     <div class="col-sm-10 col-md-9 ">
                         <input type="text" id="uri" name="uri" class="form-control"/>
                     </div>
