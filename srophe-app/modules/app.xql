@@ -711,7 +711,7 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
         return 
             if(xs:integer($subject-count) gt 0) then 
                 <div class="panel panel-default" style="margin-top:1em;">
-                    <div class="panel-heading"><h3 class="panel-title">Syriaca.org Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
+                    <div class="panel-heading"><h3 class="panel-title">Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
                     <div class="panel-body">
                         {
                                 <div class="related-resources">
