@@ -698,73 +698,75 @@ declare %templates:wrap function app:other-data-formats($node as node(), $model 
 declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
     (:if($model("data")//@ref[contains(.,'http://syriaca.org/')] and $model("data")//tei:idno[@type="subject"][contains(.,'http://syriaca.org/')]) then:) 
       if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
-        <div class="panel panel-default" style="margin-top:1em;">
-            <div class="panel-heading"><h3 class="panel-title">Syriaca.org Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
-            <div class="panel-body">
-                {
-                    let $subject-uri := string($model("data")//tei:idno[@type="subject"][contains(.,'http://syriaca.org/')][1])
-                    let $article-title := $model('data')/tei:head[1]
-                    let $subjects := 
+        let $subject-uri := string($model("data")//tei:idno[@type="subject"][contains(.,'http://syriaca.org/')][1])
+        let $article-title := $model('data')/tei:head[1]
+        let $subjects := 
                         try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$subject-uri}" method="get"/>)[2]
                            } catch * {<error>Caught error {$err:code}: {$err:description} {$subject-uri}</error>}
-                    let $subject-count := $subjects/descendant::*:literal/text()            
-                    let $citations := 
+        let $subject-count := $subjects/descendant::*:literal/text()            
+        let $citations := 
                         try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$subject-uri}" method="get"/>)[2]
                             } catch * {<error>Caught error {$err:code}: {$err:description} {$subject-uri}</error>}
-                    let $citations-count := $citations/descendant::*:literal/text()                                
-                    return
-                        <div class="related-resources">
-                            <h4>Resources related to
-                                {if($subject-uri) then <a href="{$subject-uri}">{$article-title}</a> else $article-title}
-                            </h4>
-                            <ul class="list-unstyled">
-                                {(
-                                    if(xs:integer($citations-count) gt 0) then
-                                        <li class="indent">{$citations-count} related citations</li>
-                                    else (),
-                                    if(xs:integer($subject-count) gt 0) then
-                                        <li class="indent">{$subject-count} related subjects</li>
-                                    else ()
-                                )}
-                            </ul>
-                            {
-                                if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
-                                    let $other-resources := $model("data")//@ref[contains(.,'http://syriaca.org/')]
-                                    let $count := count(distinct-values($other-resources))
-                                    return 
-                                        <div class="other-resources">
-                                            <h4>Resources related to {$count} other subjects. <a href="#" class="togglelink" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide">Show...</a></h4>
-                                            <div class="collapse" id="showOtherResources">
-                                                {
-                                                    for $r in subsequence($other-resources,1,25)
-                                                    group by $group := $r
-                                                    return 
-                                                        let $other-resources-subjects := 
-                                                             try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={string($group)}" method="get"/>)[2]
-                                                                } catch * {<error>Caught error {$err:code}: {$err:description} {$group}</error>}
-                                                        let $other-resources-subjects-count := $other-resources-subjects/descendant::*:literal/text()
-                                                        let $other-resources-citations := 
-                                                              try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={string($group)}" method="get"/>)[2]
-                                                                } catch * {<error>Caught error {$err:code}: {$err:description} {$group}</error>}
-                                                        let $other-resources-citations-count := $other-resources-citations/descendant::*:literal/text()   
-                                                        return       
-                                                            (<h4>Resources related to <a href="{$group}">{$group/parent::*[1]/text()}</a></h4>,
-                                                             <ul class="list-unstyled">{(
-                                                                if(xs:integer($other-resources-citations-count) gt 0) then
-                                                                    <li class="indent">{$other-resources-citations-count} related citations </li>
-                                                                else (),
-                                                                if(xs:integer($other-resources-subjects-count) gt 0) then
-                                                                    <li class="indent">{$other-resources-subjects-count} related subjects</li>
-                                                                else ()
-                                                                )}</ul>)
-                                                }
-                                            </div>
-                                        </div>
-                                else () (: End Other Resources:)
-                            }
-                        </div>(: End Resources related:)
-                }
-            </div><!-- End panel-body-->
-        </div>(: End panel:)         
+        let $citations-count := $citations/descendant::*:literal/text()       
+        return 
+            if(xs:integer($subject-count) gt 0) then 
+                <div class="panel panel-default" style="margin-top:1em;">
+                    <div class="panel-heading"><h3 class="panel-title">Syriaca.org Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
+                    <div class="panel-body">
+                        {
+                                <div class="related-resources">
+                                    <h4>Resources related to
+                                        {if($subject-uri) then <a href="{$subject-uri}">{$article-title}</a> else $article-title}
+                                    </h4>
+                                    <ul class="list-unstyled">
+                                        {(
+                                            if(xs:integer($citations-count) gt 0) then
+                                                <li class="indent">{$citations-count} related citations</li>
+                                            else (),
+                                            if(xs:integer($subject-count) gt 0) then
+                                                <li class="indent">{$subject-count} related subjects</li>
+                                            else ()
+                                        )}
+                                    </ul>
+                                    {
+                                        if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
+                                            let $other-resources := $model("data")//@ref[contains(.,'http://syriaca.org/')]
+                                            let $count := count(distinct-values($other-resources))
+                                            return 
+                                                <div class="other-resources">
+                                                    <h4>Resources related to {$count} other topics in this article. <a href="#" class="togglelink" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide">Show...</a></h4>
+                                                    <div class="collapse" id="showOtherResources">
+                                                        {
+                                                            for $r in subsequence($other-resources,1,25)
+                                                            group by $group := $r
+                                                            return 
+                                                                let $other-resources-subjects := 
+                                                                     try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={string($group)}" method="get"/>)[2]
+                                                                        } catch * {<error>Caught error {$err:code}: {$err:description} {$group}</error>}
+                                                                let $other-resources-subjects-count := $other-resources-subjects/descendant::*:literal/text()
+                                                                let $other-resources-citations := 
+                                                                      try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={string($group)}" method="get"/>)[2]
+                                                                        } catch * {<error>Caught error {$err:code}: {$err:description} {$group}</error>}
+                                                                let $other-resources-citations-count := $other-resources-citations/descendant::*:literal/text()   
+                                                                return       
+                                                                    (<h4>Resources related to <a href="{$group}">{$group/parent::*[1]/text()}</a></h4>,
+                                                                     <ul class="list-unstyled">{(
+                                                                        if(xs:integer($other-resources-citations-count) gt 0) then
+                                                                            <li class="indent">{$other-resources-citations-count} related citations </li>
+                                                                        else (),
+                                                                        if(xs:integer($other-resources-subjects-count) gt 0) then
+                                                                            <li class="indent">{$other-resources-subjects-count} related subjects</li>
+                                                                        else ()
+                                                                        )}</ul>)
+                                                        }
+                                                    </div>
+                                                </div>
+                                        else () (: End Other Resources:)
+                                    }
+                                </div>(: End Resources related:)
+                        }
+                    </div><!-- End panel-body-->
+                </div>(: End panel:)    
+           else()     
     else()
 };
