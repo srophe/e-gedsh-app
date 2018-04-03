@@ -429,9 +429,9 @@ td {
 
 /*.footnote-links {float:right; overflow:hidden; clear:right;}*/
 .footnote-icon {padding-left:.5em; font-size:12px;}
-.listBibl {margin-left:2em;}
+/*.listBibl {margin-left:2em;}*/
 .listBibl li {    
-    text-indent: -2em; 
+    text-indent: 0; 
     padding-left: 2em;
     }
 .bibl li{
