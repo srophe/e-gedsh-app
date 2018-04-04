@@ -4,6 +4,7 @@ module namespace search="http://syriaca.org/search";
 import module namespace page="http://syriaca.org/page" at "../lib/paging.xqm";
 import module namespace common="http://syriaca.org/common" at "common.xqm";
 import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
+import module namespace tei2html="http://syriaca.org/tei2html" at "../lib/tei2html.xqm";
 import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
 import module namespace kwic="http://exist-db.org/xquery/kwic";
 import module namespace templates="http://exist-db.org/xquery/templates" ;
@@ -214,44 +215,16 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
         let $kwic := (:kwic:summarize($hit, <config width="40" />, util:function(xs:QName("search:filter"), 2)):)
                       kwic:summarize($hit, <config width="40"/>)
         let $uri := if($hit/@type='crossreference') then
-                        tokenize($hit/descendant::tei:ref/@target,'/')[last()]
-                    else tokenize($hit/descendant::tei:idno[@type='URI'][1],'/')[last()]
-        return
+                        string($hit/descendant::tei:ref/@target)
+                    else $hit/descendant::tei:idno[@type='URI'][1]/text()
+        return 
             <div class="row" xmlns="http://www.w3.org/1999/xhtml" style="border-bottom:1px dotted #eee; padding-top:.5em">
                 <div class="col-md-12">
                       <div class="col-md-1" style="margin-right:-1em; padding-top:1em;">
                         <span class="label label-default">{$search:start + $p - 1}</span>
                       </div>
                       <div class="col-md-9" xml:lang="en">
-                       {
-                            if($hit/@type='crossreference') then
-                                      <div class="results-list">
-                                        <span class="sort-title">
-                                           {$hit/tei:head} 
-                                           <span class="browse cross-ref">&#160;{$hit/tei:ab[@type='crossreference']/text()} </span>{
-                                                if($uri != '') then 
-                                                    <a href="{$global:nav-base}/entry/{$uri}">{$hit/descendant::tei:ref//text()}</a>
-                                                else if($hit/descendant::tei:ref[@type='lookup']) then 
-                                                    <a href="{$global:nav-base}/search.html?q={$hit/descendant::tei:ref[@type='lookup']//text()}">{$hit/descendant::tei:ref[@type='lookup']//text()}</a>
-                                                else $hit/descendant::tei:ref//text()
-                                           }</span>
-                                       </div>  
-                            else 
-                                <div class="results-list">
-                                     <span class="sort-title"><a href="{$global:nav-base}/entry/{$uri}">{$hit/tei:head}</a></span>
-                                     {if($hit/descendant::tei:byline) then
-                                      <span class="results-list-desc sort-title">
-                                          <span>Author: </span>
-                                          <i>{$hit/descendant::tei:byline/tei:persName}</i>
-                                      </span>
-                                      else ()}
-                                     <span class="results-list-desc type">{subsequence($kwic, 1, 5)}</span>
-                                     <span class="results-list-desc uri">
-                                         <span class="srp-label">URI: </span>
-                                         <a href="{$global:nav-base}/entry/{$uri}">{$hit/descendant::tei:idno[@type='URI'][1]}</a>
-                                     </span>
-                                </div>
-                       }
+                       {tei2html:summary-view($hit, $uri, $kwic)}
                       </div>
                 </div>
             </div>

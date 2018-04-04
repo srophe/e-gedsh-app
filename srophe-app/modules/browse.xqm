@@ -10,6 +10,7 @@ xquery version "3.0";
  :)
 
 module namespace browse="http://syriaca.org/browse";
+import module namespace tei2html="http://syriaca.org/tei2html" at "../lib/tei2html.xqm";
 import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
 import module namespace facet="http://expath.org/ns/facet" at "lib/facet.xqm";
 import module namespace facet-defs="http://syriaca.org/facet-defs" at "facet-defs.xqm";
@@ -298,53 +299,10 @@ declare function browse:display-hits($hits){
     for $data in subsequence($hits, $browse:start,$browse:perpage)
     let $entryLink := if($data[@type='crossreference']) then
                         if($data/descendant::tei:ref/@target) then
-                            substring-after($data/descendant::tei:ref/@target, $global:base-uri)
+                            string($data/descendant::tei:ref/@target)
                         else ()
-                      else substring-after($data/descendant::tei:idno[@type='URI'][1], $global:base-uri)
-    let $entryLink := if(starts-with($entryLink,'/')) then $entryLink else concat('/',$entryLink)
-    return 
-    if($data/@type='crossreference') then 
-        <div class="results-list">
-          <span class="sort-title">
-               {$data/tei:head} 
-                <span class="browse cross-ref">&#160;{$data/tei:ab[@type='crossreference']/text()} </span>
-                {
-                    if($entryLink != '') then <a href="{$global:nav-base}/entry{$entryLink}">{$data/descendant::tei:ref//text()}</a>
-                    else if($data/descendant::tei:ref[@type='lookup']) then <a href="{$global:nav-base}/search.html?q={$data/descendant::tei:ref[@type='lookup']/text()}">{$data/descendant::tei:ref[@type='lookup']//text()}</a>
-                    else $data/descendant::tei:ref//text()
-                }
-           </span>
-           {(if($data/descendant::tei:byline) then
-            <span class="results-list-desc sort-title">
-               <span>Author: </span>
-               <i>{$data/descendant::tei:byline/tei:persName}</i>
-            </span>
-           else (),
-           if($entryLink != '' and $entryLink != '/') then
-             <span class="results-list-desc uri">
-               <span class="srp-label">URI: </span>
-               <a href="{$global:nav-base}/entry{$entryLink}">{string($data/descendant::tei:ref/@target)}</a>
-             </span>
-           else ()
-           )}
-       </div>
-    else
-       <div class="results-list {if($data[@type = ('subsection','subSubsection')]) then 'indent' else ()}">
-          <span class="sort-title">  
-               <a href="{$global:nav-base}/entry{$entryLink}">{$data/tei:head}</a>
-               <span class="type">{$data/tei:ab[@type='infobox']}</span>
-           </span>
-           {if($data/descendant::tei:byline) then
-           <span class="results-list-desc sort-title">
-               <span>Author: </span>
-               <i>{$data/descendant::tei:byline/tei:persName}</i>
-           </span>
-           else ()}
-           <span class="results-list-desc uri">
-               <span class="srp-label">URI: </span>
-               <a href="{$global:nav-base}/entry{$entryLink}">{$data/descendant::tei:idno[@type='URI'][1]}</a>
-           </span>
-       </div>
+                      else $data/descendant::tei:idno[@type='URI'][1]/text()
+    return tei2html:summary-view($data, $entryLink,())
 };
 
 (: Display map :)
