@@ -307,12 +307,12 @@ declare function browse:display-hits($hits){
         <div class="results-list">
           <span class="sort-title">
                {$data/tei:head} 
-               <span class="browse cross-ref"> see </span>
-               {
-                if($entryLink != '' and $entryLink != '/') then 
-                    <a href="{$global:nav-base}/entry{$entryLink}">{replace($data/tei:ab[@type='crossreference'],'see ','')}</a>
-                else replace($data/tei:ab[@type='crossreference'],'see ','')
-               }
+                <span class="browse cross-ref">&#160;{$data/tei:ab[@type='crossreference']/text()} </span>
+                {
+                    if($entryLink != '') then <a href="{$global:nav-base}/entry{$entryLink}">{$data/descendant::tei:ref//text()}</a>
+                    else if($data/descendant::tei:ref[@type='lookup']) then <a href="{$global:nav-base}/search.html?q={$data/descendant::tei:ref[@type='lookup']/text()}">{$data/descendant::tei:ref[@type='lookup']//text()}</a>
+                    else $data/descendant::tei:ref//text()
+                }
            </span>
            {(if($data/descendant::tei:byline) then
             <span class="results-list-desc sort-title">
@@ -327,7 +327,6 @@ declare function browse:display-hits($hits){
              </span>
            else ()
            )}
-
        </div>
     else
        <div class="results-list {if($data[@type = ('subsection','subSubsection')]) then 'indent' else ()}">

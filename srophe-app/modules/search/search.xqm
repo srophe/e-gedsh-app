@@ -223,27 +223,35 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                         <span class="label label-default">{$search:start + $p - 1}</span>
                       </div>
                       <div class="col-md-9" xml:lang="en">
-                       <div class="results-list">
-                           <span class="sort-title">
-                                {
-                                if($hit/@type='crossreference') then
-                                    ($hit/tei:head, <span class="browse cross-ref"> see </span>,
-                                    <a href="{$global:nav-base}/entry/{$uri}">{replace($hit/tei:ab[@type='crossreference'],'see ','')}</a>)
-                                else <a href="{$global:nav-base}/entry/{$uri}">{$hit/tei:head}</a>
-                                }
-                            </span>
-                            {if($hit/descendant::tei:byline) then
-                             <span class="results-list-desc sort-title">
-                                 <span>Author: </span>
-                                 <i>{$hit/descendant::tei:byline/tei:persName}</i>
-                             </span>
-                             else ()}
-                            <span class="results-list-desc type">{subsequence($kwic, 1, 5)}</span>
-                            <span class="results-list-desc uri">
-                                <span class="srp-label">URI: </span>
-                                <a href="{$global:nav-base}/entry/{$uri}">{$uri}</a>
-                            </span>
-                        </div>
+                       {
+                            if($hit/@type='crossreference') then
+                                      <div class="results-list">
+                                        <span class="sort-title">
+                                           {$hit/tei:head} 
+                                           <span class="browse cross-ref">&#160;{$hit/tei:ab[@type='crossreference']/text()} </span>{
+                                                if($uri != '') then 
+                                                    <a href="{$global:nav-base}/entry/{$uri}">{$hit/descendant::tei:ref//text()}</a>
+                                                else if($hit/descendant::tei:ref[@type='lookup']) then 
+                                                    <a href="{$global:nav-base}/search.html?q={$hit/descendant::tei:ref[@type='lookup']//text()}">{$hit/descendant::tei:ref[@type='lookup']//text()}</a>
+                                                else $hit/descendant::tei:ref//text()
+                                           }</span>
+                                       </div>  
+                            else 
+                                <div class="results-list">
+                                     <span class="sort-title"><a href="{$global:nav-base}/entry/{$uri}">{$hit/tei:head}</a></span>
+                                     {if($hit/descendant::tei:byline) then
+                                      <span class="results-list-desc sort-title">
+                                          <span>Author: </span>
+                                          <i>{$hit/descendant::tei:byline/tei:persName}</i>
+                                      </span>
+                                      else ()}
+                                     <span class="results-list-desc type">{subsequence($kwic, 1, 5)}</span>
+                                     <span class="results-list-desc uri">
+                                         <span class="srp-label">URI: </span>
+                                         <a href="{$global:nav-base}/entry/{$uri}">{$hit/descendant::tei:idno[@type='URI'][1]}</a>
+                                     </span>
+                                </div>
+                       }
                       </div>
                 </div>
             </div>

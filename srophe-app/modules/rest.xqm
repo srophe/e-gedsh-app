@@ -2,7 +2,6 @@ xquery version "3.0";
 
 module namespace api="http://syriaca.org/api";
 
-import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
 import module namespace geojson="http://syriaca.org/geojson" at "lib/geojson.xqm";
 import module namespace geokml="http://syriaca.org/geokml" at "lib/geokml.xqm";
