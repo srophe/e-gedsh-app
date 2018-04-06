@@ -119,10 +119,11 @@ body {font-family: times, serif; background-color:#333;}
 .banner-title h1{
     position:absolute;
     bottom:0;
-    right:0;
+    right:18px;
     height:75px;
     width:100%;
-    text-align:left;
+    padding-right:2em;
+    text-align:right;
     text-indent:8%;
     font:1.95em Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight:400;
@@ -452,6 +453,7 @@ td {
 /*    max-height:150px;*/
     min-height: 25px;
     min-width: 25px;
+    max-width: 30%;
     background-color:white;
     border:1px solid #ccc;
     top:125px;
