@@ -132,20 +132,28 @@ declare function tei2html:summary-view-crossref($nodes as node()*, $id as xs:str
         </div>  
 };
 
-(:~ 
- : Reworked KWIC to be more 'Google like' used examples from: http://ctb.kantl.be/download/kwic.xql for preceding and following content. 
- : Pass content through tei2html:tei2html() to handle simple things like suppression of tei:orig, etc. Could be made more robust to hide URI's as well. 
- :
- : @see : https://rvdb.wordpress.com/2011/07/20/from-kwic-display-to-kwicer-processing-with-exist/
-          http://ctb.kantl.be/download/kwic.xql
-:)
 declare function tei2html:output-kwic($nodes as node()*, $id as xs:string?){
     for $node in subsequence($nodes//exist:match,1,8)
     return
         <span>{tei2html:kwic-truncate-previous($node/ancestor-or-self::tei:div[@type='entry'], $node, (), 40)} 
                 &#160;<span class="match" style="background-color:yellow;">{$node/text()}</span>
-                {tei2html:kwic-truncate-following($node/ancestor-or-self::tei:div[@type='entry'], $node, (), 40)} </span>        
+                {tei2html:kwic-truncate-following($node/ancestor-or-self::tei:div[@type='entry'], $node, (), 40)} </span>
+
+    (:
+    for $node in $nodes
+    return 
+        typeswitch($node)
+            case text() return ()
+            case comment() return ()
+            case element(exist:match) return    
+                <span>{tei2html:kwic-truncate-previous($node/ancestor-or-self::tei:div[@type='entry'], $node, (), 40)} 
+                &#160;<span class="match" style="background-color:yellow;">{$node/text()}</span>
+                {tei2html:kwic-truncate-following($node/ancestor-or-self::tei:div[@type='entry'], $node, (), 40)} </span>
+            default return tei2html:output-kwic($node/node(), $id)
+    :)            
 };
+
+(:kwic:truncate-previous($root, $node, (), $width, $callback):)
 
 (:~
 	Generate the left-hand context of the match. Returns a normalized string, 
@@ -155,7 +163,7 @@ declare function tei2html:output-kwic($nodes as node()*, $id as xs:string?){
 :)
 declare function tei2html:kwic-truncate-previous($root as node()?, $node as node()?, $truncated as item()*, $width as xs:int) {
   let $nextProbe := $node/preceding::text()[1]
-  let $next := if ($root[not(. intersect $nextProbe/ancestor::*)]) then () else $nextProbe  
+  let $next := if ($root[not(. intersect $nextProbe/ancestor::*)]) then () else tei2html:tei2html($nextProbe)  
   let $probe :=  concat($nextProbe, ' ', $truncated)
   return
     if (string-length($probe) gt $width) then
@@ -165,8 +173,7 @@ declare function tei2html:kwic-truncate-previous($root as node()?, $node as node
           tei2html:kwic-truncate-previous($root, $next, $norm, $width)
         else if ($next) then
           concat('...', substring($norm, string-length($norm) - $width + 1))
-        else 
-          tei2html:tei2html($norm)
+        else $norm
     else if ($next) then 
       tei2html:kwic-truncate-previous($root, $next, $probe, $width)
     else for $str in normalize-space($probe)[.] return concat($str, ' ')
@@ -174,7 +181,7 @@ declare function tei2html:kwic-truncate-previous($root as node()?, $node as node
 
 declare function tei2html:kwic-truncate-following($root as node()?, $node as node()?, $truncated as item()*, $width as xs:int) {
   let $nextProbe := $node/following::text()[1]
-  let $next := if ($root[not(. intersect $nextProbe/ancestor::*)]) then () else $nextProbe  
+  let $next := if ($root[not(. intersect $nextProbe/ancestor::*)]) then () else tei2html:tei2html($nextProbe)  
   let $probe :=  concat($nextProbe, ' ', $truncated)
   return
     if (string-length($probe) gt $width) then
@@ -184,8 +191,7 @@ declare function tei2html:kwic-truncate-following($root as node()?, $node as nod
           tei2html:kwic-truncate-following($root, $next, $norm, $width)
         else if ($next) then
           concat('...', substring($norm, string-length($norm) - $width + 1))
-        else 
-          tei2html:tei2html($norm)
+        else $norm
     else if ($next) then 
       tei2html:kwic-truncate-following($root, $next, $probe, $width)
     else for $str in normalize-space($probe)[.] return concat($str, ' ')
