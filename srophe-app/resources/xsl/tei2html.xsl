@@ -386,7 +386,7 @@
                         <h4>Footnote Style Citation with Date:</h4>
                         <p>
                         <xsl:if test="//t:byline/t:persName">
-                            <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>.  
+                            <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>,  
                         </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>” in <em>
                             <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                         </em>, 
@@ -396,7 +396,7 @@
                         <h4>Bibliography Entry Citation:</h4>
                         <p>
                             <xsl:if test="//t:byline/t:persName">
-                            <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
+                            <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>. 
                             </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>.” In <em>
                                 <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                             </em>. Edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
