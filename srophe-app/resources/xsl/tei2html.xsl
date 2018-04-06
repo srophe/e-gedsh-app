@@ -394,7 +394,8 @@
                             accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                         </p>
                         <h4>Bibliography Entry Citation:</h4>
-                        <p><xsl:if test="//t:byline/t:persName">
+                        <p>
+                            <xsl:if test="//t:byline/t:persName">
                             <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
                             </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>.” In <em>
                                 <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
@@ -1295,12 +1296,14 @@
                 </xsl:attribute>
             </xsl:if>
             <xsl:apply-templates/>
-            <xsl:if test="descendant::t:note[@rend='footer']">
+            
+            <xsl:if test="descendant::t:note[@rend='footer'] and not(parent::t:div)">
                 <hr width="40%" align="left"/>
                 <div class="footnotes">
                     <xsl:apply-templates select="descendant::t:note[@rend='footer']" mode="footnote"/>
                 </div>    
             </xsl:if>
+            
         </div>
     </xsl:template>
     <xsl:template match="t:ab">

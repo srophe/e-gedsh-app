@@ -22,6 +22,10 @@
             </div>
         </div>  
     </div>
+    <!-- Floating footnotes display -->
+    <div id="footnoteDisplay" class="footnote">
+        <div class="content"/>  
+    </div>
     <!-- Modal email form-->
     <div data-template="app:contact-form" data-template-collection="bhse"/>
     <!-- Modal faq popup -->
@@ -67,4 +71,22 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        $('html').click(function() {
+            $('#footnoteDisplay').hide();
+            $('#footnoteDisplay div.content').empty();
+        })
+        
+        $('.footnote-ref a').click(function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            var link = $(this);
+            var href = $(this).attr('href');
+            var content = $(href).html()
+            $('#footnoteDisplay').css('display','block');
+            $('#footnoteDisplay').css({'top':e.pageY-50,'left':e.pageX+25, 'position':'absolute'});
+            $('#footnoteDisplay div.content').html( content );    
+        });
+        
+    </script>
 </div>
