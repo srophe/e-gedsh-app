@@ -42,7 +42,7 @@ declare %templates:wrap function search:get-results($node as node(), $model as m
                         return $hit                                                     
                     else 
                         for $hit in util:eval($eval-string)
-                        order by ft:score($hit) + (count($hit/descendant::tei:bibl) div 2) descending
+                        order by ft:score($hit) descending
                         return $hit
                 else ()                        
          }
@@ -213,7 +213,7 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
     {
         for $hit at $p in subsequence($model("hits"), $search:start, $search:perpage)
         let $kwic := (:kwic:summarize($hit, <config width="40" />, util:function(xs:QName("search:filter"), 2)):)
-                      kwic:summarize($hit, <config width="40"/>)
+                      (:kwic:summarize($hit, <config width="40"/>):) kwic:expand($hit)
         let $uri := if($hit/@type='crossreference') then
                         string($hit/descendant::tei:ref/@target)
                     else $hit/descendant::tei:idno[@type='URI'][1]/text()

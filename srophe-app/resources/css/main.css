@@ -882,6 +882,6 @@ pre {
 .head.div2 {font-size: 1.25em; font-weight:500;}
 .head.div3 {font-size: 1.15em; font-weight:500;}
 .note {font-size:.875em;}
-.notes.footnote-refs{display:inline-block; padding-right:2em;}
+.notes.footnote-refs{display:inline-block; padding-right:.75em;}
 .footnotes {margin:1em; font-size:.875em}
-.footnote{text-indent: 18px;}
+.footnote{text-indent: 8px;}
