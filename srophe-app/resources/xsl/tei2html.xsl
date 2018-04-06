@@ -377,19 +377,36 @@
             <div id="citation-note" class="well">
                     <xsl:if test="//t:byline/t:persName">
                         <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
-                    </xsl:if>&#8220;<xsl:sequence select="normalize-space(child::t:head[1])"/>&#8221; in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
+                    </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>” in <em>
+                    <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
+                </em>, 
                 edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                 <div class="collapse" id="showcit">
                     <div id="citation-bibliography">
+                        <h4>Footnote Style Citation with Date:</h4>
+                        <p>
+                        <xsl:if test="//t:byline/t:persName">
+                            <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>.  
+                        </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>” in <em>
+                            <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
+                        </em>, 
+                        edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
+                            accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
+                        </p>
+                        <xsl:value-of select="current-date()"/>
                         <h4>Bibliography Entry Citation:</h4>
                         <p><xsl:if test="//t:byline/t:persName">
-                                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
-                        </xsl:if>&#8220;<xsl:sequence select="normalize-space(child::t:head[1])"/>&#8221; 
-                        in <em><xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/></em>, 
-                        edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
-                            Digital edition prepared by Ute S. Posssekel and Daniel L. Schwartz, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
+                            <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
+                            </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>.” In <em>
+                                <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
+                            </em>. Edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
+                            Digital edition prepared by Ute S. Possekel and Daniel L. Schwartz.
+                            Accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>.
+                            <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                         </p>
-                        <p>A TEI-XML record with complete metadata is available here <a href="{replace(concat(//t:ab/t:idno[@type='URI'][1],'/tei'),$base-uri,$nav-base)}"><xsl:value-of select="concat(//t:ab/t:idno[@type='URI'][1],'/tei')"/></a>.</p>
+                        <p>A TEI-XML record with complete metadata is available here <a href="{replace(concat(//t:ab/t:idno[@type='URI'][1],'/tei'),$base-uri,$nav-base)}">
+                                <xsl:value-of select="concat(//t:ab/t:idno[@type='URI'][1],'/tei')"/>
+                            </a>.</p>
                         
                     </div>
                     <!--
