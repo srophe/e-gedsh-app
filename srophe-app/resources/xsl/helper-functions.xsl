@@ -101,6 +101,36 @@
      Function to output dates in correct formats passes whole element to function, 
      function also uses trim-date to strip leading 0
     -->
+    <xsl:function name="local:date-numberic-to-string">
+        <xsl:param name="date"/>
+        <xsl:variable name="month">
+            <xsl:choose>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('1','01')">January</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('2','02')">February</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('3','03')">March</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('4','04')">April</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('5','05')">May</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('6','06')">June</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('7','07')">July</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('8','08')">August</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('9','09')">September</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('10','10')">October</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('11','11')">November</xsl:when>
+                <xsl:when test="tokenize(string($date),'-')[2] = ('12','12')">December</xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="day">
+            <xsl:choose>
+                <xsl:when test="starts-with(tokenize(string($date),'-')[3],'0')"><xsl:value-of select="substring(tokenize(string($date),'-')[3],1)"/></xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of select="concat($month,' ',$day,', ', tokenize(string($date),'-')[1])"></xsl:value-of>
+    </xsl:function>
+    
+    <!-- 
+     Function to output dates in correct formats passes whole element to function, 
+     function also uses trim-date to strip leading 0
+    -->
     <xsl:function name="local:do-dates">
         <xsl:param name="element" as="node()"/>
         <xsl:if test="$element/@when or $element/@notBefore or $element/@notAfter or $element/@from or $element/@to">
@@ -308,14 +338,38 @@
             <xsl:param name="mode"/>
         -->
         <xsl:choose>
-            <xsl:when test="$node/@rend = 'bold'"><strong><xsl:apply-templates select="$node/node()|$node/text()"/></strong></xsl:when>
-            <xsl:when test="$node/@rend = 'italic'"><em><xsl:apply-templates select="$node/node()|$node/text()"/></em></xsl:when>
-            <xsl:when test="$node/@rend = 'superscript'"><sup><xsl:apply-templates select="$node/node()|$node/text()"/></sup></xsl:when>
-            <xsl:when test="$node/@rend = 'subscript'"><sub><xsl:apply-templates select="$node/node()|$node/text()"/></sub></xsl:when>
-            <xsl:otherwise><xsl:choose>
-                    <xsl:when test="$node/@rend"><span class="{$node/@rend}"><xsl:apply-templates select="$node/node()|$node/text()"/></span></xsl:when>
-                    <xsl:otherwise><xsl:apply-templates select="$node/node()|$node/text()"/></xsl:otherwise>
-                </xsl:choose></xsl:otherwise>
+            <xsl:when test="$node/@rend = 'bold'">
+                <strong>
+                    <xsl:apply-templates select="$node/node()|$node/text()"/>
+                </strong>
+            </xsl:when>
+            <xsl:when test="$node/@rend = 'italic'">
+                <em>
+                    <xsl:apply-templates select="$node/node()|$node/text()"/>
+                </em>
+            </xsl:when>
+            <xsl:when test="$node/@rend = 'superscript'">
+                <sup>
+                    <xsl:apply-templates select="$node/node()|$node/text()"/>
+                </sup>
+            </xsl:when>
+            <xsl:when test="$node/@rend = 'subscript'">
+                <sub>
+                    <xsl:apply-templates select="$node/node()|$node/text()"/>
+                </sub>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="$node/@rend">
+                        <span class="{$node/@rend}">
+                            <xsl:apply-templates select="$node/node()|$node/text()"/>
+                        </span>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="$node/node()|$node/text()"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
     <!-- Text normalization functions -->
