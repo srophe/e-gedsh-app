@@ -393,7 +393,6 @@
                         edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
                             accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                         </p>
-                        <xsl:value-of select="current-date()"/>
                         <h4>Bibliography Entry Citation:</h4>
                         <p><xsl:if test="//t:byline/t:persName">
                             <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
