@@ -132,6 +132,13 @@ declare function tei2html:summary-view-crossref($nodes as node()*, $id as xs:str
         </div>  
 };
 
+(:~ 
+ : Reworked KWIC to be more 'Google like' used examples from: http://ctb.kantl.be/download/kwic.xql for preceding and following content. 
+ : Pass content through tei2html:tei2html() to handle simple things like suppression of tei:orig, etc. Could be made more robust to hide URI's as well. 
+ :
+ : @see : https://rvdb.wordpress.com/2011/07/20/from-kwic-display-to-kwicer-processing-with-exist/
+          http://ctb.kantl.be/download/kwic.xql
+:)
 declare function tei2html:output-kwic($nodes as node()*, $id as xs:string?){
     for $node in subsequence($nodes//exist:match,1,8)
     return
@@ -152,8 +159,6 @@ declare function tei2html:output-kwic($nodes as node()*, $id as xs:string?){
             default return tei2html:output-kwic($node/node(), $id)
     :)            
 };
-
-(:kwic:truncate-previous($root, $node, (), $width, $callback):)
 
 (:~
 	Generate the left-hand context of the match. Returns a normalized string, 
