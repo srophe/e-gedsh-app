@@ -122,9 +122,8 @@ body {font-family: times, serif; background-color:#333;}
     right:18px;
     height:75px;
     width:100%;
-    padding-right:2em;
-    text-align:right;
-    text-indent:8%;
+    text-indent:1em;
+    text-align:left;
     font:1.95em Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight:400;
     /*
