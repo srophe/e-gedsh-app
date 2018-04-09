@@ -409,39 +409,13 @@
                             Accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>.
                             <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                         </p>
-                        <p>A TEI-XML record with complete metadata is available here <a href="{replace(concat(//t:ab/t:idno[@type='URI'][1],'/tei'),$base-uri,$nav-base)}">
+                        <p>A TEI-XML record with complete metadata is available at <a href="{replace(concat(//t:ab/t:idno[@type='URI'][1],'/tei'),$base-uri,$nav-base)}">
                                 <xsl:value-of select="concat(//t:ab/t:idno[@type='URI'][1],'/tei')"/>
                             </a>.</p>
                         
                     </div>
-                    <!--
-                    <div>
-                        <h4>About This Entry</h4> 
-                        <xsl:if test="//t:byline/t:persName">
-                            <p>
-                                <strong>Authorial Responsibility: </strong> <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>
-                            </p>                            
-                        </xsl:if>
-                        <xsl:if test="//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor">
-                            <p>
-                                <strong>Editorial Responsibility: </strong> <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>
-                            </p>    
-                        </xsl:if>
-                        <p>
-                            <strong>Additional Credit: </strong>
-                        </p>
-                        <ul>
-                            <xsl:for-each select="//t:teiHeader/t:fileDesc/t:titleStmt/t:respStmt">
-                                <li>
-                                    <xsl:value-of select="t:resp"/>
-                                    <xsl:text> </xsl:text>
-                                    <xsl:apply-templates select="t:name" mode="footnote"/>
-                                </li>
-                            </xsl:for-each>
-                        </ul>
-                    </div> -->   
-                </div>
-                <a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide">Show full citation information...</a>
+               </div>
+                <a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide">Show more information...</a>
             </div>
         </div>
     </xsl:template>
