@@ -1,4 +1,4 @@
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:local="http://syriaca.org/ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs t x saxon local" version="2.0">
 
  <!-- ================================================================== 
        Copyright 2013 New York University  
@@ -376,8 +376,8 @@
             <h3>How to Cite This Entry</h3>
             <div id="citation-note" class="well">
                     <xsl:if test="//t:byline/t:persName">
-                        <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>, 
-                    </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>” in <em>
+                        <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>,
+                    </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
                     <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                 </em>, 
                 edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
@@ -386,8 +386,8 @@
                         <h4>Footnote Style Citation with Date:</h4>
                         <p>
                         <xsl:if test="//t:byline/t:persName">
-                            <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>,  
-                        </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>” in <em>
+                           <xsl:value-of select="local:emit-responsible-persons-all(//t:byline//t:persName,'footnote')"/>,  
+                        </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
                             <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                         </em>, 
                         edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
@@ -396,7 +396,12 @@
                         <h4>Bibliography Entry Citation:</h4>
                         <p>
                             <xsl:if test="//t:byline/t:persName">
-                            <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>. 
+                                <xsl:variable name="names" select="local:emit-responsible-persons-all(//t:byline//t:persName,'biblist')"/>
+                                <xsl:value-of select="$names"/>
+                                <xsl:choose>
+                                    <xsl:when test="ends-with(normalize-space(string-join($names,' ')),'.')"> </xsl:when>
+                                    <xsl:otherwise>. </xsl:otherwise>
+                                </xsl:choose> 
                             </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>.” In <em>
                                 <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                             </em>. Edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
