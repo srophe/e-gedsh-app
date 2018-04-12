@@ -11,9 +11,8 @@ module namespace geokml="http://syriaca.org/geokml";
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
-
 (:~
- : Serialize XML as JSON
+ : Serialize XML as KML
 :)
 declare function geokml:kml($nodes as node()*){
 <kml xmlns="http://www.opengis.net/kml/2.2">
