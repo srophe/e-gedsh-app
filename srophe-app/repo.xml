@@ -9,8 +9,6 @@
     <type>application</type>
     <target>e-gedsh</target>
     <prepare>pre-install.xql</prepare>
-    <finish>post-install.xql</finish>
-    
     <config>
         <!-- App title -->
         <title>e-gedsh</title>

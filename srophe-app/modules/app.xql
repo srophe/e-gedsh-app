@@ -697,76 +697,152 @@ declare %templates:wrap function app:other-data-formats($node as node(), $model 
 :)
 declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
     (:if($model("data")//@ref[contains(.,'http://syriaca.org/')] and $model("data")//tei:idno[@type="subject"][contains(.,'http://syriaca.org/')]) then:) 
-      if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
-        let $subject-uri := string($model("data")//tei:idno[@type="subject"][contains(.,'http://syriaca.org/')][1])
-        let $article-title := $model('data')/tei:head[1]
-        let $subjects := 
-                        try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={$subject-uri}" method="get"/>)[2]
-                           } catch * {<error>Caught error {$err:code}: {$err:description} {$subject-uri}</error>}
-        let $subject-count := $subjects/descendant::*:literal/text()            
-        let $citations := 
-                        try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={$subject-uri}" method="get"/>)[2]
-                            } catch * {<error>Caught error {$err:code}: {$err:description} {$subject-uri}</error>}
-        let $citations-count := $citations/descendant::*:literal/text()       
-        return 
-            if(xs:integer($subject-count) gt 0) then 
-                <div class="panel panel-default" style="margin-top:1em;">
-                    <div class="panel-heading"><h3 class="panel-title">Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
-                    <div class="panel-body">
-                        {
-                                <div class="related-resources">
-                                    <h4>Resources related to
-                                        {if($subject-uri) then <a href="{$subject-uri}">{$article-title}</a> else $article-title}
-                                    </h4>
-                                    <ul class="list-unstyled">
-                                        {(
-                                            if(xs:integer($citations-count) gt 0) then
-                                                <li class="indent">{$citations-count} related citations</li>
-                                            else (),
-                                            if(xs:integer($subject-count) gt 0) then
-                                                <li class="indent">{$subject-count} related subjects</li>
-                                            else ()
-                                        )}
-                                    </ul>
-                                    {
-                                        if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
-                                            let $other-resources := $model("data")//@ref[contains(.,'http://syriaca.org/')]
-                                            let $count := count(distinct-values($other-resources))
-                                            return 
-                                                <div class="other-resources">
-                                                    <h4>Resources related to {$count} other topics in this article. <a href="#" class="togglelink" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide">Show...</a></h4>
-                                                    <div class="collapse" id="showOtherResources">
-                                                        {
-                                                            for $r in subsequence($other-resources,1,25)
-                                                            group by $group := $r
-                                                            return 
-                                                                let $other-resources-subjects := 
-                                                                     try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-subjects-count&amp;id={string($group)}" method="get"/>)[2]
-                                                                        } catch * {<error>Caught error {$err:code}: {$err:description} {$group}</error>}
-                                                                let $other-resources-subjects-count := $other-resources-subjects/descendant::*:literal/text()
-                                                                let $other-resources-citations := 
-                                                                      try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?qname=related-citations-count&amp;id={string($group)}" method="get"/>)[2]
-                                                                        } catch * {<error>Caught error {$err:code}: {$err:description} {$group}</error>}
-                                                                let $other-resources-citations-count := $other-resources-citations/descendant::*:literal/text()   
-                                                                return       
-                                                                    (<h4>Resources related to <a href="{$group}">{$group/parent::*[1]/text()}</a></h4>,
-                                                                     <ul class="list-unstyled">{(
-                                                                        if(xs:integer($other-resources-citations-count) gt 0) then
-                                                                            <li class="indent">{$other-resources-citations-count} related citations </li>
-                                                                        else (),
-                                                                        if(xs:integer($other-resources-subjects-count) gt 0) then
-                                                                            <li class="indent">{$other-resources-subjects-count} related subjects</li>
-                                                                        else ()
-                                                                        )}</ul>)
-                                                        }
-                                                    </div>
-                                                </div>
-                                        else () (: End Other Resources:)
-                                    }
-                                </div>(: End Resources related:)
-                        }
-                    </div><!-- End panel-body-->
-                </div>(: End panel:)    
-           else()     
+    if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
+        <div class="panel panel-default" style="margin-top:1em;" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="panel-heading"><h3 class="panel-title">Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
+            <div class="panel-body">
+                {(
+                    let $subject-uri := string($model("data")/descendant::tei:idno[@type="subject"][contains(.,'http://syriaca.org/')][1])
+                    let $article-title := $model('data')/tei:head[1]
+                    let $query := 
+                        fn:encode-for-uri(concat("prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                prefix lawd: <http://lawd.info/ontology/>
+                                prefix skos: <http://www.w3.org/2004/02/skos/core#>
+                                prefix dcterms: <http://purl.org/dc/terms/>  
+                                SELECT ?uri ?label ?subjects ?citations 
+                                {
+                                    ?uri rdfs:label ?label
+                                    FILTER (?uri IN ( <",$subject-uri,">))
+                                    FILTER ( langMatches(lang(?label), 'en')) .
+                                    {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  
+                                    {SELECT ?uri ( count(?o) as ?citations ) { 
+                                            ?uri lawd:hasCitation ?o 
+                                            	OPTIONAL{
+                                                  ?uri skos:closeMatch ?o.}
+                                            } GROUP BY ?uri }   
+                                }"))
+                    let $subject-sparql-results := 
+                                    try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?query={$query}" method="get"/>)[2]
+                                       } catch * {<error>Caught error {$err:code}: {$err:description} {$subject-uri}</error>}       
+                    return 
+                        if($subject-uri != '') then 
+                            <div class="related-resources">
+                                <h4>Resources related to {if($subject-uri) then <a href="{$subject-uri}">{$article-title}</a> else $article-title}</h4>
+                                    {(
+                                     if($subject-sparql-results//*:binding[@name='citations']/*:literal[xs:integer(.) gt 0]) then
+                                       <div class="indent">{$subject-sparql-results//*:binding[@name='citations'][1]/*:literal} related citations</div>
+                                     else (),
+                                     if($subject-sparql-results//*:binding[@name='subjects']/*:literal[xs:integer(.) gt 0]) then 
+                                        <div class="indent">{$subject-sparql-results//*:binding[@name='subjects'][1]/*:literal} related subjects</div>
+                                     else()
+                                    )}
+                            </div>
+                        else (),
+                 if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
+                    let $other-resources := distinct-values($model("data")//@ref[contains(.,'http://syriaca.org/')])
+                    let $count := count($other-resources)
+                    return 
+                        <div class="other-resources" xmlns="http://www.w3.org/1999/xhtml">
+                            <h4>Resources related to {$count} other topics in this article. </h4>
+                            <div class="collapse" id="showOtherResources">
+                                <form class="form-inline hidden" action="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql" method="post">
+                                    <input type="hidden" name="format" id="format" value="json"/>
+                                    <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
+                                      <![CDATA[
+                                        prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                        prefix lawd: <http://lawd.info/ontology/>
+                                        prefix skos: <http://www.w3.org/2004/02/skos/core#>
+                                        prefix dcterms: <http://purl.org/dc/terms/>
+                                        
+                                        SELECT ?uri ?label ?subjects ?citations
+                                        {
+                                            ?uri rdfs:label ?label
+                                            FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,1,10) return concat('<',$r,'>'),',')}<![CDATA[))
+                                            FILTER ( langMatches(lang(?label), 'en')) .
+                                            {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  
+                                            {SELECT ?uri ( count(?o) as ?citations ) { 
+                                              ?uri lawd:hasCitation ?o 
+                                            	OPTIONAL{
+                                                  ?uri skos:closeMatch ?o.}
+                                            } GROUP BY ?uri }   
+                                        }
+                                      ]]>  
+                                    </textarea>
+                                </form>
+                                <div id="listOtherResources"></div>
+                                {if($count gt 10) then
+                                    <div>
+                                        <div class="collapse" id="showMoreResources">
+                                            <form class="form-inline hidden" action="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql" method="post">
+                                                <input type="hidden" name="format" id="format" value="json"/>
+                                                <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
+                                                  <![CDATA[
+                                                    prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                                    prefix lawd: <http://lawd.info/ontology/>
+                                                    prefix skos: <http://www.w3.org/2004/02/skos/core#>
+                                                    prefix dcterms: <http://purl.org/dc/terms/>
+                                                    
+                                                    SELECT ?uri ?label ?subjects ?citations
+                                                    {
+                                                        ?uri rdfs:label ?label
+                                                        FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,12,$count) return concat('<',$r,'>'),',')}<![CDATA[))
+                                                        FILTER ( langMatches(lang(?label), 'en')) .
+                                                        {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  
+                                                        {SELECT ?uri ( count(?o) as ?citations ) { 
+                                                          ?uri lawd:hasCitation ?o 
+                                                        	OPTIONAL{
+                                                              ?uri skos:closeMatch ?o.}
+                                                        } GROUP BY ?uri }   
+                                                    }
+                                                  ]]>  
+                                                </textarea>
+                                            </form>
+                                        </div>
+                                        <a href="#" class="togglelink" data-toggle="collapse" data-target="#showMoreResources" data-text-swap="Less" id="getMoreLinkedData">See more ...</a>
+                                    </div>
+                                else ()
+                                }
+                            </div>
+                            <a href="#" class="btn btn-default togglelink" style="width:100%;" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide Other Resources" id="getLinkedData">Show Other Resources</a>
+                            <script>
+                            <![CDATA[
+                                $(document).ready(function() {
+                                    $('#showOtherResources').children('form').each(function () {
+                                        var url = $(this).attr('action');
+                                            $.post(url, $(this).serialize(), function(data) {
+                                                console.log(data);
+                                                var showOtherResources = $("#listOtherResources"); 
+                                                $.each(data.results.bindings, function (currentIndex, currentElem) {
+                                                    showOtherResources.append(
+                                                        '<div>Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> <div class="indent">' + currentElem.citations.value + ' related citations</div><div class="indent">' + currentElem.subjects.value + ' related subjects</div></div>'
+                                                    );
+                                                });
+                                            }).fail( function(jqXHR, textStatus, errorThrown) {
+                                                console.log(textStatus);
+                                            }); 
+                                        });
+                                        $('#getMoreLinkedData').one("click", function(e){
+                                           $('#showMoreResources').children('form').each(function () {
+                                                var url = $(this).attr('action');
+                                                    $.post(url, $(this).serialize(), function(data) {
+                                                        var showOtherResources = $("#showMoreResources"); 
+                                                        $.each(data.results.bindings, function (currentIndex, currentElem) {
+                                                            showOtherResources.append(
+                                                               '<div>Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> <div class="indent">' + currentElem.citations.value + ' related citations</div><div class="indent">' + currentElem.subjects.value + ' related subjects</div></div>'
+                                                          );
+                                                        });
+                                                    }).fail( function(jqXHR, textStatus, errorThrown) {
+                                                        console.log(textStatus);
+                                                    }); 
+                                                }); 
+                                        });
+                                });
+                            ]]>
+                            </script>
+                        </div>
+                 else () 
+                )}
+            </div>
+        </div>       
     else()
 };
