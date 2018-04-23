@@ -259,6 +259,7 @@ h1 {font-size:1.5em; margin:.25em 0 .25em 0; color:#666; font-weight:600;}
 h1 small {color:#666 !important; font-weight:600; font-size:.75em;}
 h2 {font-size: 1.25em; margin:1em 0 .25em 0; padding-bottom:0; color:#999; font-weight:500;}
 h3 {font-size: 1.2em; margin:1em 0 .25em 0; padding-bottom:0; color:#333; font-weight:500;  padding-bottom:0; margin-bottom:1em;}
+h3.head {text-align:left;}
 h3.banner-solid {color:white;}
 h3.underline {color:#999; border-bottom:3px solid #666; padding-bottom:-.75em; margin-bottom:1em; margin-top:0;}
 h4 {font-size: 1em; margin:0 0 .25em 0; padding-bottom:0; font-weight:bold;}
