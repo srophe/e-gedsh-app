@@ -627,11 +627,18 @@ function app:fix-links($node as node(), $model as map(*)) {
 :)
 declare  
     %templates:wrap 
-function app:google-analytics($node as node(), $model as map(*)){
+function app:google-analytics($node as node(), $model as map(*)) {
    $global:get-config//google_analytics/text() 
 };
 
-(: e-gedsh functions :)
+(: e-gedsh functions :) 
+declare %templates:wrap function app:entries-count($node as node(), $model as map(*)){
+count(collection($global:data-root)//tei:div[@type='entry'])
+};
+
+declare %templates:wrap function app:contributors-count($node as node(), $model as map(*)){
+count(collection($global:data-root)//tei:div[@type='section'][tei:ab[@type='idnos']/child::tei:idno[. = 'http://gedsh.bethmardutho.org/List-Contributors']]/tei:p)
+};
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
 if($model("data")/descendant::tei:idno[@type=('back','front')] or $model("data")/descendant-or-self::*/@type='figure') then 
     let $c := $model("data")/descendant::tei:idno[1]
