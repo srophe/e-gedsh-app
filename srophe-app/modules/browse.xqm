@@ -251,14 +251,14 @@ return
             else <h3>Select Date</h3>  
         else (
                 browse:pages($hits, $collection, ''),
-                
                 <h3>Results {concat(upper-case(substring($browse:type,1,1)),substring($browse:type,2))} ({count($hits)})</h3>,
                 <div>
                     {(
                         browse:get-map($hits),
                         browse:display-hits($hits)
                         )}
-                </div>)
+                </div>
+                )
         }</div>)
 else if($browse:view = 'map') then 
     <div class="col-md-12 map-lg">
@@ -289,6 +289,12 @@ else
                 <div class="col-sm-12">
                 {if(($browse:lang = 'syr') or ($browse:lang = 'ar')) then (attribute dir {"rtl"}) else()}
                 {browse:display-hits($hits)}</div>
+            </div>
+        </div>,
+         <div class="float-container">
+         <br/>
+            <div class="{if(($browse:lang = 'syr') or ($browse:lang = 'ar')) then "pull-left" else "pull-right"}">
+                 <div>{browse:pages($hits, $collection, $sort-options)}</div>
             </div>
         </div>
         )}
