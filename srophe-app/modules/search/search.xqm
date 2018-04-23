@@ -102,9 +102,9 @@ declare function search:idno(){
     if($search:idno != '') then 
     concat("
         [descendant::tei:idno =  '",$search:idno,"' or  
-            .//@ref[matches(.,'",$search:idno,"(\W.*)?$')]
+            .//@ref[matches(.,'",$search:idno,"(\s.*)?$')]
             or 
-            .//@target[matches(.,'",$search:idno,"(\W.*)?$')]
+            .//@target[matches(.,'",$search:idno,"(\s.*)?$')]
         ]")
     (:     concat("[descendant::tei:idno =  '",$search:idno,"']") :) 
     else () 
