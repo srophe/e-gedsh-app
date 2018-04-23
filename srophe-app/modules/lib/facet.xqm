@@ -165,7 +165,7 @@ declare function facet:group-by-abc($results as item()*, $facet-definitions as e
     let $name := $facet-definitions/@name
     let $parent := $facet-definitions/parent::*[1]/@name 
     for $f in util:eval($path)
-    let $sort-string := translate(translate(translate(translate(upper-case(substring(global:build-sort-string($f[1],''),1,1)),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H')
+    let $sort-string := translate(translate(translate(translate(upper-case(substring(global:build-sort-string(replace($f[1],'ʿ',''),''),1,1)),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H')
     group by $facet-grp := $sort-string
     order by $facet-grp ascending
     return 
