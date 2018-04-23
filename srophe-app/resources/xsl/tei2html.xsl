@@ -1191,6 +1191,12 @@
                     <xsl:value-of select="replace(@target,$base-uri, $nav-base)"/>
                     <!-- <xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"/>-->
                 </xsl:when>
+                <xsl:when test="@type='authorLookup'">
+                    <xsl:value-of select="concat($nav-base,'/search.html?author=',normalize-space(.))"/>
+                </xsl:when>
+                <xsl:when test="@type='lookup'">
+                    <xsl:value-of select="concat($nav-base,'/search.html?q=',normalize-space(.))"/>
+                </xsl:when>
                 <xsl:when test="starts-with(@target, $base-uri) and $base-uri != $nav-base">
                     <!--<xsl:value-of select="concat('/exist/apps/e-gedsh/entry.html?id=',@target)"/>-->
                     <xsl:value-of select="replace(@target,$base-uri, concat($nav-base,'/entry'))"/>

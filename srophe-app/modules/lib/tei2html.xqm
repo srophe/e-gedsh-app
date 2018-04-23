@@ -40,6 +40,8 @@ declare function tei2html:tei2html($nodes as node()*) as item()* {
                         <a href="{replace($node/@target,$global:base-uri,concat($global:nav-base,'/entry'))}">{$node//text()}</a>
                     else if($node[@type='lookup']) then   
                         <a href="{concat($global:nav-base,'/search.html?q=',$node//text())}">{$node//text()}</a>
+                    else if($node[@type='authorLookup']) then   
+                        <a href="{concat($global:nav-base,'/search.html?author=',$node//text())}">{$node//text()}</a>
                     else <a href="{concat($global:nav-base,'/search.html?q=',$node//text())}">{$node//text()}</a>
                 else tei2html:tei2html($node/node())                    
             case element(tei:imprint) return element span {
