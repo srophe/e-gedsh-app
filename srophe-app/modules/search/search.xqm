@@ -55,6 +55,7 @@ declare function search:query-string($collection as xs:string?) as xs:string?{
 if($collection !='') then 
     concat("collection('",$global:data-root,"/",$collection,"')//tei:body",
     common:keyword(),
+    search:author(),
     search:persName(),
     search:placeName(), 
     search:bibl(),
@@ -63,11 +64,19 @@ if($collection !='') then
 else 
 concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossreference','section')]",
     common:keyword(),
+    search:author(),
     search:persName(),
     search:placeName(), 
     search:bibl(),
     search:idno()
     )
+};
+
+
+declare function search:author(){
+    if(request:get-parameter('author', '') != '') then 
+        concat("[ft:query(descendant::tei:byline,'",request:get-parameter('author', ''),"',common:options())]")
+    else () 
 };
 
 declare function search:persName(){
@@ -111,6 +120,10 @@ declare function search:search-string(){
             if($parameter = 'start' or $parameter = 'sort-element') then ()
             else if($parameter = 'q') then 
                 (<span class="param">Keyword: </span>,<span class="match">{$search:q}&#160;</span>)
+            else if($parameter = 'persName') then 
+                (<span class="param">Person: </span>,<span class="match">{$search:persName}&#160;</span>)
+            else if($parameter = 'placeName') then 
+                (<span class="param">Place: </span>,<span class="match">{$search:placeName}&#160;</span>)                            
             else (<span class="param">{replace(concat(upper-case(substring($parameter,1,1)),substring($parameter,2)),'-',' ')}: </span>,<span class="match">{request:get-parameter($parameter, '')}</span>)    
         else ())
         }
@@ -265,6 +278,12 @@ declare function search:search-form() {
                         <input type="text" id="q" name="q" class="form-control"/>
                     </div>
                   </div>
+                  <div class="form-group">
+                    <label for="author" class="col-sm-2 col-md-3  control-label">Author: </label>
+                    <div class="col-sm-10 col-md-9 ">
+                        <input type="text" id="author" name="author" class="form-control"/>
+                    </div>
+                  </div> 
                     <!-- Place Name-->
                   <div class="form-group">
                     <label for="placeName" class="col-sm-2 col-md-3  control-label">Place Name: </label>
