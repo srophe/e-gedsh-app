@@ -304,10 +304,14 @@ declare function search:search-form() {
                     </div>
                </div> 
                 <div class="form-group">
-                    <label for="uri" class="col-sm-2 col-md-3  control-label">URI (e-GEDSH, Syriaca.org, etc.): </label>
+                    <label for="uri" class="col-sm-2 col-md-3  control-label">URI <span class="glyphicon glyphicon-question-sign text-info moreInfo" 
+                    aria-hidden="true" data-toggle="tooltip" 
+                    title="Searches GEDSH or Syriaca URIs identifying entries or referenced in entries."></span>: </label>
                     <div class="col-sm-10 col-md-9 ">
                         <input type="text" id="uri" name="uri" class="form-control"/>
+                        <p class="hint">*Enter GEDSH or Syriaca URI, ex. http://gedsh.bethmardutho.org/Aba, or http://syriaca.org/person/13</p>
                     </div>
+
                </div> 
                </div>
             </div>    
