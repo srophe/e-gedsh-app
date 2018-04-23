@@ -1,4 +1,4 @@
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:local="http://syriaca.org/ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs t x saxon local" version="2.0">
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
 
  <!-- ================================================================== 
        Copyright 2013 New York University  
@@ -190,11 +190,13 @@
             <xsl:when test="@url">
                 <xsl:choose>
                     <xsl:when test="starts-with(@url,'http://cantaloupe.dh.tamu.edu/iiif')"> 
-                        <h5 class="text-center">
-                            <a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a>
-                        </h5>
-                        <div style="width:100% !important;margin:1em;">
-                            <img src="{concat(@url,'/full/650,/0/default.jpg')}"/>
+                        <div class="graphic">
+                            <div style="width:100% !important;">
+                                <img src="{concat(@url,'/full/650,/0/default.jpg')}"/>
+                            </div>
+                            <span class="see-full-image text-center">
+                                <a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a>
+                            </span>
                         </div>
                     </xsl:when>
                     <xsl:otherwise>
@@ -1306,6 +1308,7 @@
             <xsl:if test="@type">
                 <xsl:attribute name="class">
                     <xsl:value-of select="@type"/>
+                    <xsl:if test="t:head[starts-with(.,'Map')] and t:figure/t:graphic"> map-section </xsl:if>
                 </xsl:attribute>
             </xsl:if>
             <xsl:apply-templates/>
