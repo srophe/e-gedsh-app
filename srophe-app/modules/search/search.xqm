@@ -101,7 +101,7 @@ declare function search:bibl(){
 declare function search:idno(){
     if($search:idno != '') then 
     concat("
-        [descendant::tei:idno =  '",$search:idno,"' or  
+        [descendant::tei:idno[@type='URI'][. =  '",$search:idno,"'] or  
             .//@ref[matches(.,'",$search:idno,"(\s.*)?$')]
             or 
             .//@target[matches(.,'",$search:idno,"(\s.*)?$')]
