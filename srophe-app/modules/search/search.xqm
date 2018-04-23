@@ -279,7 +279,7 @@ declare function search:search-form() {
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="author" class="col-sm-2 col-md-3  control-label">Author: </label>
+                    <label for="author" class="col-sm-2 col-md-3  control-label">Contributor: </label>
                     <div class="col-sm-10 col-md-9 ">
                         <input type="text" id="author" name="author" class="form-control"/>
                     </div>
@@ -298,7 +298,7 @@ declare function search:search-form() {
                     </div>
                   </div> 
                 <div class="form-group">
-                    <label for="bibl" class="col-sm-2 col-md-3  control-label">Citation: </label>
+                    <label for="bibl" class="col-sm-2 col-md-3  control-label">Sources: </label>
                     <div class="col-sm-10 col-md-9 ">
                         <input type="text" id="bibl" name="bibl" class="form-control"/>
                     </div>
