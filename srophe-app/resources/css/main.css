@@ -140,14 +140,15 @@ body {font-family: times, serif; background-color:#333;}
     height:55px;
     width:100%;
     text-align:left;
-    font-size:2.25em;
+    font-size:2.23em;
     font-weight:400;
     color: white; 
     display: inline;
-    padding: .75em 1.75em;
+    padding: .5em 1.75em;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;   
 }
+
 /* Banner styles index page (Colors and images are set by internal css for submodules) */
 .banner-index {
     position:relative;

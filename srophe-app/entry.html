@@ -1,19 +1,24 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
-    <xi:include href="banner.html"/>
+    <div class="banner-title full-page">
+    <span class="img-credit">
+        <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
+    </span>
+</div>
     <div class="section indent top-padding">
+        <!--Main Content-->
         <div class="row row-centered top-padding">
-            <div class="col-md-3 toc">
-                <div data-template="app:next-entry"/>
-                <div data-template="browse:group-abc-entries"/>
-            </div>
-            <div class="col-md-6 entry">
+            <div class="col-md-6 col-md-push-3 entry">
                 <br/>
                 <div data-template="app:display-rec"/>
                 <br/>
                 <div data-template="app:display-citation"/>
             </div>
+            <div class="col-md-3 col-md-pull-6 toc noprint">
+                <div data-template="app:next-entry"/>
+                <div data-template="browse:group-abc-entries"/>
+            </div>
             <div class="col-md-3">
-                <div data-template="app:other-data-formats" data-template-formats="print,tei"/>
+                <div data-template="app:other-data-formats" data-template-formats="print,tei" class="noprint"/>
                 <div data-template="app:srophe-related"/>
             </div>
         </div>  
