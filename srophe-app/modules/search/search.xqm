@@ -225,8 +225,7 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
     <div>{search:build-geojson($node,$model)}</div>
     {
         for $hit at $p in subsequence($model("hits"), $search:start, $search:perpage)
-        let $kwic := (:kwic:summarize($hit, <config width="40" />, util:function(xs:QName("search:filter"), 2)):)
-                      (:kwic:summarize($hit, <config width="40"/>):) kwic:expand($hit)
+        let $kwic := kwic:expand($hit)
         let $uri := if($hit/@type='crossreference') then
                         string($hit/descendant::tei:ref/@target)
                     else $hit/descendant::tei:idno[@type='URI'][1]/text()
@@ -306,10 +305,10 @@ declare function search:search-form() {
                 <div class="form-group">
                     <label for="uri" class="col-sm-2 col-md-3  control-label">URI <span class="glyphicon glyphicon-question-sign text-info moreInfo" 
                     aria-hidden="true" data-toggle="tooltip" 
-                    title="Searches the entire XML data, and returns entries which reference specific URIS  (GEDSH, Syriaca.org, etc)."></span>: </label>
+                    title="Searches the entire XML data and returns the entries that reference the specified URI(s)."></span>: </label>
                     <div class="col-sm-10 col-md-9 ">
                         <input type="text" id="uri" name="uri" class="form-control"/>
-                        <p class="hint">*Enter GEDSH or Syriaca URI, ex. http://gedsh.bethmardutho.org/Aba, or http://syriaca.org/person/13</p>
+                        <p class="hint">*Enter e-GEDSH or Syriaca URI, ex. http://gedsh.bethmardutho.org/Aba, or http://syriaca.org/person/13</p>
                     </div>
 
                </div> 
