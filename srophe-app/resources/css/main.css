@@ -122,13 +122,12 @@ body {font-family: times, serif; background-color:#333;}
     right:18px;
     height:75px;
     width:100%;
-    text-indent:1em;
     text-align:left;
     font-size:1.70em;
     font-weight:400;
     color: white; 
     display: inline;
-    padding: 1.25em 1em;
+    padding: 1.25em 1.75em;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
 }
@@ -330,7 +329,7 @@ td {
 
 /* Browse page styles */
 .syr-list{padding-right:7em; padding-top:2em; text-align: right;}
-.en-list{padding-left:5em; padding-top:2em;}
+.en-list{padding-left:4em; padding-top:2em;}
 
 .alpha-pages {margin-top:-1.85em;}
 .browse-alpha {border-bottom:1px solid #ccc; padding-left:1em; padding:0; margin-bottom:1em; text-align: justify;}

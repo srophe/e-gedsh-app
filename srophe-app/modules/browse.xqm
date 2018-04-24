@@ -285,11 +285,8 @@ else
             else attribute class {"label"},
                 if($browse:sort != '') then $browse:sort else 'A')}</h3>,
         <div class="{if($browse:lang = 'syr' or $browse:lang = 'ar') then 'syr-list' else 'en-list'}">
-            <div class="row">
-                <div class="col-sm-12">
                 {if(($browse:lang = 'syr') or ($browse:lang = 'ar')) then (attribute dir {"rtl"}) else()}
-                {browse:display-hits($hits)}</div>
-            </div>
+                {browse:display-hits($hits)}
         </div>,
          <div class="float-container">
          <br/>
