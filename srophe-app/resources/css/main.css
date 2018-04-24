@@ -139,13 +139,12 @@ body {font-family: times, serif; background-color:#333;}
     right:18px;
     height:55px;
     width:100%;
-    text-indent:1em;
     text-align:left;
-    font-size:1.70em;
+    font-size:1.95em;
     font-weight:400;
     color: white; 
     display: inline;
-    padding: .75em 1em;
+    padding: .75em 1.75em;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;   
 }
