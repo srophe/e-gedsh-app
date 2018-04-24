@@ -124,19 +124,15 @@ body {font-family: times, serif; background-color:#333;}
     width:100%;
     text-indent:1em;
     text-align:left;
-    font-size:26px;
-/*    font:1.95em Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    font-size:1.70em;
     font-weight:400;
-    /*
-    background: rgb(34,34,34); 
-    background: rgba(34,34,34,0.25);
-    */
     color: white; 
     display: inline;
     padding: 1.25em 1em;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
 }
+
 .banner-index h1 {
     position:absolute;
     top:0;
@@ -145,30 +141,13 @@ body {font-family: times, serif; background-color:#333;}
     width:100%;
     text-indent:1em;
     text-align:left;
-    font-size:26px;
+    font-size:1.70em;
     font-weight:400;
     color: white; 
     display: inline;
     padding: .75em 1em;
     -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-/*
-    position:absolute;
-    bottom:0;
-    right:18px;
-    height:65px;
-    width:100%;
-    text-indent:1em;
-    text-align:left;
-    font-size:26px;
-    font-weight:400;
-    color: white; 
-    display: inline;
-    padding: 1.25em 1em;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-*/    
-    
+    box-decoration-break: clone;   
 }
 /* Banner styles index page (Colors and images are set by internal css for submodules) */
 .banner-index {
