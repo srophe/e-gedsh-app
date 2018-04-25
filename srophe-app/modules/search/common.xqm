@@ -187,8 +187,8 @@ return
 declare function common:keyword(){
     if(request:get-parameter('q', '') != '') then 
         if(starts-with(request:get-parameter('q', ''),'http://syriaca.org/')) then
-           concat("[ft:query(descendant::*,'&quot;",request:get-parameter('q', ''),"&quot;',common:options())]")
-        else concat("[ft:query(descendant::*,'",common:clean-string(request:get-parameter('q', '')),"',common:options())]")
+           concat("[ft:query(.,'&quot;",request:get-parameter('q', ''),"&quot;',common:options())]")
+        else concat("[ft:query(.,'",common:clean-string(request:get-parameter('q', '')),"',common:options())]")
     else '' 
 };
 
