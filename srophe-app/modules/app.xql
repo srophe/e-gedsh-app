@@ -819,7 +819,9 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                             $.post(url, $(this).serialize(), function(data) {
                                                 console.log(data);
                                                 var showOtherResources = $("#listOtherResources"); 
-                                                $.each(data.results.bindings, function (currentIndex, currentElem) {
+                                                var dataArray = data.results.bindings;
+                                                if (!jQuery.isArray(dataArray)) dataArray = [dataArray];
+                                                $.each(dataArray, function (currentIndex, currentElem) {
                                                     showOtherResources.append(
                                                         '<div>Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> <div class="indent">' + currentElem.citations.value + ' related citations</div><div class="indent">' + currentElem.subjects.value + ' related subjects</div></div>'
                                                     );
@@ -832,8 +834,10 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                            $('#showMoreResources').children('form').each(function () {
                                                 var url = $(this).attr('action');
                                                     $.post(url, $(this).serialize(), function(data) {
-                                                        var showOtherResources = $("#showMoreResources"); 
-                                                        $.each(data.results.bindings, function (currentIndex, currentElem) {
+                                                        var showOtherResources = $("#showMoreResources");
+                                                        var dataArray = data.results.bindings;
+                                                        if (!jQuery.isArray(dataArray)) dataArray = [dataArray];                                                        
+                                                        $.each(dataArray, function (currentIndex, currentElem) {
                                                             showOtherResources.append(
                                                                '<div>Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> <div class="indent">' + currentElem.citations.value + ' related citations</div><div class="indent">' + currentElem.subjects.value + ' related subjects</div></div>'
                                                           );
