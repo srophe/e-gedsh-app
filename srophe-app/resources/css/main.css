@@ -116,6 +116,7 @@ body {font-family: times, serif; background-color:#333;}
 	height:75px;
     width:100%;
     }
+    
 .banner-title h1{
     position:absolute;
     bottom:0;
@@ -139,7 +140,7 @@ body {font-family: times, serif; background-color:#333;}
     height:55px;
     width:100%;
     text-align:left;
-    font-size:2.22em;
+    font-size:2.25em; 
     font-weight:400;
     color: white; 
     display: inline;
@@ -156,7 +157,7 @@ body {font-family: times, serif; background-color:#333;}
 	background-image:url('../img/egedsh-banner.png');
 	background-size:cover;
 	background-position:center;
-	height:22px;
+	height:200px;
     width:100%;
 }
 /* styles used for index2 example*/
@@ -834,6 +835,7 @@ pre {
 .mobile-submenu{display:none;}
 
 @media screen and (max-width: 480px) {
+.banner-index h1 {font-size: 1.75em;}
 .navbar-collapse, .dropdown-menu {float:none; width:100% !important;}
 .navbar-nav li {width:100% !important; float:none;}
 .mobile-submenu {
