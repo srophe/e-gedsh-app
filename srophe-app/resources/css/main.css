@@ -821,9 +821,11 @@ pre {
 .moreInfo {padding-left:1em;}
 /* Popover */
   .tooltip {
+      pointer-events: none;
       padding:1em;
       overflow:visible;
   }
+  
   .tooltip-inner {
     padding:1em;
     padding-left:1.5em;
