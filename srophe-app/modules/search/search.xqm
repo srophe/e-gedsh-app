@@ -62,7 +62,7 @@ if($collection !='') then
     search:idno()
     )
 else 
-concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossreference','section')]",
+concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossreference','section','subsection')]",
     common:keyword(),
     search:author(),
     search:persName(),
@@ -265,8 +265,12 @@ declare %templates:wrap function search:build-page($node as node()*, $model as m
  : Builds advanced search form
  :)
 declare function search:search-form() {   
-<form method="get" action="search.html" style="margin-top:2em;" class="form-horizontal indent" role="form">
+<form method="get" action="search.html" style="margin-top:2em;" class="form-horizontal indent" role="form" xmlns:xi="http://www.w3.org/2001/XInclude">
     <div class="well well-small">
+              <button type="button" class="btn btn-info pull-right" data-toggle="collapse" data-target="#searchTips">
+                Search Help <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+            </button>&#160;<p/>
+            <xi:include href="{$global:app-root}/searchTips.html"/>
         <div class="well well-small" style="background-color:white;">
             <div class="row">
                 <div class="col-md-7">
