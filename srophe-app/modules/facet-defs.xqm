@@ -14,7 +14,7 @@ declare function facet-defs:facet-definition($collection){
 if($collection = 'e-gedsh') then
 <facets xmlns="http://expath.org/ns/facet">
     <facet-definition name="Browse">
-        <facet-definition name="Front">
+        <facet-definition name="Front Matter">
             <group-by function="facet:group-front-back">
                 <sub-path>descendant::tei:idno[@type="front"]/@type</sub-path>
             </group-by>
@@ -24,7 +24,7 @@ if($collection = 'e-gedsh') then
                 <sub-path>self::tei:div[@type="entry" or @type="crossreference"]/tei:head[1]</sub-path>
             </group-by>
         </facet-definition>
-        <facet-definition name="Back">
+        <facet-definition name="Back Matter">
             <group-by function="facet:group-front-back">
                 <sub-path>descendant::tei:idno[@type="back"]/@type</sub-path>
             </group-by>
