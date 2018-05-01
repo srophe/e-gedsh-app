@@ -335,7 +335,7 @@ td {
 .browse-alpha {border-bottom:1px solid #ccc; padding-left:1em; padding:0; margin-bottom:1em; text-align: justify;}
 
 .browse-alpha li + li {
-    padding-left: 1em;
+    padding-left: .75em;
 }
 
 .browse-alpha li.syr-menu + li.syr-menu {

@@ -283,7 +283,11 @@ else
             if(($browse:lang = 'syr') or ($browse:lang = 'ar')) then 
                 (attribute dir {"rtl"}, attribute lang {"syr"}, attribute class {"label pull-right"}) 
             else attribute class {"label"},
-                if($browse:sort != '') then $browse:sort else 'A')}</h3>,
+            if($browse:sort = 'Front') then 'Front Matter'
+             else if($browse:sort = 'Back') then 'Back Matter' 
+             else if($browse:sort != '') then $browse:sort 
+             else 'A'
+                )}</h3>,
         <div class="{if($browse:lang = 'syr' or $browse:lang = 'ar') then 'syr-list' else 'en-list'}">
                 {if(($browse:lang = 'syr') or ($browse:lang = 'ar')) then (attribute dir {"rtl"}) else()}
                 {browse:display-hits($hits)}
@@ -339,7 +343,7 @@ declare function browse:browse-abc-menu(){
             else                
                 for $letter in tokenize('Front A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Back', ' ')
                 return
-                    <li><a href="?lang={$browse:lang}&amp;sort={$letter}">{$letter}</a></li>
+                    <li><a href="?lang={$browse:lang}&amp;sort={$letter}">{if($letter = 'Front') then 'Front Matter' else if($letter = 'Back') then 'Back Matter' else $letter}</a></li>
         }
         </ul>
     </div>
