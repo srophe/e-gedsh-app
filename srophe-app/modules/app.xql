@@ -704,7 +704,7 @@ declare %templates:wrap function app:other-data-formats($node as node(), $model 
 :)
 declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
     (:if($model("data")//@ref[contains(.,'http://syriaca.org/')] and $model("data")//tei:idno[@type="subject"][contains(.,'http://syriaca.org/')]) then:) 
-    if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
+    if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//tei:idno[contains(.,'http://syriaca.org/')]) then
         <div class="panel panel-default" style="margin-top:1em;" xmlns="http://www.w3.org/1999/xhtml">
             <div class="panel-heading"><h3 class="panel-title">Linked Data <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to additional resources beyond those mentioned by the author of this entry."></span></h3></div>
             <div class="panel-body">
@@ -712,7 +712,8 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                     let $subject-uri := string($model("data")/descendant::tei:idno[@type="subject"][contains(.,'http://syriaca.org/')][1])
                     let $article-title := $model('data')/tei:head[1]
                     let $query := 
-                        fn:encode-for-uri(concat("prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                        fn:encode-for-uri(concat("
+                                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                                 prefix lawd: <http://lawd.info/ontology/>
                                 prefix skos: <http://www.w3.org/2004/02/skos/core#>
                                 prefix dcterms: <http://purl.org/dc/terms/>  
@@ -720,13 +721,16 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                 {
                                     ?uri rdfs:label ?label
                                     FILTER (?uri IN ( <",$subject-uri,">))
-                                    FILTER ( langMatches(lang(?label), 'en')) .
-                                    {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  
-                                    {SELECT ?uri ( count(?o) as ?citations ) { 
-                                            ?uri lawd:hasCitation ?o 
-                                            	OPTIONAL{
-                                                  ?uri skos:closeMatch ?o.}
-                                            } GROUP BY ?uri }   
+                                    OPTIONAL{FILTER ( langMatches(lang(?label), 'en')) }.
+                                    OPTIONAL{
+                                        {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                                    OPTIONAL{
+                                        {SELECT ?uri ( count(?o) as ?citations ) { 
+                                                ?uri lawd:hasCitation ?o 
+                                                	OPTIONAL{
+                                                      ?uri skos:closeMatch ?o.}
+                                                } GROUP BY ?uri }
+                                    }           
                                 }"))
                     let $subject-sparql-results := 
                                     try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?query={$query}" method="get"/>)[2]
@@ -765,13 +769,16 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                         {
                                             ?uri rdfs:label ?label
                                             FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,1,10) return concat('<',$r,'>'),',')}<![CDATA[))
-                                            FILTER ( langMatches(lang(?label), 'en')) .
-                                            {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  
-                                            {SELECT ?uri ( count(?o) as ?citations ) { 
-                                              ?uri lawd:hasCitation ?o 
-                                            	OPTIONAL{
-                                                  ?uri skos:closeMatch ?o.}
-                                            } GROUP BY ?uri }   
+                                            OPTIONAL{FILTER ( langMatches(lang(?label), 'en')) }.
+                                            OPTIONAL{
+                                                {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                                            OPTIONAL{
+                                                {SELECT ?uri ( count(?o) as ?citations ) { 
+                                                        ?uri lawd:hasCitation ?o 
+                                                        	OPTIONAL{
+                                                              ?uri skos:closeMatch ?o.}
+                                                        } GROUP BY ?uri }
+                                            }           
                                         }
                                       ]]>  
                                     </textarea>
@@ -793,14 +800,17 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                                     {
                                                         ?uri rdfs:label ?label
                                                         FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,12,$count) return concat('<',$r,'>'),',')}<![CDATA[))
-                                                        FILTER ( langMatches(lang(?label), 'en')) .
-                                                        {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  
-                                                        {SELECT ?uri ( count(?o) as ?citations ) { 
-                                                          ?uri lawd:hasCitation ?o 
-                                                        	OPTIONAL{
-                                                              ?uri skos:closeMatch ?o.}
-                                                        } GROUP BY ?uri }   
-                                                    }
+                                                        OPTIONAL{FILTER ( langMatches(lang(?label), 'en')) }.
+                                                        OPTIONAL{
+                                                             {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                                                        OPTIONAL{
+                                                             {SELECT ?uri ( count(?o) as ?citations ) { 
+                                                                     ?uri lawd:hasCitation ?o 
+                                                                     	OPTIONAL{
+                                                                           ?uri skos:closeMatch ?o.}
+                                                                     } GROUP BY ?uri }
+                                                         }           
+                                                     }
                                                   ]]>  
                                                 </textarea>
                                             </form>
