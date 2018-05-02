@@ -1,9 +1,9 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
     <div class="banner-title full-page">
-    <span class="img-credit">
-        <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
-    </span>
-</div>
+        <span class="img-credit">
+            <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
+        </span>
+    </div>
     <div class="section indent top-padding">
         <!--Main Content-->
         <div class="row row-centered top-padding">
@@ -18,7 +18,7 @@
                 <div data-template="browse:group-abc-entries"/>
             </div>
             <div class="col-md-3">
-                <div data-template="app:other-data-formats" data-template-formats="print,tei" class="noprint"/>
+                <div data-template="app:other-data-formats" data-template-formats="print,tei,buy" class="noprint"/>
                 <div data-template="app:srophe-related"/>
             </div>
         </div>  
@@ -74,19 +74,19 @@
     </div>
     <script type="text/javascript">
         $('html').click(function() {
-            $('#footnoteDisplay').hide();
-            $('#footnoteDisplay div.content').empty();
+        $('#footnoteDisplay').hide();
+        $('#footnoteDisplay div.content').empty();
         })
         
         $('.footnote-ref a').click(function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            var link = $(this);
-            var href = $(this).attr('href');
-            var content = $(href).html()
-            $('#footnoteDisplay').css('display','block');
-            $('#footnoteDisplay').css({'top':e.pageY-50,'left':e.pageX+25, 'position':'absolute'});
-            $('#footnoteDisplay div.content').html( content );    
+        e.stopPropagation();
+        e.preventDefault();
+        var link = $(this);
+        var href = $(this).attr('href');
+        var content = $(href).html()
+        $('#footnoteDisplay').css('display','block');
+        $('#footnoteDisplay').css({'top':e.pageY-50,'left':e.pageX+25, 'position':'absolute'});
+        $('#footnoteDisplay div.content').html( content );    
         });
         
     </script>
