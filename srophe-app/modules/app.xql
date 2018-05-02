@@ -690,8 +690,12 @@ declare %templates:wrap function app:other-data-formats($node as node(), $model 
                   else if($f = 'ttl') then
                         (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/ttl')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-Turtle data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/TTL
+                        </a>, '&#160;')
+                  else if($f = 'buy') then
+                        (<a href="https://www.gorgiaspress.com/gorgias-encyclopedic-dictionary-of-the-syriac-heritage-students-and-scholars" target="_blank"class="btn btn-default btn-xs" id="buyBtn" data-toggle="tooltip" title="Purchase a copy of the printed edition" >
+                             <span class="glyphicon glyphicon-book" aria-hidden="true"></span> Purchase
                         </a>, '&#160;')                        
-                   else () 
+                  else () 
                 
             }
             <br/>
@@ -713,25 +717,27 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                     let $article-title := $model('data')/tei:head[1]
                     let $query := 
                         fn:encode-for-uri(concat("
-                                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                                prefix lawd: <http://lawd.info/ontology/>
-                                prefix skos: <http://www.w3.org/2004/02/skos/core#>
-                                prefix dcterms: <http://purl.org/dc/terms/>  
-                                SELECT ?uri ?label ?subjects ?citations 
-                                {
-                                    ?uri rdfs:label ?label
-                                    FILTER (?uri IN ( <",$subject-uri,">))
-                                    OPTIONAL{FILTER ( langMatches(lang(?label), 'en')) }.
-                                    OPTIONAL{
-                                        {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
-                                    OPTIONAL{
-                                        {SELECT ?uri ( count(?o) as ?citations ) { 
-                                                ?uri lawd:hasCitation ?o 
-                                                	OPTIONAL{
-                                                      ?uri skos:closeMatch ?o.}
-                                                } GROUP BY ?uri }
-                                    }           
-                                }"))
+                            prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                            prefix lawd: <http://lawd.info/ontology/>
+                            prefix skos: <http://www.w3.org/2004/02/skos/core#>
+                            prefix dcterms: <http://purl.org/dc/terms/>  
+                            	SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
+                                    {
+                                       ?uri rdfs:label ?l
+                                       FILTER (?uri IN ( <",$subject-uri,">)).
+                                       FILTER ( langMatches(lang(?l), 'en')).
+                                       OPTIONAL{
+                                             {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                                       OPTIONAL{
+                                             {SELECT ?uri ( count(?o) as ?uriCitations ) { 
+                                                     ?uri lawd:hasCitation ?o 
+                                                       OPTIONAL{
+                                                              ?uri skos:closeMatch ?o.}
+                                                             } GROUP BY ?uri }
+                                             }           
+                                     }
+                            GROUP BY ?uri
+                            "))
                     let $subject-sparql-results := 
                                     try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?query={$query}" method="get"/>)[2]
                                        } catch * {<error>Caught error {$err:code}: {$err:description} {$subject-uri}</error>}       
@@ -763,23 +769,23 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                         prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                                         prefix lawd: <http://lawd.info/ontology/>
                                         prefix skos: <http://www.w3.org/2004/02/skos/core#>
-                                        prefix dcterms: <http://purl.org/dc/terms/>
-                                        
-                                        SELECT ?uri ?label ?subjects ?citations
+                                        prefix dcterms: <http://purl.org/dc/terms/>  
+                            	        
+                            	        SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
                                         {
-                                            ?uri rdfs:label ?label
-                                            FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,1,10) return concat('<',$r,'>'),',')}<![CDATA[))
-                                            OPTIONAL{FILTER ( langMatches(lang(?label), 'en')) }.
+                                            ?uri rdfs:label ?l
+                                            FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,1,10) return concat('<',$r,'>'),',')}<![CDATA[)).
+                                            FILTER ( langMatches(lang(?l), 'en')).
                                             OPTIONAL{
-                                                {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                                                 {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
                                             OPTIONAL{
-                                                {SELECT ?uri ( count(?o) as ?citations ) { 
-                                                        ?uri lawd:hasCitation ?o 
-                                                        	OPTIONAL{
-                                                              ?uri skos:closeMatch ?o.}
-                                                        } GROUP BY ?uri }
-                                            }           
+                                                 {SELECT ?uri ( count(?o) as ?uriCitations ) { ?uri lawd:hasCitation ?o 
+                                                         OPTIONAL{ ?uri skos:closeMatch ?o.}
+                                                 } GROUP BY ?uri }
+                                           }           
                                         }
+                                        GROUP BY ?uri                                            
+                                            
                                       ]]>  
                                     </textarea>
                                 </form>
@@ -794,23 +800,22 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                                     prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                                                     prefix lawd: <http://lawd.info/ontology/>
                                                     prefix skos: <http://www.w3.org/2004/02/skos/core#>
-                                                    prefix dcterms: <http://purl.org/dc/terms/>
-                                                    
-                                                    SELECT ?uri ?label ?subjects ?citations
+                                                    prefix dcterms: <http://purl.org/dc/terms/>  
+                                        	        
+                                        	        SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
                                                     {
-                                                        ?uri rdfs:label ?label
-                                                        FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,12,$count) return concat('<',$r,'>'),',')}<![CDATA[))
-                                                        OPTIONAL{FILTER ( langMatches(lang(?label), 'en')) }.
+                                                        ?uri rdfs:label ?l
+                                                        FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,12,$count) return concat('<',$r,'>'),',')}<![CDATA[)).
+                                                        FILTER ( langMatches(lang(?l), 'en')).
                                                         OPTIONAL{
-                                                             {SELECT ?uri ( count(?s) as ?subjects ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                                                             {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
                                                         OPTIONAL{
-                                                             {SELECT ?uri ( count(?o) as ?citations ) { 
-                                                                     ?uri lawd:hasCitation ?o 
-                                                                     	OPTIONAL{
-                                                                           ?uri skos:closeMatch ?o.}
-                                                                     } GROUP BY ?uri }
-                                                         }           
-                                                     }
+                                                             {SELECT ?uri ( count(?o) as ?uriCitations ) { ?uri lawd:hasCitation ?o 
+                                                                     OPTIONAL{ ?uri skos:closeMatch ?o.}
+                                                             } GROUP BY ?uri }
+                                                       }           
+                                                    }
+                                                    GROUP BY ?uri                                                                                     
                                                   ]]>  
                                                 </textarea>
                                             </form>
@@ -827,13 +832,15 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                     $('#showOtherResources').children('form').each(function () {
                                         var url = $(this).attr('action');
                                             $.post(url, $(this).serialize(), function(data) {
-                                                console.log(data);
                                                 var showOtherResources = $("#listOtherResources"); 
                                                 var dataArray = data.results.bindings;
                                                 if (!jQuery.isArray(dataArray)) dataArray = [dataArray];
                                                 $.each(dataArray, function (currentIndex, currentElem) {
+                                                var relatedResources = 'Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> '
+                                                var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>' : ''
+                                                var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>' : ''
                                                     showOtherResources.append(
-                                                        '<div>Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> <div class="indent">' + currentElem.citations.value + ' related citations</div><div class="indent">' + currentElem.subjects.value + ' related subjects</div></div>'
+                                                       '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>'
                                                     );
                                                 });
                                             }).fail( function(jqXHR, textStatus, errorThrown) {
@@ -848,9 +855,12 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                                         var dataArray = data.results.bindings;
                                                         if (!jQuery.isArray(dataArray)) dataArray = [dataArray];                                                        
                                                         $.each(dataArray, function (currentIndex, currentElem) {
-                                                            showOtherResources.append(
-                                                               '<div>Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> <div class="indent">' + currentElem.citations.value + ' related citations</div><div class="indent">' + currentElem.subjects.value + ' related subjects</div></div>'
-                                                          );
+                                                            var relatedResources = 'Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> '
+                                                            var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>' : ''
+                                                            var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>' : ''
+                                                                showOtherResources.append(
+                                                                   '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>'
+                                                                );
                                                         });
                                                     }).fail( function(jqXHR, textStatus, errorThrown) {
                                                         console.log(textStatus);
