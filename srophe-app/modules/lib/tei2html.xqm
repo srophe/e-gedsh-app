@@ -109,7 +109,7 @@ declare function tei2html:summary-view-generic($nodes as node()*, $id as xs:stri
            </span>
            {(if($nodes/descendant::tei:byline) then
             <span class="results-list-desc sort-title">
-                <span>Author: </span>
+                <span>Contributor: </span>
                 <i>{$nodes/descendant::tei:byline/tei:persName}</i>
             </span>
            else (),

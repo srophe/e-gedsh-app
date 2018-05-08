@@ -118,6 +118,8 @@ declare function search:search-string(){
     return 
         if(request:get-parameter($parameter, '') != '') then
             if($parameter = 'start' or $parameter = 'sort-element') then ()
+            else if($parameter = 'author') then 
+                (<span class="param">Contributor: </span>,<span class="match">{request:get-parameter($parameter, '')}&#160;</span>)
             else if($parameter = 'q') then 
                 (<span class="param">Keyword: </span>,<span class="match">{$search:q}&#160;</span>)
             else if($parameter = 'persName') then 
