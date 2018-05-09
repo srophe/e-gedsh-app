@@ -256,23 +256,26 @@ else $global:app-title
 
 (:~ 
  : Add header links for alternative formats. 
+ <link rel="MARCREL.EDT" href="http://example.org/agents/DeptOfObfuscation" />
+ <link rel="DCTERMS.subject" href="http://example.org/topics/archives" title="Archives" />
 :)
 declare function app:metadata($node as node(), $model as map(*)) {
     if(request:get-parameter('id', '')) then 
-    (
-    (: some rdf examples
-    <link type="application/rdf+xml" href="id.rdf" rel="alternate"/>
-    <link type="text/turtle" href="id.ttl" rel="alternate"/>
-    <link type="text/plain" href="id.nt" rel="alternate"/>
-    <link type="application/json+ld" href="id.jsonld" rel="alternate"/>
-    :)
-    <meta name="DC.title" property="dc.title " content="{normalize-space($model("data")/descendant::tei:head[1])}"/>,
+    (  
+    <meta name="DC.title" content="{normalize-space($model("data")/descendant::tei:head[1])}"/>,
+    for $author in $model("data")/descendant::tei:byline/tei:persName
+    return <meta name="DC.creator"  content="{normalize-space(string-join($author/text(),' '))}"/>,
+    <meta name="DCTERMS.isPartOf" content="Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition"/>,
+    <meta name="DCTERMS.publisher" content="Beth Mardutho, The Syriac Institute/Gorgias Press"/>,
+    <meta name="bibo.uri" content="{normalize-space($model("data")/descendant::tei:idno[@type='URI'][1]/text())}"/>,
+    <meta name="DC.type" content="Article"/>,
+    <meta name="DC.identifier " content="{normalize-space($model("data")/descendant::tei:idno[@type='URI'][1]/text())}"/>,
     if($model("data")/descendant::tei:note[@type='abstract']) then 
-        <meta name="DC.description" property="dc.description " content="{normalize-space($model("data")/descendant::tei:note[@type='abstract'][1])}"/>
+        <meta name="DCTERMS.abstract" content="{normalize-space($model("data")/descendant::tei:note[@type='abstract'][1])}"/>
     else (),
     <link xmlns="http://www.w3.org/1999/xhtml" type="text/html" href="{request:get-parameter('id', '')}.html" rel="alternate"/>,
-    <link xmlns="http://www.w3.org/1999/xhtml" type="text/xml" href="{request:get-parameter('id', '')}/tei" rel="alternate"/>,
-    <link xmlns="http://www.w3.org/1999/xhtml" type="application/atom+xml" href="{request:get-parameter('id', '')}/atom" rel="alternate"/>
+    <link xmlns="http://www.w3.org/1999/xhtml" type="text/xml" href="{request:get-parameter('id', '')}.tei" rel="alternate"/>,
+    <link xmlns="http://www.w3.org/1999/xhtml" type="application/rdf+xml" href="{replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry'))}.rdf" rel="meta"/>
     )
     else ()
 };
