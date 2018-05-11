@@ -4,7 +4,7 @@ module namespace search="http://syriaca.org/search";
 import module namespace page="http://syriaca.org/page" at "../lib/paging.xqm";
 import module namespace common="http://syriaca.org/common" at "common.xqm";
 import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
-import module namespace tei2html="http://syriaca.org/tei2html" at "../lib/tei2html.xqm";
+import module namespace tei2html="http://syriaca.org/tei2html" at "../content-negotiation/tei2html.xqm";
 import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
 import module namespace kwic="http://exist-db.org/xquery/kwic";
 import module namespace templates="http://exist-db.org/xquery/templates" ;
@@ -62,7 +62,7 @@ if($collection !='') then
     search:idno()
     )
 else 
-concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossreference','section','subsection')]",
+concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossreference','section','subsection')][tei:ab[@type='idnos']]",
     common:keyword(),
     search:author(),
     search:persName(),
