@@ -155,12 +155,14 @@ declare function tei2html:output-kwic($nodes as node()*, $id as xs:string*){
     for $node in subsequence($results//*:match,1,8)
     let $prev := $node/preceding-sibling::text()[1]
     let $next := $node/following-sibling::text()[1]
-    (:if($prev[not(. intersect $node/following-sibling::text()[1])]) then () else $node/following-sibling::text()[1]:)
     let $prevString := 
         if(string-length($prev) gt 60) then 
             concat('...',substring($prev,string-length($prev) - 100, 100))
         else $prev
-    let $nextString := if(string-length($next) lt 60 ) then () else concat(substring($next,1,100),'...')
+    let $nextString := 
+        if($next = $node/preceding-sibling::*:match[1]/following-sibling::text()[1]) then '[[Overlap]]'
+        else if(string-length($next) lt 60 ) then 'Less then 60 whatever' 
+        else (:concat(substring($next,1,100),'...'):) 'Ouput result'
     let $link := concat($global:nav-base,'/',tokenize($id,'/')[last()],'#',$node/@n)
     return 
         <span>{$prevString}&#160;<span class="match" style="background-color:yellow;"><a href="{$link}">{$node/text()}</a></span>&#160;{$nextString}</span>
