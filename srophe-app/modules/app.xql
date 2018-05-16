@@ -262,11 +262,11 @@ else $global:app-title
 declare function app:metadata($node as node(), $model as map(*)) {
     if(request:get-parameter('id', '')) then 
     (  
-    <meta name="DC.title" content="{normalize-space($model("data")/descendant::tei:head[1])}"/>,
+    <meta name="DC.title" content="{normalize-space($model("data")/descendant::tei:head[1])}"/>, 
     for $author in $model("data")/descendant::tei:byline/tei:persName
     return <meta name="DC.creator"  content="{normalize-space(string-join($author/text(),' '))}"/>,
-    <meta name="DCTERMS.isPartOf" content="Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition"/>,
-    <meta name="DCTERMS.publisher" content="Beth Mardutho, The Syriac Institute/Gorgias Press"/>,
+    <meta name="DC.source" content="Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition" />,
+    <meta name="DC.publisher" content="Beth Mardutho, The Syriac Institute/Gorgias Press"/>,
     <meta name="bibo.uri" content="{normalize-space($model("data")/descendant::tei:idno[@type='URI'][1]/text())}"/>,
     <meta name="DC.type" content="Article"/>,
     <meta name="DC.identifier " content="{normalize-space($model("data")/descendant::tei:idno[@type='URI'][1]/text())}"/>,
@@ -671,8 +671,11 @@ else
    return             
    <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
 };
+
 (: Data formats and sharing:)
 declare %templates:wrap function app:other-data-formats($node as node(), $model as map(*), $formats as xs:string?){
+let $id := $model("data")/descendant::tei:idno[@type='URI'][contains(., $global:base-uri)][1]/text()
+return
     if($formats) then
         <div class="container" style="width:100%;clear:both;margin-bottom:1em; text-align:right;">
             {
@@ -698,8 +701,15 @@ declare %templates:wrap function app:other-data-formats($node as node(), $model 
                         (<a href="https://www.gorgiaspress.com/gorgias-encyclopedic-dictionary-of-the-syriac-heritage-students-and-scholars" target="_blank"class="btn btn-default btn-xs" id="buyBtn" data-toggle="tooltip" title="Purchase a copy of the printed edition" >
                              <span class="glyphicon glyphicon-book" aria-hidden="true"></span> Purchase
                         </a>, '&#160;')                        
+                  else if($f = 'uri') then
+                        (<a class="btn btn-default btn-xs" id="copyBtn" 
+                        data-toggle="tooltip" 
+                        title="Copy URI to clipboard: {$id}"
+                        data-clipboard-action="copy" data-clipboard-text="{string($id)}">
+                        <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> uri</a>,'&#160;',
+                        <script><![CDATA[new Clipboard('#copyBtn');]]></script>)
+                    
                   else () 
-                
             }
             <br/>
         </div>
