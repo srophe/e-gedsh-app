@@ -28,7 +28,7 @@
         <!-- eXist data app root for gazetteer data -->
         <data-root>e-gedsh-data</data-root>
         <!-- Base URI for identifiers in app data -->
-        <base_uri>http://gedsh.bethmardutho.org</base_uri>
+        <base_uri>https://gedsh.bethmardutho.org</base_uri>
         <!-- Map rendering -->
         <maps>
             <option>google</option>
@@ -48,5 +48,5 @@
             </div>
         </footer>
     </config>
-<deployed>2017-03-14T12:38:59.416-05:00</deployed>
+    <deployed>2017-03-14T12:38:59.416-05:00</deployed>
 </meta>

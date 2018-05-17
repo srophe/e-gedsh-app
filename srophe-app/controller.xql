@@ -80,7 +80,7 @@ else if(contains($exist:path,"/entry/") or contains($exist:path,"/fig/") or ends
             <forward url="{$exist:controller}{$html-path}"></forward>
                 <view>
                     <forward url="{$exist:controller}/modules/view.xql">
-                         <add-parameter name="id" value="{concat('http://gedsh.bethmardutho.org/map/',$id)}"/>
+                         <add-parameter name="id" value="{concat('https://gedsh.bethmardutho.org/map/',$id)}"/>
                     </forward>
                 </view>
                 <error-handler>
@@ -98,7 +98,7 @@ else if(contains($exist:path,"/entry/") or contains($exist:path,"/fig/") or ends
             <forward url="{$exist:controller}{$html-path}"></forward>
                 <view>
                     <forward url="{$exist:controller}/modules/view.xql">
-                         <add-parameter name="id" value="{concat('http://gedsh.bethmardutho.org/fig/',$id)}"/>
+                         <add-parameter name="id" value="{concat('https://gedsh.bethmardutho.org/fig/',$id)}"/>
                     </forward>
                 </view>
                 <error-handler>
@@ -116,7 +116,7 @@ else if(contains($exist:path,"/entry/") or contains($exist:path,"/fig/") or ends
             <forward url="{$exist:controller}{$html-path}"></forward>
                 <view>
                     <forward url="{$exist:controller}/modules/view.xql">
-                         <add-parameter name="id" value="{concat('http://gedsh.bethmardutho.org/',$id)}"/>
+                         <add-parameter name="id" value="{concat('https://gedsh.bethmardutho.org/',$id)}"/>
                     </forward>
                 </view>
                 <error-handler>
