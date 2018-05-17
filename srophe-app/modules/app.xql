@@ -706,7 +706,7 @@ return
                         data-toggle="tooltip" 
                         title="Copy URI to clipboard: {$id}"
                         data-clipboard-action="copy" data-clipboard-text="{string($id)}">
-                        <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> uri</a>,'&#160;',
+                        <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> URI</a>,'&#160;',
                         <script><![CDATA[new Clipboard('#copyBtn');]]></script>)
                     
                   else () 
