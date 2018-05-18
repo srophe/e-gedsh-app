@@ -640,7 +640,7 @@ count(collection($global:data-root)//tei:div[@type='entry'])
 };
 
 declare %templates:wrap function app:contributors-count($node as node(), $model as map(*)){
-count(collection($global:data-root)//tei:div[@type='section'][tei:ab[@type='idnos']/child::tei:idno[. = 'http://gedsh.bethmardutho.org/List-Contributors']]/tei:p)
+count(collection($global:data-root)//tei:div[@type='section'][tei:ab[@type='idnos']/child::tei:idno[. = 'https://gedsh.bethmardutho.org/List-Contributors']]/tei:p)
 };
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
 if($model("data")/descendant::tei:idno[@type=('back','front')] or $model("data")/descendant-or-self::*/@type='figure') then 
