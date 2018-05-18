@@ -392,7 +392,7 @@
                         </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
                             <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                         </em>, 
-                        edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
+                        edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
                             accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                         </p>
                         <h4>Bibliography Entry Citation:</h4>
@@ -406,8 +406,8 @@
                                 </xsl:choose> 
                             </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>.” In <em>
                                 <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
-                            </em>. Edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
-                            Digital edition prepared by Ute S. Possekel and Daniel L. Schwartz.
+                            </em>. Edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
+                            Digital edition prepared by Ute Possekel and Daniel L. Schwartz.
                             Accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>.
                             <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                         </p>
