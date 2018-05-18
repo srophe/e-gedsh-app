@@ -382,7 +382,7 @@
                     </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
                     <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                 </em>, 
-                edited by, <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
+                edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                 <div class="collapse" id="showcit">
                     <div id="citation-bibliography">
                         <h4>Footnote Style Citation with Date:</h4>
