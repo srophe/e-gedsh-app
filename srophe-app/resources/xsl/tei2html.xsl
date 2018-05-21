@@ -392,8 +392,8 @@
                         </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
                             <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                         </em>, 
-                        edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, 
-                            accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
+                        edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/> 
+                            (Gorgias Press, 2011; online ed. Beth Mardutho, 2018), <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                         </p>
                         <h4>Bibliography Entry Citation:</h4>
                         <p>
@@ -407,8 +407,7 @@
                             </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>.” In <em>
                                 <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                             </em>. Edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
-                            Digital edition prepared by Ute Possekel and Daniel L. Schwartz.
-                            Accessed <xsl:value-of select="local:date-numberic-to-string(current-date())"/>.
+                            Digital edition prepared by David Michelson, Ute Possekel, and Daniel L. Schwartz. Gorgias Press, 2011; online ed. Beth Mardutho, 2018. 
                             <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                         </p>
                         <p>A TEI-XML record with complete metadata is available at <a href="{replace(concat(//t:ab/t:idno[@type='URI'][1],'/tei'),$base-uri,$nav-base)}">
