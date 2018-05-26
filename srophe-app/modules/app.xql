@@ -7,7 +7,7 @@ import module namespace config="http://syriaca.org/config" at "config.xqm";
 import module namespace functx="http://www.functx.com";
 (: Srophe modules :)
 import module namespace teiDocs="http://syriaca.org/teiDocs" at "teiDocs/teiDocs.xqm";
-import module namespace tei2html="http://syriaca.org/tei2html" at "lib/tei2html.xqm";
+import module namespace tei2html="http://syriaca.org/tei2html" at "content-negotiation/tei2html.xqm";
 import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
 import module namespace rel="http://syriaca.org/related" at "lib/get-related.xqm";
 import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
@@ -822,7 +822,7 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                         <div class="other-resources" xmlns="http://www.w3.org/1999/xhtml">
                             <h4>Resources related to {$count} other topics in this article. </h4>
                             <div class="collapse" id="showOtherResources">
-                                <form class="form-inline hidden" action="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql" method="post">
+                                <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post">
                                     <input type="hidden" name="format" id="format" value="json"/>
                                     <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
                                       <![CDATA[
@@ -853,7 +853,7 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                 {if($count gt 10) then
                                     <div>
                                         <div class="collapse" id="showMoreResources">
-                                            <form class="form-inline hidden" action="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql" method="post">
+                                            <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post">
                                                 <input type="hidden" name="format" id="format" value="json"/>
                                                 <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
                                                   <![CDATA[
@@ -887,22 +887,23 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                             </div>
                             <a href="#" class="btn btn-default togglelink" style="width:100%;" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide Other Resources" id="getLinkedData">Show Other Resources</a>
                             <script>
-                            <![CDATA[
+                               <![CDATA[
                                 $(document).ready(function() {
                                     $('#showOtherResources').children('form').each(function () {
                                         var url = $(this).attr('action');
                                             $.post(url, $(this).serialize(), function(data) {
-                                                var showOtherResources = $("#listOtherResources"); 
+                                                console.log(data);
+                                                var showOtherResources = $("#listOtherResources");
                                                 var dataArray = data.results.bindings;
                                                 if (!jQuery.isArray(dataArray)) dataArray = [dataArray];
                                                 $.each(dataArray, function (currentIndex, currentElem) {
-                                                var relatedResources = 'Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> '
-                                                var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>' : ''
-                                                var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>' : ''
-                                                    showOtherResources.append(
-                                                       '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>'
-                                                    );
-                                                });
+                                                            var relatedResources = 'Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> '
+                                                            var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>' : ''
+                                                            var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>' : ''
+                                                                showOtherResources.append(
+                                                                   '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>'
+                                                                );
+                                                        });
                                             }).fail( function(jqXHR, textStatus, errorThrown) {
                                                 console.log(textStatus);
                                             }); 
@@ -911,9 +912,9 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                            $('#showMoreResources').children('form').each(function () {
                                                 var url = $(this).attr('action');
                                                     $.post(url, $(this).serialize(), function(data) {
-                                                        var showOtherResources = $("#showMoreResources");
+                                                        var showOtherResources = $("#showMoreResources"); 
                                                         var dataArray = data.results.bindings;
-                                                        if (!jQuery.isArray(dataArray)) dataArray = [dataArray];                                                        
+                                                        if (!jQuery.isArray(dataArray)) dataArray = [dataArray];
                                                         $.each(dataArray, function (currentIndex, currentElem) {
                                                             var relatedResources = 'Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> '
                                                             var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>' : ''

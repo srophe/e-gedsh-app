@@ -146,7 +146,7 @@ else if (ends-with($exist:path, "/atom") or ends-with($exist:path, "/tei")) then
         <forward url="{concat('/restxq/e-gedsh', $exist:path)}" absolute="yes"/>
     </dispatch>
 else if (ends-with($exist:resource, ".html")) then
-    (: the html page is run through view.xql to expand templates :)
+    (: the html page is run through view.xql to expand templates :) 
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <view>
             <forward url="{$exist:controller}/modules/view.xql"/>
@@ -155,12 +155,29 @@ else if (ends-with($exist:resource, ".html")) then
 			<forward url="{$exist:controller}/error-page.html" method="get"/>
 			<forward url="{$exist:controller}/modules/view.xql"/>
 		</error-handler>
-    </dispatch>
+    </dispatch>    
 (: Redirects paths with directory, and no trailing slash to index.html in that directory :)    
 else if (matches($exist:resource, "^([^.]+)$")) then
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+      let $id := 
+            if(matches($exist:resource,"\*.html")) then substring-before($exist:resource,'.html')
+            else $exist:resource
+       let $html-path := '/entry.html'
+       return 
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <forward url="{$exist:controller}{$html-path}"></forward>
+                <view>
+                    <forward url="{$exist:controller}/modules/view.xql">
+                         <add-parameter name="id" value="{concat('https://gedsh.bethmardutho.org/',$id)}"/>
+                    </forward>
+                </view>
+                <error-handler>
+                    <forward url="{$exist:controller}/error-page.html" method="get"/>
+                    <forward url="{$exist:controller}/modules/view.xql"/>
+                </error-handler>
+         </dispatch> 
+    (:<dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <redirect url="{concat($exist:path,'/index.html')}"/>
-    </dispatch>         
+    </dispatch>:)         
 else
     (: everything else is passed through :)
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

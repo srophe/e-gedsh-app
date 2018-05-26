@@ -13,7 +13,6 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 declare namespace util="http://exist-db.org/xquery/util";
 
-
 (:~
  : Simple TEI to HTML transformation
  : @param $node   
@@ -39,7 +38,7 @@ declare function tei2html:tei2html($nodes as node()*) as item()* {
             case element(tei:ref) return
                 if($node/parent::tei:ab[@type='crossreference']) then 
                     if($node/@target) then
-                        <a href="{replace($node/@target,$global:base-uri,concat($global:nav-base,'/entry'))}">{$node//text()}</a>
+                        <a href="{replace($node/@target,$global:base-uri,$global:nav-base)}">{$node//text()}</a>
                     else if($node[@type='lookup']) then   
                         <a href="{concat($global:nav-base,'/search.html?q=',$node//text())}">{$node//text()}</a>
                     else if($node[@type='authorLookup']) then   
@@ -106,7 +105,7 @@ declare function tei2html:summary-view-generic($nodes as node()*, $id as xs:stri
     return 
        <div class="results-list {if($nodes[@type = ('subsection','subSubsection')]) then 'indent' else ()}">
           <span class="sort-title">  
-               <a href="{$global:nav-base}/entry/{$recID}">{$nodes/tei:head}</a>
+               <a href="{$global:nav-base}/{$recID}">{$nodes/tei:head}</a>
                <span class="type">{$nodes/tei:ab[@type='infobox']}</span>
            </span>
            {(if($nodes/descendant::tei:byline) then
@@ -121,7 +120,7 @@ declare function tei2html:summary-view-generic($nodes as node()*, $id as xs:stri
            )}
            <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>
-               <a href="{$global:nav-base}/entry/{$recID}">{$id}</a>
+               <a href="{$global:nav-base}/{$recID}">{$id}</a>
            </span>
        </div>   
 };
@@ -152,17 +151,16 @@ declare function tei2html:summary-view-crossref($nodes as node()*, $id as xs:str
 declare function tei2html:output-kwic($nodes as node()*, $id as xs:string*){
     let $results := <results xmlns="http://www.w3.org/1999/xhtml">{tei2html:kwic-format($nodes)}</results>
     let $count := count($results//*:match)
-    for $node in subsequence($results//*:match,1,8)
+    for $node at $p in subsequence($results//*:match,1,8)
     let $prev := $node/preceding-sibling::text()[1]
     let $next := $node/following-sibling::text()[1]
     let $prevString := 
         if(string-length($prev) gt 60) then 
-            concat('...',substring($prev,string-length($prev) - 100, 100))
+            concat(' ...',substring($prev,string-length($prev) - 100, 100))
         else $prev
     let $nextString := 
-        if($next = $node/preceding-sibling::*:match[1]/following-sibling::text()[1]) then '[[Overlap]]'
-        else if(string-length($next) lt 60 ) then 'Less then 60 whatever' 
-        else (:concat(substring($next,1,100),'...'):) 'Ouput result'
+        if(string-length($next) lt 100 ) then () 
+        else concat(substring($next,1,100),'... ')
     let $link := concat($global:nav-base,'/',tokenize($id,'/')[last()],'#',$node/@n)
     return 
         <span>{$prevString}&#160;<span class="match" style="background-color:yellow;"><a href="{$link}">{$node/text()}</a></span>&#160;{$nextString}</span>
