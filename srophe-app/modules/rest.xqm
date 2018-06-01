@@ -171,7 +171,7 @@ function api:data-serialize($data as item()*, $content-type as item()*) {
   :)
 declare
     %rest:GET
-    %rest:path("/e-gedsh/{$folder}/{$page}")
+    %rest:path("/e-gedsh/{$page}")
     %rest:header-param("Content-Type", "{$content-type}")
 function api:get-page($folder as xs:string?, $page as xs:string?, $content-type as item()*) {
     let $path := concat($folder,'/',$page)
@@ -189,7 +189,7 @@ function api:get-page($folder as xs:string?, $page as xs:string?, $content-type 
   :)
 declare
     %rest:GET
-    %rest:path("/e-gedsh/{$folder}/{$page}/{$extension}")
+    %rest:path("/e-gedsh/{$page}/{$extension}")
     %rest:header-param("Content-Type", "{$content-type}")
 function api:get-page($folder as xs:string?, $page as xs:string?, $extension as xs:string, $content-type as item()*) {
     let $path := concat($folder,'/',$page,'.',$extension)
