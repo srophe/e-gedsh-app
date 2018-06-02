@@ -275,7 +275,7 @@ declare function app:metadata($node as node(), $model as map(*)) {
     else (),
     <link xmlns="http://www.w3.org/1999/xhtml" type="text/html" href="{request:get-parameter('id', '')}.html" rel="alternate"/>,
     <link xmlns="http://www.w3.org/1999/xhtml" type="text/xml" href="{request:get-parameter('id', '')}.tei" rel="alternate"/>,
-    <link xmlns="http://www.w3.org/1999/xhtml" type="application/rdf+xml" href="{replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry'))}.rdf" rel="meta"/>
+    <link xmlns="http://www.w3.org/1999/xhtml" type="application/rdf+xml" href="{replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base)}.rdf" rel="meta"/>
     )
     else ()
 };
@@ -690,11 +690,11 @@ if($model("data")/descendant::tei:idno[@type=('back','front')] or $model("data")
     let $pID := substring-after($model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1], $global:base-uri)
     let $prev := 
                if($pID != '') then
-                    (<a href="{$global:nav-base}/entry{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+                    (<a href="{$global:nav-base}{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
                else ()
     let $next := 
                 if($nID != '') then 
-                    (' | ', <a href="{$global:nav-base}/entry{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                    (' | ', <a href="{$global:nav-base}{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()  
     return 
     <p>{($prev, ' ', if($model("data")/descendant-or-self::*/@type='figure') then $c else $model("data")/tei:head[1], ' ', $next)}</p>
@@ -703,11 +703,11 @@ else
    let $pID := substring-after($model("data")/preceding-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],$global:base-uri)
    let $prev := 
                 if($pID != '') then
-                        (<a href="{$global:nav-base}/entry{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+                        (<a href="{$global:nav-base}{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
                 else ()
    let $next := 
                 if($nID != '') then 
-                   (' | ', <a href="{$global:nav-base}/entry{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
+                   (' | ', <a href="{$global:nav-base}{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
                 else ()
    return             
    <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
@@ -723,7 +723,7 @@ return
                 for $f in tokenize($formats,',')
                 return 
                     if($f = 'tei') then
-                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/tei')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the TEI XML data for this record." >
+                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/tei')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the TEI XML data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> TEI/XML
                         </a>, '&#160;')
                     else if($f = 'print') then                        
@@ -731,11 +731,11 @@ return
                              <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
                         </a>, '&#160;')  
                    else if($f = 'rdf') then
-                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/rdf')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-XML data for this record." >
+                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/rdf')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-XML data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/XML
                         </a>, '&#160;')
                   else if($f = 'ttl') then
-                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,concat($global:nav-base,'/entry')),'/ttl')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-Turtle data for this record." >
+                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/ttl')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-Turtle data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/TTL
                         </a>, '&#160;')
                   else if($f = 'buy') then
