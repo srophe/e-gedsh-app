@@ -83,13 +83,6 @@ return
             if(local:recaptcha() = true()) then 
                let $mail := local:build-message()
                return 
-                    if($config/descendant::email/properties) then
-                        let $mailSession := mail:get-mail-session($config/descendant::email/properties)
-                        return 
-                            if(mail:send-email(xs:long($mailSession), $mail)) then 
-                                <h4>Thank you. Your message has been sent.</h4>
-                            else <h4>Could not send message.</h4>    
-                    else 
                         if (mail:send-email($mail,'localhost', ()) ) then
                             <h4>Thank you. Your message has been sent.</h4>
                         else

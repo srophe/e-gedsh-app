@@ -11,15 +11,17 @@ declare variable $recap:VALIDATE_URI as xs:anyURI := xs:anyURI("https://www.goog
 :)
 declare function recap:validate($private-key as xs:string, $recaptcha-response as xs:string) 
 {
-let $client-ip := request:get-header("X-Real-IP") 
-let $response := http:send-request(<http:request http-version="1.1" href="{xs:anyURI($recap:VALIDATE_URI)}" method="post">
-                                        <http:body media-type="application/x-www-form-urlencoded">secret={$private-key}&amp;response={$recaptcha-response}&amp;remoteip={$client-ip}
-                                        </http:body>
-                                    </http:request>)[2]
+let $client-ip := request:get-header("X-Real-IP"),
+     $post-fields := 
+       <httpclient:fields>
+            <httpclient:field name="secret" value="{$private-key}"/>            
+            <httpclient:field name="response" value="{$recaptcha-response}"/>
+            <httpclient:field name="remoteip" value="{$client-ip}"/>
+        </httpclient:fields>     
+let $response := httpclient:post-form($recap:VALIDATE_URI, $post-fields, false(), ())
 let $payload := util:base64-decode($response)
-return if(string(contains($payload,'success: true'))) then true()
-       else false()
-(: 
+let $json-data := parse-json($payload)
+return 
     if($json-data?success = true()) then true()
-    else (:false():)$payload:)
+    else false()
 };
