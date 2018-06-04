@@ -300,26 +300,10 @@ declare %templates:wrap function app:contact-form($node as node(), $model as map
         <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">x</span><span class="sr-only">Close</span></button>
-            <h2 class="modal-title" id="feedbackLabel">Corrections/Additions?</h2>
+            <h2 class="modal-title" id="feedbackLabel">Contact</h2>
         </div>
         <form action="{$global:nav-base}/modules/email.xql" method="post" id="email" role="form">
             <div class="modal-body" id="modal-body">
-                <!-- More information about submitting data from howtoadd.html -->
-                <p><strong>Notify the editors of a mistake:</strong>
-                <a class="btn btn-link togglelink" data-toggle="collapse" data-target="#viewdetails" data-text-swap="hide information">more information...</a>
-                </p>
-                <div class="container">
-                    <div class="collapse" id="viewdetails">
-                    <p>Using the following form, please inform us which page URI the mistake is on, where on the page the mistake occurs,
-                    the content of the correction, and a citation for the correct information (except in the case of obvious corrections, such as misspelled words). 
-                    Please also include your email address, so that we can follow up with you regarding 
-                    anything which is unclear. We will publish your name, but not your contact information as the author of the  correction.</p>
-                    <h4>Add data to an existing entry</h4>
-                    <p>The Syriac Gazetteer is an ever expanding resource  created by and for users. The editors actively welcome additions to the gazetteer. If there is information which you would like to add to an existing place entry in The Syriac Gazetteer, please use the link below to inform us about the information, your (primary or scholarly) source(s) 
-                    for the information, and your contact information so that we can credit you for the modification. For categories of information which  The Syriac Gazetteer structure can support, please see the section headings on the entry for Edessa and  specify in your submission which category or 
-                    categories this new information falls into.  At present this information should be entered into  the email form here, although there is an additional  delay in this process as the data needs to be encoded in the appropriate structured data format  and assigned a URI. A structured form for submitting  new entries is under development.</p>
-                    </div>
-                </div>
                 <input type="text" name="name" placeholder="Name" class="form-control" style="max-width:300px"/>
                 <br/>
                 <input type="text" name="email" placeholder="email" class="form-control" style="max-width:300px"/>
@@ -327,8 +311,7 @@ declare %templates:wrap function app:contact-form($node as node(), $model as map
                 <input type="text" name="subject" placeholder="subject" class="form-control" style="max-width:300px"/>
                 <br/>
                 <textarea name="comments" id="comments" rows="3" class="form-control" placeholder="Comments" style="max-width:500px"/>
-                <input type="hidden" name="id" value="{request:get-parameter('id', '')}"/>
-                <input type="hidden" name="collection" value="{$collection}"/>
+                <input type="hidden" name="formID" value="editors"/>
                 <!-- start reCaptcha API-->
                 {if($global:recaptcha != '') then                                
                     <div class="g-recaptcha" data-sitekey="{$global:recaptcha}"></div>                
