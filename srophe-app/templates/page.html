@@ -54,13 +54,48 @@
                         <li>
                             <a href="$app-root/index.html">Home</a>
                         </li>
-                        <li>
+                        <li class="dropdown" style="margin-left: 1em;">
+                            <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                                <span class="icon-nav">
+                                    <img src="$app-root/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho"/>
+                                </span>
+                                <span class="icon-text">Beth Mardutho</span>  <b class="caret"/>
+                            </a>
+                            <!--
                             <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
                                 <span class="icon-nav">
                                     <img src="$app-root/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho"/>
                                 </span>
                                 <span class="icon-text">Beth Mardutho</span>
                             </a>
+                            -->
+                            <ul class="dropdown-menu pull-right">
+                                <li>
+                                    <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
+                                        <span class="icon-text">Beth Mardutho</span>
+                                    </a>
+                                </li>
+                                <li role="presentation" class="divider"/>
+                                <li>
+                                    <a href="http://sedra.bethmardutho.org/" class="icon-container" target="_blank">
+                                        <span class="icon-text">Syriac Dictionary Lookup</span>
+                                    </a>
+                                </li>
+                                <!--
+                                <li role="presentation" class="divider"/>
+                                <li>
+                                    <a href="https://hugoye.bethmardutho.org" class="icon-container" target="_blank">
+                                        <span class="icon-text">Hugoye</span>
+                                    </a>
+                                </li>
+                                <li role="presentation" class="divider"/>
+                                <li>
+                                    <a href="https://qoruyo.bethmardutho.org" class="icon-container" target="_blank">
+                                        <span class="icon-text">qoruyo.bethmardutho.org</span>
+                                    </a>
+                                </li>
+                                -->
+                            </ul>
                         </li>
                         <!-- Shared drop-down menu of all submodules 
                         <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
