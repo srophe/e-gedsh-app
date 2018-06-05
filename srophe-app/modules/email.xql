@@ -40,10 +40,10 @@ return
 if($list != '') then 
     if($config/descendant::contact[@listID =  $list]) then 
         for $contact in $config/descendant::contact[@listID =  $list]/child::*
-        return $contact
+        return element { fn:local-name($contact) } {$contact/text()}
     else 
         for $contact in $config/descendant::contact[1]/child::*
-        return $contact
+        return element { fn:local-name($contact) } {$contact/text()}
 else 
     for $contact in $config/descendant::contact[1]/child::*
     return 
@@ -83,10 +83,10 @@ return
             if(local:recaptcha() = true()) then 
                let $mail := local:build-message()
                return 
-                        if (mail:send-email($mail,'localhost', ()) ) then
-                            <h4>Thank you. Your message has been sent.</h4>
-                        else
-                            <h4>Could not send message.</h4>
+                    if (mail:send-email($mail,'localhost', ()) ) then
+                        <h4>Thank you. Your message has been sent.</h4>
+                    else
+                        <h4>Could not send message.</h4>
             else 'Recaptcha fail'
         else  <h4>Incomplete form.</h4>
    else  <h4>Incomplete form.</h4>
