@@ -782,7 +782,7 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                             GROUP BY ?uri
                             "))
                     let $subject-sparql-results := 
-                                    try{http:send-request(<http:request href="http://wwwb.library.vanderbilt.edu/exist/apps/srophe/api/sparql?query={$query}" method="get"/>)[2]
+                                    try{http:send-request(<http:request href="{$global:nav-base}/modules/sparql-requests.xql?query={$query}" method="get"/>)[2]
                                        } catch * {<error>Caught error {$err:code}: {$err:description} {$subject-uri}</error>}       
                     return 
                         if($subject-uri != '') then 
