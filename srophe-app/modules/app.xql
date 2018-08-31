@@ -744,30 +744,32 @@ return
  : Display related Syriaca.org names
 :)
 declare %templates:wrap function app:srophe-related($node as node(), $model as map(*)){
-    (:if($model("data")//@ref[contains(.,'http://syriaca.org/')] and $model("data")//tei:idno[@type="subject"][contains(.,'http://syriaca.org/')]) then:) 
-    if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//tei:idno[contains(.,'http://syriaca.org/')]) then
-        <div class="panel panel-default" style="margin-top:1em;" xmlns="http://www.w3.org/1999/xhtml">
-            <div class="panel-heading">
-            <a href="#" data-toggle="collapse" data-target="#showLinkedData">Linked Data  </a>
+if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//tei:idno[contains(.,'http://syriaca.org/')]) then
+    <div class="panel panel-default" style="margin-top:1em;" xmlns="http://www.w3.org/1999/xhtml">
+        <div class="panel-heading"><a href="#" data-toggle="collapse" data-target="#showLinkedData">Linked Data  </a>
             <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to 
             additional resources beyond this record. 
             We welcome your additions, please use the e-mail button on the right to contact Syriaca.org about submitting additional links."></span>
             <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#submitLinkedData" style="margin-right:1em;"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></button>
-            </div>
-            <div class="panel-body">
-                {(
-                    let $subject-uri := string($model("data")/descendant::tei:idno[@type="subject"][contains(.,'http://syriaca.org/')][1])
-                    let $article-title := $model('data')/tei:head[1]
-                    let $query := 
-                        fn:encode-for-uri(concat("
-                            prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        </div>
+        <div class="panel-body">
+            {(
+                let $subject-uri := string($model("data")/descendant::tei:idno[@type="subject"][contains(.,'http://syriaca.org/')][1])
+                let $article-title := $model('data')/tei:head[1]
+                return 
+                <div class="related-resources" id="relatedResources">
+                    <h4>Resources related to {if($subject-uri) then <a href="{$subject-uri}">{$article-title}</a> else $article-title}</h4>
+                    <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post" id="lod1">
+                        <input type="hidden" name="format" id="format" value="json"/>
+                        <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
+                           <![CDATA[prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                             prefix lawd: <http://lawd.info/ontology/>
                             prefix skos: <http://www.w3.org/2004/02/skos/core#>
                             prefix dcterms: <http://purl.org/dc/terms/>  
                             	SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
                                     {
                                        ?uri rdfs:label ?l
-                                       FILTER (?uri IN ( <",$subject-uri,">)).
+                                       FILTER (?uri IN ( <]]>{$subject-uri}<![CDATA[ >)).
                                        FILTER ( langMatches(lang(?l), 'en')).
                                        OPTIONAL{
                                              {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
@@ -779,145 +781,143 @@ declare %templates:wrap function app:srophe-related($node as node(), $model as m
                                                              } GROUP BY ?uri }
                                              }           
                                      }
-                            GROUP BY ?uri
-                            "))
-                    let $subject-sparql-results := 
-                                    try{http:send-request(<http:request href="{$global:nav-base}/modules/sparql-requests.xql?query={$query}" method="get"/>)[2]
-                                       } catch * {<error>Caught error {$err:code}: {$err:description} {$subject-uri}</error>}       
-                    return 
-                        if($subject-uri != '') then 
-                            <div class="related-resources">
-                                <h4>Resources related to {if($subject-uri) then <a href="{$subject-uri}">{$article-title}</a> else $article-title}</h4>
-                                    {(
-                                     if($subject-sparql-results//*:binding[@name='citations']/*:literal[xs:integer(.) gt 0]) then
-                                       <div class="indent">{$subject-sparql-results//*:binding[@name='citations'][1]/*:literal} related citations</div>
-                                     else (),
-                                     if($subject-sparql-results//*:binding[@name='subjects']/*:literal[xs:integer(.) gt 0]) then 
-                                        <div class="indent">{$subject-sparql-results//*:binding[@name='subjects'][1]/*:literal} related subjects</div>
-                                     else()
-                                    )}
-                            </div>
-                        else (),
-                 if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
+                            GROUP BY ?uri                                          
+                           ]]>  
+                       </textarea>
+                    </form>
+                 </div>,
+                if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
                     let $other-resources := distinct-values($model("data")//@ref[contains(.,'http://syriaca.org/')])
                     let $count := count($other-resources)
                     return 
-                        <div class="other-resources" xmlns="http://www.w3.org/1999/xhtml">
-                            <h4>Resources related to {$count} other topics in this article. </h4>
-                            <div class="collapse" id="showOtherResources">
-                                <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post">
-                                    <input type="hidden" name="format" id="format" value="json"/>
-                                    <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
-                                      <![CDATA[
-                                        prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                                        prefix lawd: <http://lawd.info/ontology/>
-                                        prefix skos: <http://www.w3.org/2004/02/skos/core#>
-                                        prefix dcterms: <http://purl.org/dc/terms/>  
-                            	        
-                            	        SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
-                                        {
-                                            ?uri rdfs:label ?l
-                                            FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,1,10) return concat('<',$r,'>'),',')}<![CDATA[)).
-                                            FILTER ( langMatches(lang(?l), 'en')).
-                                            OPTIONAL{
-                                                 {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
-                                            OPTIONAL{
-                                                 {SELECT ?uri ( count(?o) as ?uriCitations ) { ?uri lawd:hasCitation ?o 
-                                                         OPTIONAL{ ?uri skos:closeMatch ?o.}
-                                                 } GROUP BY ?uri }
-                                           }           
-                                        }
-                                        GROUP BY ?uri                                            
-                                            
-                                      ]]>  
-                                    </textarea>
-                                </form>
-                                <div id="listOtherResources"></div>
-                                {if($count gt 10) then
-                                    <div>
-                                        <div class="collapse" id="showMoreResources">
-                                            <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post">
-                                                <input type="hidden" name="format" id="format" value="json"/>
-                                                <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
-                                                  <![CDATA[
-                                                    prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                                                    prefix lawd: <http://lawd.info/ontology/>
-                                                    prefix skos: <http://www.w3.org/2004/02/skos/core#>
-                                                    prefix dcterms: <http://purl.org/dc/terms/>  
-                                        	        
-                                        	        SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
-                                                    {
-                                                        ?uri rdfs:label ?l
-                                                        FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,11,$count) return concat('<',$r,'>'),',')}<![CDATA[)).
-                                                        FILTER ( langMatches(lang(?l), 'en')).
-                                                        OPTIONAL{
-                                                             {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
-                                                        OPTIONAL{
-                                                             {SELECT ?uri ( count(?o) as ?uriCitations ) { ?uri lawd:hasCitation ?o 
-                                                                     OPTIONAL{ ?uri skos:closeMatch ?o.}
-                                                             } GROUP BY ?uri }
-                                                       }           
-                                                    }
-                                                    GROUP BY ?uri                                                                                     
-                                                  ]]>  
-                                                </textarea>
-                                            </form>
+                            <div class="other-resources" xmlns="http://www.w3.org/1999/xhtml">
+                                <h4>Resources related to {$count} other topics in this article. </h4>
+                                <div class="collapse" id="showOtherResources">
+                                    <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post">
+                                        <input type="hidden" name="format" id="format" value="json"/>
+                                        <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
+                                          <![CDATA[
+                                            prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                            prefix lawd: <http://lawd.info/ontology/>
+                                            prefix skos: <http://www.w3.org/2004/02/skos/core#>
+                                            prefix dcterms: <http://purl.org/dc/terms/>  
+                                	        
+                                	        SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
+                                            {
+                                                ?uri rdfs:label ?l
+                                                FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,1,10) return concat('<',$r,'>'),',')}<![CDATA[)).
+                                                FILTER ( langMatches(lang(?l), 'en')).
+                                                OPTIONAL{
+                                                     {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                                                OPTIONAL{
+                                                     {SELECT ?uri ( count(?o) as ?uriCitations ) { ?uri lawd:hasCitation ?o 
+                                                             OPTIONAL{ ?uri skos:closeMatch ?o.}
+                                                     } GROUP BY ?uri }
+                                               }           
+                                            }
+                                            GROUP BY ?uri                                            
+                                                
+                                          ]]>  
+                                        </textarea>
+                                    </form>
+                                    <div id="listOtherResources"></div>
+                                    {if($count gt 10) then
+                                        <div>
+                                            <div class="collapse" id="showMoreResources">
+                                                <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post">
+                                                    <input type="hidden" name="format" id="format" value="json"/>
+                                                    <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
+                                                      <![CDATA[
+                                                        prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                                        prefix lawd: <http://lawd.info/ontology/>
+                                                        prefix skos: <http://www.w3.org/2004/02/skos/core#>
+                                                        prefix dcterms: <http://purl.org/dc/terms/>  
+                                            	        
+                                            	        SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
+                                                        {
+                                                            ?uri rdfs:label ?l
+                                                            FILTER (?uri IN ( ]]>{string-join(for $r in subsequence($other-resources,11,$count) return concat('<',$r,'>'),',')}<![CDATA[)).
+                                                            FILTER ( langMatches(lang(?l), 'en')).
+                                                            OPTIONAL{
+                                                                 {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                                                            OPTIONAL{
+                                                                 {SELECT ?uri ( count(?o) as ?uriCitations ) { ?uri lawd:hasCitation ?o 
+                                                                         OPTIONAL{ ?uri skos:closeMatch ?o.}
+                                                                 } GROUP BY ?uri }
+                                                           }           
+                                                        }
+                                                        GROUP BY ?uri                                                                                     
+                                                      ]]>  
+                                                    </textarea>
+                                                </form>
+                                            </div>
+                                            <a href="#" class="togglelink" data-toggle="collapse" data-target="#showMoreResources" data-text-swap="Less" id="getMoreLinkedData">See more ...</a>
                                         </div>
-                                        <a href="#" class="togglelink" data-toggle="collapse" data-target="#showMoreResources" data-text-swap="Less" id="getMoreLinkedData">See more ...</a>
-                                    </div>
-                                else ()
-                                }
-                            </div>
-                            <a href="#" class="btn btn-default togglelink" style="width:100%;" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide Other Resources" id="getLinkedData">Show Other Resources</a>
-                            <script>
-                               <![CDATA[
-                                $(document).ready(function() {
-                                    $('#showOtherResources').children('form').each(function () {
-                                        var url = $(this).attr('action');
-                                            $.post(url, $(this).serialize(), function(data) {
-                                                console.log(data);
-                                                var showOtherResources = $("#listOtherResources");
-                                                var dataArray = data.results.bindings;
-                                                if (!jQuery.isArray(dataArray)) dataArray = [dataArray];
-                                                $.each(dataArray, function (currentIndex, currentElem) {
-                                                            var relatedResources = 'Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> '
-                                                            var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>' : ''
-                                                            var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>' : ''
-                                                                showOtherResources.append(
-                                                                   '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>'
-                                                                );
-                                                        });
-                                            }).fail( function(jqXHR, textStatus, errorThrown) {
-                                                console.log(textStatus);
-                                            }); 
-                                        });
-                                        $('#getMoreLinkedData').one("click", function(e){
-                                           $('#showMoreResources').children('form').each(function () {
-                                                var url = $(this).attr('action');
-                                                    $.post(url, $(this).serialize(), function(data) {
-                                                        var showOtherResources = $("#showMoreResources"); 
-                                                        var dataArray = data.results.bindings;
-                                                        if (!jQuery.isArray(dataArray)) dataArray = [dataArray];
-                                                        $.each(dataArray, function (currentIndex, currentElem) {
-                                                            var relatedResources = 'Resources related to <a href="'+ currentElem.uri.value +'">'+ currentElem.label.value + '</a> '
-                                                            var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>' : ''
-                                                            var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>' : ''
-                                                                showOtherResources.append(
-                                                                   '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>'
-                                                                );
-                                                        });
-                                                    }).fail( function(jqXHR, textStatus, errorThrown) {
-                                                        console.log(textStatus);
-                                                    }); 
-                                                }); 
-                                        });
-                                });
-                            ]]>
-                            </script>
-                        </div>
-                 else () 
-                )}
-            </div>
-        </div>       
-    else()
+                                    else ()
+                                    }
+                                </div>
+                                <a href="#" class="btn btn-default togglelink" style="width:100%;" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide Other Resources" id="getLinkedData">Show Other Resources</a>
+                           </div>
+                else ()           
+        )}
+        </div>
+        <script><![CDATA[
+            $(document).ready(function () {
+            $('#relatedResources').children('form').each(function () {
+                var url = $(this).attr('action');
+                $.post(url, $(this).serialize(), function (data) {
+                    var showOtherResources = $("#listOtherResources");
+                    var dataArray = data.results.bindings;
+                    if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
+                    $.each(dataArray, function (currentIndex, currentElem) {
+                        var relatedResources = 'Resources related to <a href="' + currentElem.uri.value + '">' + currentElem.label.value + '</a> '
+                        var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>': ''
+                        var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>': ''
+                        showOtherResources.append(
+                        '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>');
+                    });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                });
+            });
+            $('#showOtherResources').children('form').each(function () {
+                var url = $(this).attr('action');
+                $.post(url, $(this).serialize(), function (data) {
+                    var showOtherResources = $("#listOtherResources");
+                    var dataArray = data.results.bindings;
+                    if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
+                    $.each(dataArray, function (currentIndex, currentElem) {
+                        var relatedResources = 'Resources related to <a href="' + currentElem.uri.value + '">' + currentElem.label.value + '</a> '
+                        var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>': ''
+                        var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>': ''
+                        showOtherResources.append(
+                        '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>');
+                    });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                });
+            });
+            $('#getMoreLinkedData').one("click", function (e) {
+                $('#showMoreResources').children('form').each(function () {
+                    var url = $(this).attr('action');
+                    $.post(url, $(this).serialize(), function (data) {
+                        var showOtherResources = $("#showMoreResources");
+                        var dataArray = data.results.bindings;
+                        if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
+                        $.each(dataArray, function (currentIndex, currentElem) {
+                            var relatedResources = 'Resources related to <a href="' + currentElem.uri.value + '">' + currentElem.label.value + '</a> '
+                            var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>': ''
+                            var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>': ''
+                            showOtherResources.append(
+                            '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>');
+                        });
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    });
+                });
+            });
+        });
+        ]]></script>
+    </div>
+else()
 };
