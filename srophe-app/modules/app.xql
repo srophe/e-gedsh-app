@@ -29,14 +29,13 @@ if(request:get-parameter('id', '') != '') then
     let $id := global:resolve-id()   
     return 
         let $rec := 
-                    if(request:get-parameter('id', '') = 'front') then 
+                    if(request:get-parameter('id', '')[1] = 'front') then 
                         collection($global:data-root)//tei:front
-                    else if(request:get-parameter('id', '') = 'back') then 
+                    else if(request:get-parameter('id', '')[1] = 'back') then 
                         collection($global:data-root)//tei:back
                     else collection($global:data-root)//tei:div[tei:ab/tei:idno[normalize-space(.) = $id]]
         return 
-            if(empty($rec)) then request:get-parameter('id', '')
-            (:response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html'))):)
+            if(empty($rec)) then response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html')))
             else 
                 if($rec/descendant::tei:revisionDesc[@status='deprecated']) then 
                     let $redirect := 
@@ -151,7 +150,7 @@ declare function app:subject-headings($node as node(), $model as map(*)){
  : bibl 
 :)                   
 declare function app:cited($node as node(), $model as map(*)){
-    rel:cited($model("data")//tei:idno[@type='URI'][ends-with(.,'/tei')], request:get-parameter('start', 1),request:get-parameter('perpage', 5))
+    rel:cited($model("data")//tei:idno[@type='URI'][ends-with(.,'/tei')], request:get-parameter('start', 1)[1],request:get-parameter('perpage', 5)[1])
 };
 
 (:~      
@@ -250,7 +249,7 @@ return
  : @param request:get-parameter('id', '') if id is present find TEI title, otherwise use title of sub-module
 :)
 declare %templates:wrap function app:app-title($node as node(), $model as map(*), $collection as xs:string?){
-if(request:get-parameter('id', '')) then normalize-space(string-join($model("data")/tei:head[1]/text()))
+if(request:get-parameter('id', '')[1]) then normalize-space(string-join($model("data")/tei:head[1]/text()))
 else $global:app-title
 };  
 
@@ -260,7 +259,7 @@ else $global:app-title
  <link rel="DCTERMS.subject" href="http://example.org/topics/archives" title="Archives" />
 :)
 declare function app:metadata($node as node(), $model as map(*)) {
-    if(request:get-parameter('id', '')) then 
+    if(request:get-parameter('id', '')[1]) then 
     (  
     <meta name="DC.title" content="{normalize-space($model("data")/descendant::tei:head[1])}"/>, 
     for $author in $model("data")/descendant::tei:byline/tei:persName
@@ -273,9 +272,9 @@ declare function app:metadata($node as node(), $model as map(*)) {
     if($model("data")/descendant::tei:note[@type='abstract']) then 
         <meta name="DCTERMS.abstract" content="{normalize-space($model("data")/descendant::tei:note[@type='abstract'][1])}"/>
     else (),
-    <link xmlns="http://www.w3.org/1999/xhtml" type="text/html" href="{request:get-parameter('id', '')}.html" rel="alternate"/>,
-    <link xmlns="http://www.w3.org/1999/xhtml" type="text/xml" href="{request:get-parameter('id', '')}.tei" rel="alternate"/>,
-    <link xmlns="http://www.w3.org/1999/xhtml" type="application/rdf+xml" href="{replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base)}.rdf" rel="meta"/>
+    <link xmlns="http://www.w3.org/1999/xhtml" type="text/html" href="{request:get-parameter('id', '')[1]}.html" rel="alternate"/>,
+    <link xmlns="http://www.w3.org/1999/xhtml" type="text/xml" href="{request:get-parameter('id', '')[1]}.tei" rel="alternate"/>,
+    <link xmlns="http://www.w3.org/1999/xhtml" type="application/rdf+xml" href="{replace(request:get-parameter('id', '')[1],$global:base-uri,$global:nav-base)}.rdf" rel="meta"/>
     )
     else ()
 };
@@ -346,7 +345,7 @@ declare %templates:wrap function app:contact-form-linked-data($node as node(), $
                             <input type="text" name="subject" placeholder="subject" class="form-control" style="max-width:300px"/>
                             <br/>
                             <textarea name="comments" id="comments" rows="3" class="form-control" placeholder="Comments" style="max-width:500px"/>
-                            <input type="hidden" name="id" value="{request:get-parameter('id', '')}"/>
+                            <input type="hidden" name="id" value="{request:get-parameter('id', '')[1]}"/>
                             <input type="hidden" name="formID" value="linkedData"/>
                             <!-- start reCaptcha API-->
                             <div class="g-recaptcha" data-sitekey="{$global:recaptcha}"></div>
@@ -555,11 +554,11 @@ declare function app:get-wiki($wiki-uri as xs:string?){
 declare function app:wiki-page-title($node, $model){
     let $wiki-uri := 
         if(request:get-parameter('wiki-uri', '')) then 
-            request:get-parameter('wiki-uri', '')
+            request:get-parameter('wiki-uri', '')[1]
         else 'https://github.com/srophe/srophe-eXist-app/wiki' 
     let $uri := 
         if(request:get-parameter('wiki-page', '')) then 
-            concat($wiki-uri, request:get-parameter('wiki-page', ''))
+            concat($wiki-uri, request:get-parameter('wiki-page', '')[1])
         else $wiki-uri
     let $wiki-data := app:get-wiki($uri)
     let $content := $wiki-data//html:div[@id='wiki-body']
@@ -572,11 +571,11 @@ declare function app:wiki-page-title($node, $model){
 declare function app:wiki-page-content($node, $model){
     let $wiki-uri := 
         if(request:get-parameter('wiki-uri', '')) then 
-            request:get-parameter('wiki-uri', '')
+            request:get-parameter('wiki-uri', '')[1]
         else 'https://github.com/srophe/srophe-eXist-app/wiki' 
     let $uri := 
         if(request:get-parameter('wiki-page', '')) then 
-            concat($wiki-uri, request:get-parameter('wiki-page', ''))
+            concat($wiki-uri, request:get-parameter('wiki-page', '')[1])
         else $wiki-uri
     let $wiki-data := app:get-wiki($uri)
     return $wiki-data//html:div[@id='wiki-body'] 
@@ -660,11 +659,11 @@ function app:google-analytics($node as node(), $model as map(*)) {
 
 (: e-gedsh functions :) 
 declare %templates:wrap function app:entries-count($node as node(), $model as map(*)){
-count(collection($global:data-root)//tei:div[@type='entry'])
+    count(collection($global:data-root)//tei:div[@type='entry'])
 };
 
 declare %templates:wrap function app:contributors-count($node as node(), $model as map(*)){
-count(collection($global:data-root)//tei:div[@type='section'][tei:ab[@type='idnos']/child::tei:idno[. = 'https://gedsh.bethmardutho.org/List-Contributors']]/tei:p)
+    count(collection($global:data-root)//tei:div[@type='section'][tei:ab[@type='idnos']/child::tei:idno[. = 'https://gedsh.bethmardutho.org/List-Contributors']]/tei:p)
 };
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
 if($model("data")/descendant::tei:idno[@type=('back','front')] or $model("data")/descendant-or-self::*/@type='figure') then 
@@ -706,7 +705,7 @@ return
                 for $f in tokenize($formats,',')
                 return 
                     if($f = 'tei') then
-                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/tei')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the TEI XML data for this record." >
+                        (<a href="{concat(replace(request:get-parameter('id', '')[1],$global:base-uri,$global:nav-base),'/tei')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the TEI XML data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> TEI/XML
                         </a>, '&#160;')
                     else if($f = 'print') then                        
@@ -714,11 +713,11 @@ return
                              <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
                         </a>, '&#160;')  
                    else if($f = 'rdf') then
-                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/rdf')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-XML data for this record." >
+                        (<a href="{concat(replace(request:get-parameter('id', '')[1],$global:base-uri,$global:nav-base),'/rdf')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-XML data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/XML
                         </a>, '&#160;')
                   else if($f = 'ttl') then
-                        (<a href="{concat(replace(request:get-parameter('id', ''),$global:base-uri,$global:nav-base),'/ttl')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-Turtle data for this record." >
+                        (<a href="{concat(replace(request:get-parameter('id', '')[1],$global:base-uri,$global:nav-base),'/ttl')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-Turtle data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/TTL
                         </a>, '&#160;')
                   else if($f = 'buy') then
