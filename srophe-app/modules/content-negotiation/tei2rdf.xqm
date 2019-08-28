@@ -4,7 +4,7 @@ xquery version "3.0";
  : 
 :)
 module namespace tei2rdf="http://syriaca.org/tei2rdf";
-import module namespace global="http://syriaca.org/global" at "../global.xqm";
+import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
 import module namespace config="http://syriaca.org/config" at "../config.xqm";
 import module namespace bibl2html="http://syriaca.org/bibl2html" at "bibl2html.xqm";
 import module namespace functx="http://www.functx.com";

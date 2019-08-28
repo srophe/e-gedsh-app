@@ -505,10 +505,7 @@ return
                 else if($rec/descendant::tei:body/tei:listPlace/tei:place) then
                     string-join(for $headword in $rec/descendant::tei:body/tei:listPlace/tei:place/tei:placeName[. != '']
                         return tei2ttl:make-literal($headword/descendant::text(),if($headword/@xml:lang) then string($headword/@xml:lang) else (),()),', ')                        
-                else if($rec[self::tei:div/@uri]) then
-                        if(tei2ttl:rec-type($rec) = 'syriaca:relationFactoid') then
-                            tei2ttl:make-literal(normalize-space(string-join(rel:relationship-sentence($rec/descendant::tei:listRelation/tei:relation),' ')),(),())
-                        else tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
+                else if($rec[self::tei:div/@uri]) then tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
                 else tei2ttl:make-literal($rec/descendant::tei:title[1]/text(),if($rec/descendant::tei:title[1]/@xml:lang) then string($rec/descendant::tei:title[1]/@xml:lang) else (),())),
        if($rec/descendant::tei:body/tei:bibl[@type="lawd:ConceptualWork"] or $rec/descendant::tei:body/tei:biblStruct) then
                (for $author in $rec/descendant::tei:body/tei:bibl[@type="lawd:ConceptualWork"]/tei:author | $rec/descendant::tei:body/tei:biblStruct/descendant::tei:author
@@ -570,10 +567,7 @@ return
                     else if($rec/descendant::tei:body/tei:listPlace/tei:place) then
                         string-join(for $headword in $rec/descendant::tei:body/tei:listPlace/tei:place/tei:placeName[. != '']
                             return tei2ttl:make-literal($headword/descendant::text(),if($headword/@xml:lang) then string($headword/@xml:lang) else (),()),', ')                        
-                    else if($rec[self::tei:div/@uri]) then
-                            if(tei2ttl:rec-type($rec) = 'syriaca:relationFactoid') then
-                                tei2ttl:make-literal(normalize-space(string-join(rel:relationship-sentence($rec/descendant::tei:listRelation/tei:relation),' ')),(),())
-                            else tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
+                    else if($rec[self::tei:div/@uri]) then tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
                     else tei2ttl:make-literal($rec/descendant::tei:title[1]/text(),if($rec/descendant::tei:title[1]/@xml:lang) then string($rec/descendant::tei:title[1]/@xml:lang) else (),())),
             tei2ttl:make-triple('','dcterms:subject', tei2ttl:make-uri($id)),
             if(contains($id,'/spear/')) then () else tei2ttl:bibl($rec),
@@ -590,10 +584,7 @@ return
                     else if($rec/descendant::tei:body/tei:listPlace/tei:place) then
                         string-join(for $headword in $rec/descendant::tei:body/tei:listPlace/tei:place/tei:placeName[. != '']
                             return tei2ttl:make-literal($headword/descendant::text(),if($headword/@xml:lang) then string($headword/@xml:lang) else (),()),', ')                        
-                    else if($rec[self::tei:div/@uri]) then
-                            if(tei2ttl:rec-type($rec) = 'syriaca:relationFactoid') then
-                                tei2ttl:make-literal(normalize-space(string-join(rel:relationship-sentence($rec/descendant::tei:listRelation/tei:relation),' ')),(),())
-                            else tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
+                    else if($rec[self::tei:div/@uri]) then  tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
                     else tei2ttl:make-literal($rec/descendant::tei:title[1]/text(),if($rec/descendant::tei:title[1]/@xml:lang) then string($rec/descendant::tei:title[1]/@xml:lang) else (),())),
             tei2ttl:make-triple('','dcterms:subject', tei2ttl:make-uri($id)),
             if(contains($id,'/spear/')) then () else tei2ttl:bibl($rec), 
@@ -610,10 +601,7 @@ return
                     else if($rec/descendant::tei:body/tei:listPlace/tei:place) then
                         string-join(for $headword in $rec/descendant::tei:body/tei:listPlace/tei:place/tei:placeName[. != '']
                             return tei2ttl:make-literal($headword/descendant::text(),if($headword/@xml:lang) then string($headword/@xml:lang) else (),()),', ')                        
-                    else if($rec[self::tei:div/@uri]) then
-                            if(tei2ttl:rec-type($rec) = 'syriaca:relationFactoid') then
-                                tei2ttl:make-literal(normalize-space(string-join(rel:relationship-sentence($rec/descendant::tei:listRelation/tei:relation),' ')),(),())
-                            else tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
+                    else if($rec[self::tei:div/@uri]) then tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
                     else tei2ttl:make-literal($rec/descendant::tei:title[1]/text(),if($rec/descendant::tei:title[1]/@xml:lang) then string($rec/descendant::tei:title[1]/@xml:lang) else (),())),        
                     tei2ttl:make-triple('','dcterms:subject', tei2ttl:make-uri($id)),
             tei2ttl:make-triple('','dcterms:subject', tei2ttl:make-uri($id)),

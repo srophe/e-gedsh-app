@@ -1,19 +1,43 @@
 xquery version "3.0";
+import module namespace config="http://syriaca.org/config" at "modules/config.xqm";
 
 declare variable $exist:path external;
 declare variable $exist:resource external;
 declare variable $exist:controller external;
 declare variable $exist:prefix external;
 declare variable $exist:root external;
-(:
-<div>
-    <p>$exist:path: {$exist:path}</p>
-    <p>$exist:resource: {$exist:resource}</p>
-    <p>$exist:controller: {$exist:controller}</p>
-    <p>$exist:prefix: {$exist:prefix}</p>
-    <p>$exist:root: {$exist:root}</p>
-</div>
-:)
+
+(: Send to content negotiation:)
+declare function local:content-negotiation($exist:path, $exist:resource){
+    if(starts-with($exist:resource, ('search','browse'))) then
+        let $format := request:get-parameter('format', '')
+        return 
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">        
+            <forward url="{$exist:controller}/modules/content-negotiation/content-negotiation.xql"/>
+            <add-parameter name="format" value="{$format}"/>
+        </dispatch>
+    else
+        let $id := if($exist:resource = ('tei','xml','txt','pdf','json','geojson','kml','jsonld','rdf','ttl','atom')) then
+                        tokenize(replace($exist:path,'/tei|/xml|/txt|/pdf|/json|/geojson|/kml|/jsonld|/rdf|/ttl|/atom',''),'/')[last()]
+                   else replace(xmldb:decode($exist:resource), "^(.*)\..*$", "$1")
+        let $record-uri-root := substring-before($exist:path,$id)
+        let $id := if($config:get-config//repo:collection[ends-with(@record-URI-pattern, $record-uri-root)]) then
+                        concat($config:get-config//repo:collection[ends-with(@record-URI-pattern, $record-uri-root)][1]/@record-URI-pattern,$id)
+                   else $id
+        let $html-path := concat($config:get-config//repo:collection[ends-with(@record-URI-pattern, $record-uri-root)][1]/@app-root,'record.html')
+        let $format := if($exist:resource = ('tei','xml','txt','pdf','json','geojson','kml','jsonld','rdf','ttl','atom')) then
+                            $exist:resource
+                       else if(request:get-parameter('format', '') != '') then request:get-parameter('format', '')                            
+                       else fn:tokenize($exist:resource, '\.')[fn:last()]
+        return 
+            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">        
+                <forward url="{$exist:controller}/modules/content-negotiation/content-negotiation.xql">
+                    <add-parameter name="id" value="{$id}"/>
+                    <add-parameter name="format" value="{$format}"/>
+                </forward>
+            </dispatch>
+};
+
 
 if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
@@ -45,15 +69,13 @@ else if (contains($exist:path, "/$shared/")) then
 (: Checks for any record uri patterns as defined in repo.xml :)    
 else if(contains($exist:path,"/entry/") or contains($exist:path,"/fig/") or ends-with($exist:path, ("/atom","/tei","/rdf","/ttl",'.tei','.atom','.rdf','.ttl'))) then
     (: Sends to restxql to handle /atom, /tei,/rdf:)
-    if (ends-with($exist:path, ("/atom","/tei","/rdf","/ttl",'.tei','.atom','.rdf','.ttl'))) then
-        let $path := 
-            if(ends-with($exist:path, (".atom",".tei",".rdf",".ttl"))) then 
-                replace($exist:path, "\.(atom|tei|rdf|ttl)", "/$1")
-            else $exist:path
-        return 
-            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <forward url="{concat('/restxq/e-gedsh', $path)}" absolute="yes"/>
-            </dispatch>
+    if(request:get-parameter('format', '') != '' and request:get-parameter('format', '') != 'html') then
+        local:content-negotiation($exist:path, $exist:resource)
+    else if(ends-with($exist:path,('/tei','/xml','/txt','/pdf','/json','/geojson','/kml','/jsonld','/rdf','/ttl','/atom'))) then
+        local:content-negotiation($exist:path, $exist:resource)
+    else if(ends-with($exist:resource,('.tei','.xml','.txt','.pdf','.json','.geojson','.kml','.jsonld','.rdf','.ttl','.atom'))) then
+        local:content-negotiation($exist:path, $exist:resource)
+
     (: Special handling for collections with app-root that matches record-URI-pattern sends html pages to html, others are assumed to be records :)
     else if($exist:resource = ('index.html','search.html','browse.html','about.html')) then 
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
