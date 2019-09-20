@@ -8,6 +8,7 @@ import module namespace tei2html="http://syriaca.org/tei2html" at "../content-ne
 import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
 import module namespace kwic="http://exist-db.org/xquery/kwic";
 import module namespace templates="http://exist-db.org/xquery/templates" ;
+import module namespace functx="http://www.functx.com";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
@@ -54,7 +55,8 @@ declare %templates:wrap function search:get-results($node as node(), $model as m
 declare function search:query-string($collection as xs:string?) as xs:string?{
 if($collection !='') then 
     concat("collection('",$global:data-root,"/",$collection,"')//tei:body",
-    common:keyword(),
+    (:common:keyword(),:)
+    search:keyword(),
     search:author(),
     search:persName(),
     search:placeName(), 
@@ -63,7 +65,8 @@ if($collection !='') then
     )
 else 
 concat("collection('",$global:data-root,"')//tei:div[@type=('entry','crossreference','section','subsection')][tei:ab[@type='idnos']]",
-    common:keyword(),
+   (: common:keyword(),:)
+    search:keyword(),
     search:author(),
     search:persName(),
     search:placeName(), 
@@ -112,7 +115,7 @@ declare function search:idno(){
 
 declare function search:search-string(){
 <span xmlns="http://www.w3.org/1999/xhtml">
-{(
+{
     let $parameters :=  request:get-parameter-names()
     for  $parameter in $parameters
     return 
@@ -127,7 +130,7 @@ declare function search:search-string(){
             else if($parameter = 'placeName') then 
                 (<span class="param">Place: </span>,<span class="match">{$search:placeName}&#160;</span>)                            
             else (<span class="param">{replace(concat(upper-case(substring($parameter,1,1)),substring($parameter,2)),'-',' ')}: </span>,<span class="match">{request:get-parameter($parameter, '')}</span>)    
-        else ())
+        else ()
         }
 </span>
 };
@@ -227,7 +230,6 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
     <div>{search:build-geojson($node,$model)}</div>
     {
         for $hit at $p in subsequence($model("hits"), $search:start, $search:perpage)
-        let $kwic := kwic:expand($hit)
         let $uri := if($hit/@type='crossreference') then
                         string($hit/descendant::tei:ref/@target)
                     else $hit/descendant::tei:idno[@type='URI'][1]/text()
@@ -238,7 +240,16 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                         <span class="label label-default">{$search:start + $p - 1}</span>
                       </div>
                       <div class="col-md-9" xml:lang="en">
-                       {tei2html:summary-view($hit, $uri, $kwic)}
+                       {tei2html:summary-view-generic($hit, $uri)}
+                       {if(request:get-parameter('keywordProximity', '') castable as xs:integer) then 
+                           tei2html:output-kwic($hit,$uri)  
+                         else
+                            let $expanded := util:expand($hit)
+                            return
+                                if($expanded//exist:match) then 
+                                    tei2html:output-kwic($expanded, $uri)
+                                else ()
+                          }
                       </div>
                 </div>
             </div>
@@ -277,10 +288,18 @@ declare function search:search-form() {
             <div class="row">
                 <div class="col-md-7">
                 <!-- Keyword -->
-                 <div class="form-group">
+                  <div class="form-group">
                     <label for="q" class="col-sm-2 col-md-3  control-label">Keyword: </label>
                     <div class="col-sm-10 col-md-9 ">
-                        <input type="text" id="q" name="q" class="form-control"/>
+                        <div class="input-group">
+                            <input type="text" id="qs" name="q" class="form-control keyboard"/>
+                            <div class="input-group-btn">
+                                <input type="text" id="keywordProximity" name="keywordProximity" class="form-control"/>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Proximity Operator">
+                                        &#160; Proximity *
+                                 </button>
+                            </div>
+                         </div> 
                     </div>
                   </div>
                   <div class="form-group">
@@ -328,4 +347,51 @@ declare function search:search-form() {
         <br class="clearfix"/><br/>
     </div>    
 </form>
+};
+
+(: e-gedsh search functions :)
+declare function search:strip-chars($string){
+let $query-string := $string
+let $query-string := 
+	   if (functx:number-of-matches($query-string, '"') mod 2) then 
+	       replace($query-string, '"', ' ')
+	   else $query-string   (:if there is an uneven number of quotation marks, delete all quotation marks.:)
+let $query-string := 
+	   if ((functx:number-of-matches($query-string, '\(') + functx:number-of-matches($query-string, '\)')) mod 2 eq 0) 
+	   then $query-string
+	   else translate($query-string, '()', ' ') (:if there is an uneven number of parentheses, delete all parentheses.:)
+let $query-string := 
+	   if ((functx:number-of-matches($query-string, '\[') + functx:number-of-matches($query-string, '\]')) mod 2 eq 0) 
+	   then $query-string
+	   else translate($query-string, '[]', ' ') (:if there is an uneven number of brackets, delete all brackets.:)
+let $query-string := replace($string,"'","''")	   
+return 
+    if(matches($query-string,"(^\*$)|(^\?$)")) then 'Invalid Search String, please try again.' (: Must enter some text with wildcard searches:)
+    else replace(replace($query-string,'<|>|@',''), '(\.|\[|\]|\\|\||\-|\^|\$|\+|\{|\}|\(|\)|(/))','\\$1') (: Escape special characters. Fixes error, but does not return correct results on URIs see: http://viaf.org/viaf/sourceID/SRP|person_308 :)
+};
+
+(:~
+ : Search options passed to ft:query functions
+:)
+declare function search:options($proximity){
+let $phrase-slop := if($proximity castable as xs:integer) then xs:integer($proximity) else xs:integer(1)
+return
+    <options>
+        <default-operator>and</default-operator>
+        <phrase-slop>{$phrase-slop}</phrase-slop>
+        <leading-wildcard>yes</leading-wildcard>
+        <filter-rewrite>yes</filter-rewrite>
+    </options>
+};
+
+(:
+ : Build full-text keyword search over full record data 
+:)
+declare function search:keyword(){
+    if(request:get-parameter('q', '') != '') then
+        let $string := if(request:get-parameter('keywordProximity', '') castable as xs:integer) then
+                            concat('"',search:strip-chars(request:get-parameter('q', '')),'"','~',request:get-parameter('keywordProximity', ''))
+                       else search:strip-chars(request:get-parameter('q', ''))
+        return concat("[ft:query(descendant::*,'",$string,"')]") 
+    else () 
 };

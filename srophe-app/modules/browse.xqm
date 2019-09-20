@@ -309,7 +309,7 @@ declare function browse:display-hits($hits){
                             string($data/descendant::tei:ref/@target)
                         else ()
                       else $data/descendant::tei:idno[@type='URI'][1]/text()
-    return tei2html:summary-view($data, $entryLink,())
+    return tei2html:summary-view($data, $entryLink)
 };
 
 (: Display map :)

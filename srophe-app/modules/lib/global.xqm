@@ -1,6 +1,8 @@
 xquery version "3.0";
 (: Global app variables and functions. :)
 module namespace global="http://syriaca.org/global";
+import module namespace functx="http://www.functx.com";
+
 declare namespace http="http://expath.org/ns/http-client";
 declare namespace repo="http://exist-db.org/xquery/repo";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -169,7 +171,7 @@ return $final-id
 declare function global:get-rec($id as xs:string){  
     for $rec in collection($global:data-root)//tei:div[tei:ab/tei:idno[normalize-space(.) = $id]]
     let $header := $rec/ancestor::tei:TEI/tei:teiHeader
-    return <tei:TEI xmlns="http://www.tei-c.org/ns/1.0">{$header, $rec}</tei:TEI>  
+    return <TEI xmlns="http://www.tei-c.org/ns/1.0">{$header, $rec}</TEI>  
 };
 
 (:~ 
