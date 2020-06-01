@@ -1,6 +1,6 @@
 xquery version "3.0";
 
-module namespace geojson="http://syriaca.org/geojson";
+module namespace geojson="http://srophe.org/srophe/geojson";
 (:~
  : Module returns coordinates as geoJSON
  : Formats include geoJSON 

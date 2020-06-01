@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<search-config>
+    <!--  <field name="author" expression="./ancestor::tei:TEI//tei:author" function="functionName"/> -->
+    <field name="head" expression="descendant::tei:head" boost="5.5"/>
+    <field name="author" expression="descendant::tei:byline" boost="3.0"/>
+    <field name="placeName" expression="descendant::tei:placeName" boost="2.0"/>
+    <field name="persName" expression="descendant::tei:persName" boost="2.0"/>
+    <field name="sources" expression="descendant::tei:div[@type='bibl']"/>
+    <field name="idno" expression="descendant::tei:idno"/>
+    <field name="type" expression="@type"/>
+</search-config>

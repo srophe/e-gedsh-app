@@ -6,13 +6,14 @@ xquery version "3.0";
  : @authored 2018-04-12
 :)
 
-import module namespace config="http://syriaca.org/config" at "../config.xqm";
+import module namespace config="http://srophe.org/srophe/config" at "../config.xqm";
 
 (: Content serialization modules. :)
-import module namespace cntneg="http://syriaca.org/cntneg" at "content-negotiation.xqm";
-import module namespace tei2html="http://syriaca.org/tei2html" at "tei2html.xqm";
+import module namespace cntneg="http://srophe.org/srophe/cntneg" at "content-negotiation.xqm";
+import module namespace tei2html="http://srophe.org/srophe/tei2html" at "tei2html.xqm";
 
-import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
+(: Data processing module. :)
+import module namespace data="http://srophe.org/srophe/data" at "../lib/data.xqm";
 
 (: Import KWIC module:)
 import module namespace kwic="http://exist-db.org/xquery/kwic";
@@ -31,20 +32,52 @@ let $path := if(request:get-parameter('id', '')  != '') then
              else ()   
 let $data :=
     if(request:get-parameter('id', '') != '' or request:get-parameter('doc', '') != '') then
-        let $id := request:get-parameter('id', '')
-        let $parse-id :=
-            if(contains($id,$global:base-uri) or starts-with($id,'http://')) then $id
-            else if(contains(request:get-uri(),$global:nav-base)) then 
-            replace(request:get-uri(),$global:nav-base, $global:base-uri)
-            else if(contains(request:get-uri(),$global:base-uri)) then request:get-uri()
-            else $id
-        let $final-id := if(ends-with($parse-id,'.html')) then substring-before($parse-id,'.html')
-                         else if(ends-with($parse-id,'/tei')) then substring-before($parse-id,'/tei') 
-                         else $parse-id
-        return global:get-rec($final-id)
+            let $id := request:get-parameter('id', '')   
+            return 
+                    if(request:get-parameter('id', '')[1] = 'front') then 
+                        collection($config:data-root)//tei:front/ancestor::tei:TEI
+                    else if(request:get-parameter('id', '')[1] = 'back') then 
+                        collection($config:data-root)//tei:back/ancestor::tei:TEI
+                    else collection($config:data-root)//tei:div[tei:ab/tei:idno[normalize-space(.) = $id]]/ancestor::tei:TEI
+    else if(request:get-parameter-names() != '') then 
+        let $hits := data:search('','','')
+        return 
+            if(count($hits) gt 0) then 
+                <root>
+                    <action>{string-join(
+                                for $param in request:get-parameter-names()
+                                return concat('&amp;',$param, '=',request:get-parameter($param, '')),'')}</action>
+                    <info>hits: {count($hits)}</info>
+                    <start>1</start>
+                    <results>{
+                        let $start := if(request:get-parameter('start', 1)) then request:get-parameter('start', 1) else 1
+                        let $perpage := if(request:get-parameter('perpage', 10)) then request:get-parameter('perpage', 10) else 10
+                        for $hit in subsequence($hits,$start,$perpage)
+                        let $id := replace($hit/descendant::tei:idno[starts-with(.,$config:base-uri)][1],'/tei','')
+                        let $title := $hit/descendant::tei:titleStmt/tei:title
+                        let $expanded := kwic:expand($hit)
+                        return 
+                            <json:value json:array="true">
+                                <id>{$id}</id>
+                                {$title}
+                                <hits>{normalize-space(string-join((tei2html:output-kwic($expanded, $id)),' '))}</hits>
+                            </json:value>
+                        }
+                    </results>
+                </root>
+            else 
+                <root>
+                    <json:value json:array="true">
+                        <action>{string-join(
+                                for $param in request:get-parameter-names()
+                                return concat('&amp;',$param, '=',request:get-parameter($param, '')),'')}</action>
+                        <info>No results</info>
+                        <start>0</start>
+                    </json:value>
+                </root>
     else ()
 let $format := if(request:get-parameter('format', '') != '') then request:get-parameter('format', '') else 'xml'    
-return  
+return 
     if(not(empty($data))) then
         cntneg:content-negotiation($data, $format, $path)    
     else ()

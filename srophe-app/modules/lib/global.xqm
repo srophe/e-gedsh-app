@@ -1,6 +1,6 @@
 xquery version "3.0";
 (: Global app variables and functions. :)
-module namespace global="http://syriaca.org/global";
+module namespace global="http://srophe.org/srophe/global";
 import module namespace functx="http://www.functx.com";
 
 declare namespace http="http://expath.org/ns/http-client";
@@ -210,7 +210,7 @@ declare function global:ar-sort-string($titlestring as xs:string?) as xs:string*
  : example: global:odd2text($rec/descendant::tei:bibl[1],string($rec/descendant::tei:bibl[1]/@type))
 :)
 declare function global:odd2text($element as element()?, $label as xs:string?) as xs:string* {
-    let $odd := util:parse(util:binary-to-string(util:binary-doc($global:app-root || '/documentation/syriaca-tei-main.odd')))
+    let $odd := util:parse-html(util:binary-to-string(util:binary-doc($global:app-root || '/documentation/syriaca-tei-main.odd')))
     return 
         if($odd/descendant::tei:elementSpec[@ident = name($element)]/descendant::tei:valItem[@ident=$label]/tei:gloss/text()) then
             $odd/descendant::tei:elementSpec[@ident = name($element)]/descendant::tei:valItem[@ident=$label]/tei:gloss/text()
@@ -249,4 +249,46 @@ declare function global:get-syriaca-refs($url as xs:string*){
            } catch * {
             concat($err:code, ": ", $err:description)
             }              
+};
+
+(:~
+ : Matches English letters and their equivalent letters as established by Syriaca.org
+ : @param $data:sort indicates letter for browse
+ :)
+declare function global:get-alpha-filter(){
+let $sort := request:get-parameter('alpha-filter', '')
+return 
+        if(request:get-parameter('lang', '') = 'ar') then
+            global:ar-sort()
+        else if(request:get-parameter('lang', '') = 'en' or request:get-parameter('lang', '') = '') then
+            if($sort = 'A' or $sort = '') then '^(A|a|ẵ|Ẵ|ằ|Ằ|ā|Ā)'
+            else if($sort = 'D') then '^(D|d|đ|Đ)'
+            else if($sort = 'S') then '^(S|s|š|Š|ṣ|Ṣ)'
+            else if($sort = 'E') then '^(E|e|ễ|Ễ)'
+            else if($sort = 'U') then '^(U|u|ū|Ū)'
+            else if($sort = 'H') then '^(H|h|ḥ|Ḥ)'
+            else if($sort = 'T') then '^(T|t|ṭ|Ṭ)'
+            else if($sort = 'I') then '^(I|i|ī|Ī)'
+            else if($sort = 'O') then '^(O|Ō|o|Œ|œ)'
+            else concat('^(',$sort,')')
+        else concat('^(',$sort,')')    
+};
+
+
+(:~
+ : Matches Arabic letters and their equivalent letters as established by Syriaca.org
+ :)
+declare function global:ar-sort(){
+let $sort := request:get-parameter('alpha-filter', '')
+return 
+    if($sort = 'ٱ') then '^(ٱ|ا|آ|أ|إ)'
+        else if($sort = 'ٮ') then '^(ٮ|ب)'
+        else if($sort = 'ة') then '^(ة|ت)'
+        else if($sort = 'ڡ') then '^(ڡ|ف)'
+        else if($sort = 'ٯ') then '^(ٯ|ق)'
+        else if($sort = 'ں') then '^(ں|ن)'
+        else if($sort = 'ھ') then '^(ھ|ه)'
+        else if($sort = 'ۈ') then '^(ۈ|ۇ|ٷ|ؤ|و)'
+        else if($sort = 'ى') then '^(ى|ئ|ي)'
+        else concat('^(',$sort,')')
 };

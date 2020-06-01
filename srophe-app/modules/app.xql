@@ -1,17 +1,17 @@
 xquery version "3.0";
 (: Main module for interacting with eXist-db templates :)
-module namespace app="http://syriaca.org/templates";
+module namespace app="http://srophe.org/srophe/templates";
 (: eXist modules :)
 import module namespace templates="http://exist-db.org/xquery/templates" ;
-import module namespace config="http://syriaca.org/config" at "config.xqm";
+import module namespace config="http://srophe.org/srophe/config" at "config.xqm";
 import module namespace functx="http://www.functx.com";
 (: Srophe modules :)
-import module namespace teiDocs="http://syriaca.org/teiDocs" at "teiDocs/teiDocs.xqm";
-import module namespace tei2html="http://syriaca.org/tei2html" at "content-negotiation/tei2html.xqm";
-import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
-import module namespace rel="http://syriaca.org/related" at "lib/get-related.xqm";
-import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
-import module namespace timeline="http://syriaca.org/timeline" at "lib/timeline.xqm";
+import module namespace teiDocs="http://srophe.org/srophe/teiDocs" at "teiDocs/teiDocs.xqm";
+import module namespace tei2html="http://srophe.org/srophe/tei2html" at "content-negotiation/tei2html.xqm";
+import module namespace global="http://srophe.org/srophe/global" at "lib/global.xqm";
+import module namespace rel="http://srophe.org/srophe/related" at "lib/get-related.xqm";
+import module namespace maps="http://srophe.org/srophe/maps" at "lib/maps.xqm";
+import module namespace timeline="http://srophe.org/srophe/timeline" at "lib/timeline.xqm";
 (: Namespaces :)
 declare namespace http="http://expath.org/ns/http-client";
 declare namespace html="http://www.w3.org/1999/xhtml";
@@ -43,8 +43,8 @@ if(request:get-parameter('id', '') != '') then
                                 replace(replace($rec/descendant::tei:idno[@type='redirect'][1]/text(),'/tei',''),$global:base-uri,$global:nav-base)
                             else concat($global:nav-base,'/',$collection,'/','browse.html')
                     return response:redirect-to(xs:anyURI(concat($global:nav-base, '/301.html?redirect=',$redirect)))
-                else map {"data" := $rec }
-else map {"data" := <div>'Page data'</div>}
+                else map {"data" : $rec }
+else map {"data" : <div>'Page data'</div>}
 };
 
 (:~    

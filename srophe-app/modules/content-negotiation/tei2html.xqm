@@ -4,9 +4,9 @@ xquery version "3.0";
  : Used by oai, can be plugged into other outputs as well.
  :)
  
-module namespace tei2html="http://syriaca.org/tei2html";
-import module namespace bibl2html="http://syriaca.org/bibl2html" at "bibl2html.xqm";
-import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
+module namespace tei2html="http://srophe.org/srophe/tei2html";
+import module namespace bibl2html="http://srophe.org/srophe/bibl2html" at "bibl2html.xqm";
+import module namespace config="http://srophe.org/srophe/config" at "../config.xqm";
 
 declare namespace html="http://purl.org/dc/elements/1.1/";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -35,16 +35,12 @@ declare function tei2html:tei2html($nodes as node()*) as item()* {
             }
             case element(tei:category) return element ul {tei2html:tei2html($node/node())}
             case element(tei:catDesc) return element li {tei2html:tei2html($node/node())}
-            case element(tei:ref) return
-                if($node/parent::tei:ab[@type='crossreference']) then 
-                    if($node/@target) then
-                        <a href="{replace($node/@target,$global:base-uri,$global:nav-base)}">{$node//text()}</a>
-                    else if($node[@type='lookup']) then   
-                        <a href="{concat($global:nav-base,'/search.html?q=',$node//text())}">{$node//text()}</a>
-                    else if($node[@type='authorLookup']) then   
-                        <a href="{concat($global:nav-base,'/search.html?author=',$node//text())}">{$node//text()}</a>
-                    else <a href="{concat($global:nav-base,'/search.html?q=',$node//text())}">{$node//text()}</a>
-                else tei2html:tei2html($node/node())                    
+            case element(tei:foreign) return element span 
+                {(
+                if($node/@xml:lang) then attribute lang { $node/@xml:lang } else (),
+                if($node/@xml:lang = ('syr','ar','he')) then attribute dir { 'rtl' } else (),
+                tei2html:tei2html($node/node())
+                )}
             case element(tei:imprint) return element span {
                     if($node/tei:pubPlace/text()) then $node/tei:pubPlace[1]/text() else (),
                     if($node/tei:pubPlace/text() and $node/tei:publisher/text()) then ': ' else (),
@@ -55,14 +51,34 @@ declare function tei2html:tei2html($nodes as node()*) as item()* {
                     if($node/following-sibling::tei:biblScope[@unit='series']) then ', ' else ()
             }
             case element(tei:label) return element span {tei2html:tei2html($node/node())}
+            case element(tei:orig) return 
+                <span class="tei-orig">{
+                if($node/tei:date) then 
+                    <span class="tei-date">{(' (',tei2html:tei2html($node/tei:date),')')}</span>
+                else tei2html:tei2html($node/node())
+                }</span>
+            case element(tei:placeName) return 
+                <span class="tei-placeName">{
+                    let $name := tei2html:tei2html($node/node())
+                    return
+                        if($node/@ref) then
+                            element a { attribute href { $node/@ref }, $name }
+                        else $name                                 
+                        }</span>
             case element(tei:persName) return 
                 <span class="tei-persName">{
-                    if($node/child::*) then 
-                        for $part in $node/child::*
-                        order by $part/@sort ascending, string-join($part/descendant-or-self::text(),' ') descending
-                        return tei2html:tei2html($part/node())
-                    else tei2html:tei2html($node/node())
-                }</span>
+                    let $name := if($node/child::*) then 
+                                    string-join(for $part in $node/child::*
+                                    order by $part/@sort ascending, string-join($part/descendant-or-self::text(),' ') descending
+                                    return tei2html:tei2html($part/node()),' ')
+                                 else tei2html:tei2html($node/node())
+                    return
+                        if($node/@ref) then
+                            element a { attribute href { $node/@ref }, $name }
+                        else $name                                 
+                        }</span>
+            case element(tei:quote) return
+                ('"',tei2html:tei2html($node/node()),'"')
             case element(tei:title) return 
                 let $titleType := 
                         if($node/@level='a') then 
@@ -79,15 +95,11 @@ declare function tei2html:tei2html($nodes as node()*) as item()* {
                             'title-person'                             
                         else ()
                 return  
-                    <span class="tei-title {$titleType}">{
+                    <span class="tei-title {$titleType}"> {
                         (if($node/@xml:lang) then attribute lang { $node/@xml:lang } else (),
                         tei2html:tei2html($node/node()))                 
                     }</span>
-            case element(tei:foreign) return 
-                <span dir="{if($node/@xml:lang = ('syr','ar','^syr')) then 'rtl' else 'ltr'}">{
-                    tei2html:tei2html($node/node())
-                }</span>
-            default return tei2html:tei2html($node/node())
+            default return <span class="tei-{local-name($node)}">{tei2html:tei2html($node/node())}</span>
 };
 
 (:
@@ -96,27 +108,41 @@ declare function tei2html:tei2html($nodes as node()*) as item()* {
 declare function tei2html:summary-view($nodes as node()*,$id as xs:string?) as item()* {
   if($nodes/descendant-or-self::tei:ab[@type='crossreference']) then
     tei2html:summary-view-crossref($nodes,$id)
-  else tei2html:summary-view-generic($nodes,$id)   
+  else tei2html:summary-view-generic($nodes,$id,())   
+};
+
+(:
+ : Used for short views of records, browse, search or related items display. 
+:)
+declare function tei2html:summary-view($nodes as node()*,$id as xs:string?, $kwic as node()*) as item()* {
+  if($nodes/descendant-or-self::tei:ab[@type='crossreference']) then
+    tei2html:summary-view-crossref($nodes,$id)
+  else tei2html:summary-view-generic($nodes,$id,$kwic)   
 };
 
 (: Generic short view template :)
-declare function tei2html:summary-view-generic($nodes as node()*, $id as xs:string?) as item()* {    
-    let $recID :=  tokenize($id,'/')[last()]
+declare function tei2html:summary-view-generic($nodes as node()*, $id as xs:string?, $kwic as node()*) as item()* {    
+    let $entryPath := concat($config:nav-base,'/entry')
+    let $recID :=  replace($id,$config:base-uri,$entryPath)
     return 
        <div class="results-list {if($nodes[@type = ('subsection','subSubsection')]) then 'indent' else ()}">
           <span class="sort-title">  
-               <a href="{$global:nav-base}/{$recID}">{$nodes/tei:head}</a>
+               <a href="{$recID}">{$nodes/tei:head}</a>
                <span class="type">{$nodes/tei:ab[@type='infobox']}</span>
            </span>
-           {if($nodes/descendant::tei:byline) then
+           {(if($nodes/descendant::tei:byline) then
             <span class="results-list-desc sort-title">
                 <span>Contributor: </span>
                 <i>{$nodes/descendant::tei:byline/tei:persName}</i>
             </span>
-           else ()}
+           else (),
+           if($kwic != '') then
+            <span class="results-list-desc type">{tei2html:output-kwic($kwic, $id)}</span>
+           else ()
+           )}
            <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>
-               <a href="{$global:nav-base}/{$recID}">{$id}</a>
+               <a href="{$recID}">{$id}</a>
            </span>
        </div>   
 };
@@ -130,6 +156,48 @@ declare function tei2html:summary-view-crossref($nodes as node()*, $id as xs:str
             {$nodes/tei:head}&#160;{tei2html:tei2html($nodes//tei:ab)} </span>
         </div>  
 };
+
+(:~
+ : Borrowed regex to solve util:expand slowness
+ : See: https://exist-open.markmail.org/message/bwcxoq3dg5e3zeis?q=util:expand+is+slow
+ 
+:)
+declare function tei2html:queryToRegex($q as xs:string, $input as xs:string) as xs:string {
+    if (ends-with($q,'"') and starts-with($q,'"')) then
+        "(^|[^a-zA-Z])" ||
+        replace(substring(substring($q,2),1,string-length($q)-2)," +"," +") ||
+        "([^a-zA-Z]|$)"
+    else
+        if (not(contains($q," "))) then
+            "([^a-zA-Z]|^)" || replace(replace($q,"[*]","[^ ]*"),"[?]","[^ ]") || "([^a-zA-Z]|$)"
+        else
+            let $terms := replace(replace($q," OR "," ")," AND "," ")
+            return
+            (if (matches($input,"([^a-zA-Z]|^)"||$q||"([^a-zA-Z]|$)","i")) then
+                "([^a-zA-Z]|^)"||$q||"([^a-zA-Z]|$)|"
+             else "") ||
+                string-join(for $term in tokenize($terms)
+                let $wildcards := replace(replace($term,"[*]","[^ ]*"),"[?]","[^]")
+                return "([^a-zA-Z]|^)" || $wildcards || "([^a-zA-Z]|$)","|")
+};
+
+declare function tei2html:highlight($toHighlight as node(), $searchterm as xs:string) as node()* {
+        try {
+            let $regex := tei2html:queryToRegex($searchterm,$toHighlight/text())
+            let $ana := fn:analyze-string( $toHighlight/text(),$regex, "i")
+            for $s in $ana/*
+            return
+            if (fn:local-name($s)='non-match') then
+                fn:string-join($s//text())
+            else <strong>{
+                fn:string-join($s//text())
+            }</strong>
+        } catch * {
+            (util:log("warn", $err:code || ": " || $err:description),
+            <span>{$toHighlight//text()}</span>)
+        }
+};
+
 
 (:~ 
  : Reworked  KWIC to be more 'Google like' 
@@ -148,9 +216,11 @@ declare function tei2html:output-kwic($nodes as node()*, $id as xs:string*){
     let $results := <results xmlns="http://www.w3.org/1999/xhtml">{
                       if(request:get-parameter('keywordProximity', '') castable as xs:integer) then
                         let $wordList := 
-                                string-join(for $word in tokenize(request:get-parameter('q', ''),'\s')
-                                    return $word,concat('\W+(\w+\W+){1,',request:get-parameter('keywordProximity', ''),'}?'))                      
-                        let $pattern := concat('(',$wordList,')\W+(\w+\W+){1,',request:get-parameter('keywordProximity', ''),'}?(',$wordList,')')
+                                (:string-join(for $word in tokenize(request:get-parameter('q', ''),'\s+')
+                                            return $word,concat('\W+(\w+\W+){1,',request:get-parameter('keywordProximity', ''),'}?'))
+                                            :)
+                                string-join(for $word in tokenize(request:get-parameter('q', ''),'\s+')
+                                            return $word,concat('.*(\w+\W+){1,',request:get-parameter('keywordProximity', ''),'}?'))                                            
                         let $highlight := function($string as xs:string) { <match xmlns="http://www.w3.org/1999/xhtml">{$string}</match> }
                         return tei2html:highlight-matches($nodes, $wordList, $highlight)
                       else tei2html:kwic-format($nodes)
@@ -166,8 +236,8 @@ declare function tei2html:output-kwic($nodes as node()*, $id as xs:string*){
     let $nextString := 
                 if(string-length($next) lt 100 ) then () 
                 else concat(substring($next,1,100),'... ')
-    let $link := concat($global:nav-base,'/',tokenize($id,'/')[last()],'#',$node/@n)
-    return <span>{$prevString}&#160;<span class="match" style="background-color:yellow;"><a href="{$link}">{$node/text()}</a></span>&#160;{$nextString}</span>
+    (:let $link := concat($config:nav-base,'/',tokenize($id,'/')[last()],'#',$node/@n):)
+    return <span>{$prevString}&#160;<span class="match" style="background-color:yellow;">{$node/text()}</span>&#160;{$nextString}</span>
 };
 
 (:~
@@ -180,9 +250,8 @@ declare function tei2html:kwic-format($nodes as node()*){
         typeswitch($node)
             case text() return $node
             case comment() return ()
-            case element(exist:match) return  
-                <match xmlns="http://www.w3.org/1999/xhtml">
-                    {(if($node/*[@n]) then attribute n {concat('n-id.',$node/@n)} else (), $node/node())}</match>
+            case element(exist:match) return 
+                <match xmlns="http://www.w3.org/1999/xhtml">{(if($node/*[@n]) then attribute n {concat('n-id.',$node/@n)} else (), $node/node())}</match>
             default return tei2html:kwic-format($node/node())                
 };
 

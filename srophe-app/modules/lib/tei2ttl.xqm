@@ -4,8 +4,8 @@ xquery version "3.0";
  : Based on examples: https://github.com/srophe/Linked-Data/blob/master/ShortEdessaPlace78inPGIF.ttl 
 :)
 
-module namespace tei2ttl="http://syriaca.org/tei2ttl";
-import module namespace global="http://syriaca.org/global" at "global.xqm";
+module namespace tei2ttl="http://srophe.org/srophe/tei2ttl";
+import module namespace global="http://srophe.org/srophe/global" at "global.xqm";
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 
