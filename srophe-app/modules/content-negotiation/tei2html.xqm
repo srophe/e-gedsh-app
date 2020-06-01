@@ -122,11 +122,12 @@ declare function tei2html:summary-view($nodes as node()*,$id as xs:string?, $kwi
 
 (: Generic short view template :)
 declare function tei2html:summary-view-generic($nodes as node()*, $id as xs:string?, $kwic as node()*) as item()* {    
-    let $recID :=  tokenize($id,'/')[last()]
+    let $entryPath := concat($config:nav-base,'/entry')
+    let $recID :=  replace($id,$config:base-uri,$entryPath)
     return 
        <div class="results-list {if($nodes[@type = ('subsection','subSubsection')]) then 'indent' else ()}">
           <span class="sort-title">  
-               <a href="{$config:nav-base}/entry/{$recID}">{$nodes/tei:head}</a>
+               <a href="{$recID}">{$nodes/tei:head}</a>
                <span class="type">{$nodes/tei:ab[@type='infobox']}</span>
            </span>
            {(if($nodes/descendant::tei:byline) then
@@ -141,7 +142,7 @@ declare function tei2html:summary-view-generic($nodes as node()*, $id as xs:stri
            )}
            <span class="results-list-desc uri">
                <span class="srp-label">URI: </span>
-               <a href="{$config:nav-base}/entry/{$recID}">{$id}</a>
+               <a href="{$recID}">{$id}</a>
            </span>
        </div>   
 };
