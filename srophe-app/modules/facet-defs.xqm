@@ -3,10 +3,10 @@
  :)
 xquery version "3.0";
 
-module namespace facet-defs="http://syriaca.org/facet-defs";
+module namespace facet-defs="http://srophe.org/srophe/facet-defs";
 
 import module namespace templates="http://exist-db.org/xquery/templates" ;
-import module namespace app="http://syriaca.org/templates" at "app.xql";
+import module namespace app="http://srophe.org/srophe/templates" at "app.xql";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 

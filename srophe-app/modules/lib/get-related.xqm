@@ -1,8 +1,8 @@
 xquery version "3.0";
 (: Build relationships. :)
-module namespace rel="http://syriaca.org/related";
-import module namespace page="http://syriaca.org/page" at "paging.xqm";
-import module namespace global="http://syriaca.org/global" at "global.xqm";
+module namespace rel="http://srophe.org/srophe/related";
+import module namespace page="http://srophe.org/srophe/page" at "paging.xqm";
+import module namespace global="http://srophe.org/srophe/global" at "global.xqm";
 import module namespace functx="http://www.functx.com";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace html="http://www.w3.org/1999/xhtml";
@@ -117,7 +117,7 @@ let $data :=
     where $sort != ''
     order by $sort
     return concat($id, 'headword:=', $headword)
-return  map { "cited" := $data}    
+return  map { "cited" : $data}    
 };
 
 (:~ 

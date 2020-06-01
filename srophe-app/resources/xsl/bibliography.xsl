@@ -105,7 +105,9 @@
                         </a>
                     </xsl:when>
                     <xsl:when test="child::text()">
-                        <span class="bibl-inline"><xsl:apply-templates/></span>
+                        <span class="bibl-inline">
+                            <xsl:apply-templates/>
+                        </span>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:call-template name="footnote"/>
@@ -1151,7 +1153,7 @@
             <xsl:choose>
                 <xsl:when test="@type='URI'">
                     <a href="{text()}">
-                        <xsl:value-of select="text()"/>&#160;
+                        <xsl:value-of select="text()"/> 
                         <xsl:call-template name="ref-icons">
                             <xsl:with-param name="ref" select="text()"/>
                         </xsl:call-template>
@@ -1175,7 +1177,7 @@
                         <xsl:value-of select="@target"/>
                     </xsl:otherwise>
                 </xsl:choose>
-                &#160;<xsl:call-template name="ref-icons">
+                 <xsl:call-template name="ref-icons">
                     <xsl:with-param name="ref" select="text()"/>
                 </xsl:call-template>
             </a>

@@ -1,15 +1,17 @@
 xquery version "3.0";
 (:
- : Build ttl output for Gazetteer data. 
- : Updated to work with Persons/Places and Works:
- : https://github.com/srophe/srophe-app-data/issues/702#issuecomment-280301046 
+ : Build Srophe TEI to ttl 
 :)
 
-module namespace tei2ttl="http://syriaca.org/tei2ttl";
-import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
-import module namespace bibl2html="http://syriaca.org/bibl2html" at "bibl2html.xqm";
-import module namespace rel="http://syriaca.org/related" at "../lib/get-related.xqm";
+module namespace tei2ttl="http://srophe.org/srophe/tei2ttl";
+import module namespace bibl2html="http://srophe.org/srophe/bibl2html" at "bibl2html.xqm";
+import module namespace tei2html="http://srophe.org/srophe/tei2html" at "tei2html.xqm";
+import module namespace rel="http://srophe.org/srophe/related" at "../lib/get-related.xqm";
+import module namespace config="http://srophe.org/srophe/config" at "../config.xqm";
+
 import module namespace functx="http://www.functx.com";
+
+declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 declare option exist:serialize "method=text media-type=text/turtle indent=yes";
@@ -195,9 +197,9 @@ return
                     tei2ttl:attestation($rec, $name/@source)))
             ,'];')
     else 
-        if($name/ancestor::tei:location[@type='nested'][starts-with(@ref,$global:base-uri)]) then
+        if($name/ancestor::tei:location[@type='nested'][starts-with(@ref,$config:base-uri)]) then
            tei2ttl:make-triple('','dcterms:isPartOf',tei2ttl:make-uri($name/@ref)) 
-        else if($name[starts-with(@ref,$global:base-uri)]) then  
+        else if($name[starts-with(@ref,$config:base-uri)]) then  
             tei2ttl:make-triple('','skos:related',tei2ttl:make-uri($name/@ref))
         else ()),' ')        
 };
@@ -210,7 +212,7 @@ declare function tei2ttl:geo($rec) as xs:string*{
 string-join((
 for $geo in $rec/descendant::tei:location[tei:geo]
 return 
-    concat('&#xa;geo:location [',
+    concat('&#xa;[',
         tei2ttl:make-triple('','geo:lat',tei2ttl:make-literal(tokenize($geo/tei:geo,' ')[1],(),())),
         tei2ttl:make-triple('','geo:long',tei2ttl:make-literal(tokenize($geo/tei:geo,' ')[2],(),())),
     '];')),'')
@@ -221,7 +223,7 @@ return
  : @param $rec
 :)
 declare function tei2ttl:bibl-citation($rec) as xs:string*{
-let $citation := string-join(bibl2html:citation(root($rec)))
+let $citation := string-join(bibl2html:citation($rec/ancestor::tei:TEI))
 return 
     tei2ttl:make-triple('','dcterms:bibliographicCitation', tei2ttl:make-literal($citation,(),()))
 };
@@ -487,9 +489,9 @@ declare function tei2ttl:prefix() as xs:string{
 
 (: Triples for a single record :)
 declare function tei2ttl:make-triple-set($rec){
-let $rec := if($rec/tei:div[@uri[starts-with(.,$global:base-uri)]]) then $rec/tei:div[@uri[starts-with(.,$global:base-uri)]] else $rec
-let $id := if($rec/descendant::tei:idno[starts-with(.,$global:base-uri)]) then replace($rec/descendant::tei:idno[starts-with(.,$global:base-uri)][1],'/tei','')
-           else if($rec/@uri[starts-with(.,$global:base-uri)]) then $rec/@uri[starts-with(.,$global:base-uri)]
+let $rec := if($rec/tei:div[@uri[starts-with(.,$config:base-uri)]]) then $rec/tei:div[@uri[starts-with(.,$config:base-uri)]] else $rec
+let $id := if($rec/descendant::tei:idno[starts-with(.,$config:base-uri)]) then replace($rec/descendant::tei:idno[starts-with(.,$config:base-uri)][1],'/tei','')
+           else if($rec/@uri[starts-with(.,$config:base-uri)]) then $rec/@uri[starts-with(.,$config:base-uri)]
            else $rec/descendant::tei:idno[1]
 let $resource-class := if($rec/descendant::tei:body/tei:biblStruct) then 'rdfs:Resource'    
                        else 'skos:Concept'    
@@ -505,7 +507,10 @@ return
                 else if($rec/descendant::tei:body/tei:listPlace/tei:place) then
                     string-join(for $headword in $rec/descendant::tei:body/tei:listPlace/tei:place/tei:placeName[. != '']
                         return tei2ttl:make-literal($headword/descendant::text(),if($headword/@xml:lang) then string($headword/@xml:lang) else (),()),', ')                        
-                else if($rec[self::tei:div/@uri]) then tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
+                else if($rec[self::tei:div/@uri]) then
+                        if(tei2ttl:rec-type($rec) = 'syriaca:relationFactoid') then
+                            tei2ttl:make-literal(normalize-space(string-join($rec/descendant::tei:listRelation/tei:relation//text(),' ')),(),())
+                        else tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
                 else tei2ttl:make-literal($rec/descendant::tei:title[1]/text(),if($rec/descendant::tei:title[1]/@xml:lang) then string($rec/descendant::tei:title[1]/@xml:lang) else (),())),
        if($rec/descendant::tei:body/tei:bibl[@type="lawd:ConceptualWork"] or $rec/descendant::tei:body/tei:biblStruct) then
                (for $author in $rec/descendant::tei:body/tei:bibl[@type="lawd:ConceptualWork"]/tei:author | $rec/descendant::tei:body/tei:biblStruct/descendant::tei:author
@@ -567,7 +572,10 @@ return
                     else if($rec/descendant::tei:body/tei:listPlace/tei:place) then
                         string-join(for $headword in $rec/descendant::tei:body/tei:listPlace/tei:place/tei:placeName[. != '']
                             return tei2ttl:make-literal($headword/descendant::text(),if($headword/@xml:lang) then string($headword/@xml:lang) else (),()),', ')                        
-                    else if($rec[self::tei:div/@uri]) then tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
+                    else if($rec[self::tei:div/@uri]) then
+                            if(tei2ttl:rec-type($rec) = 'syriaca:relationFactoid') then
+                                tei2ttl:make-literal(normalize-space(string-join($rec/descendant::tei:listRelation/tei:relation//text(),' ')),(),())
+                            else tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
                     else tei2ttl:make-literal($rec/descendant::tei:title[1]/text(),if($rec/descendant::tei:title[1]/@xml:lang) then string($rec/descendant::tei:title[1]/@xml:lang) else (),())),
             tei2ttl:make-triple('','dcterms:subject', tei2ttl:make-uri($id)),
             if(contains($id,'/spear/')) then () else tei2ttl:bibl($rec),
@@ -584,7 +592,10 @@ return
                     else if($rec/descendant::tei:body/tei:listPlace/tei:place) then
                         string-join(for $headword in $rec/descendant::tei:body/tei:listPlace/tei:place/tei:placeName[. != '']
                             return tei2ttl:make-literal($headword/descendant::text(),if($headword/@xml:lang) then string($headword/@xml:lang) else (),()),', ')                        
-                    else if($rec[self::tei:div/@uri]) then  tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
+                    else if($rec[self::tei:div/@uri]) then
+                            if(tei2ttl:rec-type($rec) = 'syriaca:relationFactoid') then
+                                tei2ttl:make-literal(normalize-space(string-join($rec/descendant::tei:listRelation/tei:relation//text(),' ')),(),())
+                            else tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
                     else tei2ttl:make-literal($rec/descendant::tei:title[1]/text(),if($rec/descendant::tei:title[1]/@xml:lang) then string($rec/descendant::tei:title[1]/@xml:lang) else (),())),
             tei2ttl:make-triple('','dcterms:subject', tei2ttl:make-uri($id)),
             if(contains($id,'/spear/')) then () else tei2ttl:bibl($rec), 
@@ -601,7 +612,10 @@ return
                     else if($rec/descendant::tei:body/tei:listPlace/tei:place) then
                         string-join(for $headword in $rec/descendant::tei:body/tei:listPlace/tei:place/tei:placeName[. != '']
                             return tei2ttl:make-literal($headword/descendant::text(),if($headword/@xml:lang) then string($headword/@xml:lang) else (),()),', ')                        
-                    else if($rec[self::tei:div/@uri]) then tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
+                    else if($rec[self::tei:div/@uri]) then
+                            if(tei2ttl:rec-type($rec) = 'syriaca:relationFactoid') then
+                                tei2ttl:make-literal(normalize-space(string-join($rec/descendant::tei:listRelation/tei:relation//text(),' ')),(),())
+                            else tei2ttl:make-literal(normalize-space(string-join($rec/descendant::*[not(self::tei:citedRange)]/text(),' ')),(),())
                     else tei2ttl:make-literal($rec/descendant::tei:title[1]/text(),if($rec/descendant::tei:title[1]/@xml:lang) then string($rec/descendant::tei:title[1]/@xml:lang) else (),())),        
                     tei2ttl:make-triple('','dcterms:subject', tei2ttl:make-uri($id)),
             tei2ttl:make-triple('','dcterms:subject', tei2ttl:make-uri($id)),
@@ -622,5 +636,9 @@ declare function tei2ttl:record($triple as xs:string*) as xs:string*{
 };
 
 declare function tei2ttl:ttl-output($recs) {
-    (concat(tei2ttl:prefix(), tei2ttl:make-triple-set($recs)))
+    serialize((concat(tei2ttl:prefix(), tei2ttl:make-triple-set($recs))), 
+        <output:serialization-parameters>
+            <output:method>text</output:method>
+            <output:media-type>text/plain</output:media-type>
+        </output:serialization-parameters>)
 };

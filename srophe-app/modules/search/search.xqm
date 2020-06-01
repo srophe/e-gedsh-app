@@ -1,11 +1,13 @@
 xquery version "3.0";        
  
-module namespace search="http://syriaca.org/search";
-import module namespace page="http://syriaca.org/page" at "../lib/paging.xqm";
-import module namespace common="http://syriaca.org/common" at "common.xqm";
-import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
-import module namespace tei2html="http://syriaca.org/tei2html" at "../content-negotiation/tei2html.xqm";
-import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
+module namespace search="http://srophe.org/srophe/search";
+import module namespace page="http://srophe.org/srophe/page" at "../lib/paging.xqm";
+import module namespace common="http://srophe.org/srophe/common" at "common.xqm";
+import module namespace maps="http://srophe.org/srophe/maps" at "lib/maps.xqm";
+import module namespace tei2html="http://srophe.org/srophe/tei2html" at "../content-negotiation/tei2html.xqm";
+import module namespace global="http://srophe.org/srophe/global" at "../lib/global.xqm";
+import module namespace sf = "http://srophe.org/srophe/facets" at "../lib/facets.xql";
+
 import module namespace kwic="http://exist-db.org/xquery/kwic";
 import module namespace templates="http://exist-db.org/xquery/templates" ;
 import module namespace functx="http://www.functx.com";
@@ -23,7 +25,7 @@ declare variable $search:bibl {request:get-parameter('bibl', '') cast as xs:stri
 declare variable $search:idno {request:get-parameter('uri', '') cast as xs:string};
 declare variable $search:start {request:get-parameter('start', 1) cast as xs:integer};
 declare variable $search:sort-element {request:get-parameter('sort-element', '') cast as xs:string};
-declare variable $search:perpage {request:get-parameter('perpage', 20) cast as xs:integer};
+declare variable $search:perpage {request:get-parameter('perpage', 10) cast as xs:integer};
 declare variable $search:collection {request:get-parameter('collection', '') cast as xs:string};
 
 (:~
@@ -32,21 +34,58 @@ declare variable $search:collection {request:get-parameter('collection', '') cas
  : @param $collection passed from search page templates to build correct sub-collection search string
 :)
 declare %templates:wrap function search:get-results($node as node(), $model as map(*), $collection as xs:string?, $view as xs:string?){
-    let $coll := if($search:collection != '') then $search:collection else $collection
+   let $coll := if($search:collection != '') then $search:collection else $collection
     let $eval-string :=  search:query-string($collection)
+    let $hits := util:eval($eval-string)
     return                         
-    map {"hits" := 
-                if(exists(request:get-parameter-names()) or ($view = 'all')) then 
-                    if($search:sort-element != '' and $search:sort-element != 'relevance' or $view = 'all') then 
-                        for $hit in util:eval($eval-string)
-                        order by global:build-sort-string(page:add-sort-options($hit,$search:sort-element),'') ascending
-                        return $hit                                                     
-                    else 
-                        for $hit in util:eval($eval-string)
-                        order by ft:score($hit) descending
-                        return $hit
-                else ()                        
-         }
+        map {"hits" : 
+                    if(exists(request:get-parameter-names()) or ($view = 'all')) then 
+                        if($search:sort-element != '' and $search:sort-element != 'relevance' or $view = 'all') then 
+                            for $hit in $hits
+                            order by global:build-sort-string(page:add-sort-options($hit,$search:sort-element),'') ascending
+                            return $hit                                                     
+                        else 
+                            for $hit in $hits
+                            order by ft:score($hit) descending
+                            return $hit
+                    else ()                        
+             }
+(: New code for fields, if we can get boost working. 
+    let $fields :=  
+            string-join(
+            for $param in request:get-parameter-names()[starts-with(., 'field-')]
+            let $dimension := substring-after($param, 'field-')
+            where request:get-parameter($param, ()) != ''
+            return concat(' +', $dimension, ':',  search:clean-string(request:get-parameter($param, ()))),''
+            )
+    let $legacy-fields := 
+            string-join(
+            for $param in ('author','placeName','persName','bibl','uri')
+            let $dimension := $param
+            where request:get-parameter($param, ()) != ''
+            return concat(' +', $dimension, ':',  search:clean-string(request:get-parameter($param, ()))),''
+            )
+    let $fullText := if(request:get-parameter('q', ())) then
+                        if(request:get-parameter('keywordProximity', ()) != '') then
+                            (search:clean-string(request:get-parameter('q', ())) || '~' || request:get-parameter('keywordProximity', ''))
+                        else search:clean-string(request:get-parameter('q', ()))
+                     else ()
+    let $query := if($fullText != '') then 
+                    $fullText || $fields || $legacy-fields (:|| ' +type:entry':) 
+                  else $fields
+    let $hits := 
+            if($query != '') then  
+                if($fullText != '') then
+                    collection($global:data-root)//tei:div[@type=('entry','crossreference','section','subsection')][tei:ab[@type='idnos']][ft:query(., ($query))] 
+                else collection($global:data-root)//tei:div[@type=('entry','crossreference','section','subsection')][tei:ab[@type='idnos']][ft:query(., ($query))]
+            else collection($global:data-root)//tei:div[@type=('entry','crossreference','section','subsection')][tei:ab[@type='idnos']][ft:query(., (),sf:facet-query())] 
+    return    
+        map {"hits" : 
+                for $hit in $hits
+                order by ft:score($hit) descending
+                return $hit
+        }
+    :)        
 };
 
 (:~   
@@ -109,7 +148,6 @@ declare function search:idno(){
             or 
             .//@target[matches(.,'",$search:idno,"(\s.*)?$')]
         ]")
-    (:     concat("[descendant::tei:idno =  '",$search:idno,"']") :) 
     else () 
 };
 
@@ -227,7 +265,6 @@ declare
     %templates:default("start", 1)
 function search:show-hits($node as node()*, $model as map(*), $collection as xs:string?) {
 <div class="indent" id="search-results">
-    <div>{search:build-geojson($node,$model)}</div>
     {
         for $hit at $p in subsequence($model("hits"), $search:start, $search:perpage)
         let $uri := if($hit/@type='crossreference') then
@@ -240,14 +277,15 @@ function search:show-hits($node as node()*, $model as map(*), $collection as xs:
                         <span class="label label-default">{$search:start + $p - 1}</span>
                       </div>
                       <div class="col-md-9" xml:lang="en">
-                       {tei2html:summary-view-generic($hit, $uri)}
-                       {if(request:get-parameter('keywordProximity', '') castable as xs:integer) then 
-                           tei2html:output-kwic($hit,$uri)  
-                         else
+                       {tei2html:summary-view($hit, $uri)}
+                       {
+                        if(request:get-parameter('keywordProximity', '') castable as xs:integer) then 
+                           <div class="indent">{tei2html:output-kwic($hit,$uri)}</div>  
+                        else
                             let $expanded := util:expand($hit)
                             return
                                 if($expanded//exist:match) then 
-                                    tei2html:output-kwic($expanded, $uri)
+                                   <div class="indent">{tei2html:output-kwic($expanded, $uri)}</div>
                                 else ()
                           }
                       </div>
@@ -333,7 +371,7 @@ declare function search:search-form() {
                     title="Searches the entire XML data and returns the entries that reference the specified URI(s)."></span>: </label>
                     <div class="col-sm-10 col-md-9 ">
                         <input type="text" id="uri" name="uri" class="form-control"/>
-                        <p class="hint">*Enter e-GEDSH or Syriaca URI, ex. http://gedsh.bethmardutho.org/Aba, or http://syriaca.org/person/13</p>
+                        <p class="hint">*Enter e-GEDSH or Syriaca URI, ex. http://gedsh.bethmardutho.org/Aba, or http://srophe.org/srophe/person/13</p>
                     </div>
 
                </div> 
@@ -394,4 +432,29 @@ declare function search:keyword(){
                        else search:strip-chars(request:get-parameter('q', ''))
         return concat("[ft:query(descendant::*,'",$string,"')]") 
     else () 
+};
+
+(:~
+ : Cleans search parameters to replace bad/undesirable data in strings
+ : @param-string parameter string to be cleaned
+:)
+declare function search:clean-string($string){
+let $query-string := $string
+let $query-string := 
+	   if (functx:number-of-matches($query-string, '"') mod 2) then 
+	       replace($query-string, '"', ' ')
+	   else $query-string   (:if there is an uneven number of quotation marks, delete all quotation marks.:)
+let $query-string := 
+	   if ((functx:number-of-matches($query-string, '\(') + functx:number-of-matches($query-string, '\)')) mod 2 eq 0) 
+	   then $query-string
+	   else translate($query-string, '()', ' ') (:if there is an uneven number of parentheses, delete all parentheses.:)
+let $query-string := 
+	   if ((functx:number-of-matches($query-string, '\[') + functx:number-of-matches($query-string, '\]')) mod 2 eq 0) 
+	   then $query-string
+	   else translate($query-string, '[]', ' ') (:if there is an uneven number of brackets, delete all brackets.:)
+let $query-string := replace($string,"'","''")	   
+return 
+    if(matches($query-string,"(^\*$)|(^\?$)")) then 'Invalid Search String, please try again.' (: Must enter some text with wildcard searches:)
+    else replace(replace($query-string,'<|>|@|&amp;',''), '(\.|\[|\]|\\|\||\-|\^|\$|\+|\{|\}|\(|\)|(/))','\\$1')
+
 };

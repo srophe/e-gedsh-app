@@ -9,13 +9,13 @@ xquery version "3.0";
  : @see browse-spear.xqm for additional SPEAR browse functions 
  :)
 
-module namespace browse="http://syriaca.org/browse";
-import module namespace tei2html="http://syriaca.org/tei2html" at "../lib/tei2html.xqm";
-import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
+module namespace browse="http://srophe.org/srophe/browse";
+import module namespace tei2html="http://srophe.org/srophe/tei2html" at "../content-negotiation/tei2html.xqm";
+import module namespace global="http://srophe.org/srophe/global" at "lib/global.xqm";
 import module namespace facet="http://expath.org/ns/facet" at "lib/facet.xqm";
-import module namespace facet-defs="http://syriaca.org/facet-defs" at "facet-defs.xqm";
-import module namespace page="http://syriaca.org/page" at "lib/paging.xqm";
-import module namespace maps="http://syriaca.org/maps" at "lib/maps.xqm";
+import module namespace facet-defs="http://srophe.org/srophe/facet-defs" at "facet-defs.xqm";
+import module namespace page="http://srophe.org/srophe/page" at "lib/paging.xqm";
+import module namespace maps="http://srophe.org/srophe/maps" at "lib/maps.xqm";
 import module namespace templates="http://exist-db.org/xquery/templates";
 
 declare namespace xslt="http://exist-db.org/xquery/transform";
@@ -151,7 +151,7 @@ let $data :=
         let $num := xs:integer($hit/tei:ab[@type="idnos"]/tei:idno[@type="entry"])
         order by $title
         return $hit
-return map{"browse-data" := $data }
+return map{"browse-data" : $data }
 };
 
 declare function browse:group-abc-entries($node as node(), $model as map(*)){

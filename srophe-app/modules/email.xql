@@ -9,7 +9,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 declare namespace mail="http://exist-db.org/xquery/mail";
 declare namespace request="http://exist-db.org/xquery/request";
-import module namespace global="http://syriaca.org/global" at "lib/global.xqm";
+import module namespace global="http://srophe.org/srophe/global" at "lib/global.xqm";
 import module namespace recap = "http://www.exist-db.org/xquery/util/recapture" at "recaptcha.xqm";
 
 declare option exist:serialize "method=xml media-type=text/xml indent=yes";

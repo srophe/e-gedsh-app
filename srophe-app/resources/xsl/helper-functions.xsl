@@ -1,4 +1,5 @@
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:local="http://syriaca.org/ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs t x saxon local" version="2.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:saxon="http://saxon.sf.net/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://syriaca.org/ns" exclude-result-prefixes="xs t x saxon local" version="2.0">
     
     <!-- Function to add correct ordinal suffix to numbers used in citation creation.  -->
     <xsl:function name="local:ordinal">
@@ -124,7 +125,9 @@
                 <xsl:when test="starts-with(tokenize(string($date),'-')[3],'0')">
                     <xsl:value-of select="substring(tokenize(string($date),'-')[3],1)"/>
                 </xsl:when>
-                <xsl:otherwise><xsl:value-of select="tokenize(string($date),'-')[3]"/></xsl:otherwise>
+                <xsl:otherwise>
+                    <xsl:value-of select="tokenize(string($date),'-')[3]"/>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
         <xsl:value-of select="concat($month,' ',$day,', ', tokenize(string($date),'-')[1])"/>

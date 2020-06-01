@@ -2,8 +2,8 @@ xquery version "3.0";
 (:~
  : Shared functions for search modules 
  :)
-module namespace common="http://syriaca.org/common";
-import module namespace global="http://syriaca.org/global" at "../lib/global.xqm";
+module namespace common="http://srophe.org/srophe/common";
+import module namespace global="http://srophe.org/srophe/global" at "../lib/global.xqm";
 import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
 import module namespace functx="http://www.functx.com";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -186,7 +186,7 @@ return
 :)
 declare function common:keyword(){
     if(request:get-parameter('q', '') != '') then 
-        if(starts-with(request:get-parameter('q', ''),'http://syriaca.org/')) then
+        if(starts-with(request:get-parameter('q', ''),'http://srophe.org/srophe/')) then
            concat("[ft:query(.,'&quot;",request:get-parameter('q', ''),"&quot;',common:options())]")
         else concat("[ft:query(.,'",common:clean-string(request:get-parameter('q', '')),"',common:options())]")
     else '' 
@@ -214,7 +214,7 @@ declare function common:related-places() as xs:string?{
     if(request:get-parameter('related-place', '') != '') then
         let $related-place := request:get-parameter('related-place', '')
         let $ids := 
-            if(matches($related-place,'^http://syriaca.org/')) then
+            if(matches($related-place,'^http://srophe.org/srophe/')) then
                 normalize-space($related-place)
             else 
                 string-join(distinct-values(
@@ -243,7 +243,7 @@ declare function common:related-persons() as xs:string?{
     if(request:get-parameter('related-persons', '') != '') then
         let $rel-person := request:get-parameter('related-persons', '')
         let $ids := 
-            if(matches($rel-person,'^http://syriaca.org/')) then
+            if(matches($rel-person,'^http://srophe.org/srophe/')) then
                 normalize-space($rel-person)
             else 
                 string-join(distinct-values(
@@ -264,7 +264,7 @@ declare function common:related-persons() as xs:string?{
 :)
 declare function common:mentioned() as xs:string?{
     if(request:get-parameter('mentioned', '') != '') then 
-        if(matches(request:get-parameter('mentioned', ''),'^http://syriaca.org/')) then 
+        if(matches(request:get-parameter('mentioned', ''),'^http://srophe.org/srophe/')) then 
             let $id := normalize-space(request:get-parameter('mentioned', ''))
             return concat("[descendant::*[@ref[matches(.,'",$id,"(\W.*)?$')]]]")
         else 
@@ -279,7 +279,7 @@ declare function common:mentioned() as xs:string?{
 declare function common:idno() as xs:string? {
     if(request:get-parameter('idno', '') != '') then 
         let $id := replace(request:get-parameter('idno', ''),'[^\d\s]','')
-        let $syr-id := concat('http://syriaca.org/work/',$id)
+        let $syr-id := concat('http://srophe.org/srophe/work/',$id)
         return concat("[descendant::tei:idno[normalize-space(.) = '",$id,"' or .= '",$syr-id,"']]")
     else ''    
 };

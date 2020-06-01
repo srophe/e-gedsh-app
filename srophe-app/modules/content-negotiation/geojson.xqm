@@ -1,6 +1,6 @@
 xquery version "3.0";
 
-module namespace geojson="http://syriaca.org/geojson";
+module namespace geojson="http://srophe.org/srophe/geojson";
 (:~
  : Module returns coordinates as geoJSON
  : Formats include geoJSON 
@@ -8,11 +8,12 @@ module namespace geojson="http://syriaca.org/geojson";
  : @authored 2014-06-25
 :)
 
-import module namespace config="http://syriaca.org/config" at "../config.xqm";
+import module namespace config="http://srophe.org/srophe/config" at "../config.xqm";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 
 declare namespace json = "http://www.json.org";
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace srophe="https://srophe.app";
 
 (:~
  : Serialize XML as JSON
@@ -54,7 +55,8 @@ declare function geojson:json-wrapper($nodes as node()*) as element()*{
 declare function geojson:geojson-object($node as node()*, $count as xs:integer?) as element()*{
 let $id := if($node/descendant::tei:idno[@type='URI']) then $node/descendant::tei:idno[@type='URI'][1]
            else $node/descendant::tei:idno[1]
-let $title := if($node/descendant::*[@syriaca-tags="#syriaca-headword"]) then $node/descendant::*[@syriaca-tags="#syriaca-headword"][1] 
+let $title := if($node/descendant::*[@srophe:tags="#headword"]) then $node/descendant::*[@srophe:tags="#headword"][1] 
+              else if($node/descendant::*[@syriaca-tags="#syriaca-headword"]) then $node/descendant::*[@syriaca-tags="#syriaca-headword"][1] 
               else $node/descendant::tei:title[1]
 let $desc := if($node/descendant::tei:desc[1]/tei:quote) then 
                 concat('"',$node/descendant::tei:desc[1]/tei:quote,'"')

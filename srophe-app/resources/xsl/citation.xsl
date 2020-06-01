@@ -259,7 +259,8 @@
                     <xsl:sequence select="local:emit-responsible-persons-all(t:editor[@role='general'],'footnote')"/>
                     <xsl:text>, editor</xsl:text>
                     <xsl:if test="count(t:editor[@role='general'])&gt; 1">s</xsl:if>
-                    <xsl:text>, </xsl:text><em>Syriaca.org Works Cited</em>
+                    <xsl:text>, </xsl:text>
+                    <em>Syriaca.org Works Cited</em>
                 </li>
                 <xsl:for-each select="t:editor[@role= ('creator','contributor')]">
                     <li>

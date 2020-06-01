@@ -1,5 +1,5 @@
 xquery version "3.0";
-import module namespace config="http://syriaca.org/config" at "modules/config.xqm";
+import module namespace config="http://srophe.org/srophe/config" at "modules/config.xqm";
 
 declare variable $exist:path external;
 declare variable $exist:resource external;
@@ -32,10 +32,10 @@ declare function local:content-negotiation($exist:path, $exist:resource){
         return 
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">        
                 <forward url="{$exist:controller}/modules/content-negotiation/content-negotiation.xql">
-                    <add-parameter name="id" value="{$id}"/>
+                    <add-parameter name="id" value="{concat('https://gedsh.bethmardutho.org/',$id)}"/>
                     <add-parameter name="format" value="{$format}"/>
                 </forward>
-            </dispatch>
+            </dispatch>        
 };
 
 
