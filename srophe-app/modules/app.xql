@@ -33,7 +33,7 @@ if(request:get-parameter('id', '') != '') then
                         collection($global:data-root)//tei:front
                     else if(request:get-parameter('id', '')[1] = 'back') then 
                         collection($global:data-root)//tei:back
-                    else collection($global:data-root)//tei:div[tei:ab/tei:idno[normalize-space(.) = $id]]
+                    else collection($global:data-root)//tei:idno[. = $id]/ancestor::tei:div[1]
         return 
             if(empty($rec)) then response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html')))
             else 
@@ -665,34 +665,29 @@ declare %templates:wrap function app:entries-count($node as node(), $model as ma
 declare %templates:wrap function app:contributors-count($node as node(), $model as map(*)){
     count(collection($global:data-root)//tei:div[@type='section'][tei:ab[@type='idnos']/child::tei:idno[. = 'https://gedsh.bethmardutho.org/List-Contributors']]/tei:p)
 };
-declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){
-if($model("data")/descendant::tei:idno[@type=('back','front')] or $model("data")/descendant-or-self::*/@type='figure') then 
-    let $c := $model("data")/descendant::tei:idno[1]
-    let $nID := substring-after($model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1], $global:base-uri) 
-    let $pID := substring-after($model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1], $global:base-uri)
-    let $prev := 
-               if($pID != '') then
-                    (<a href="{$global:nav-base}{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
-               else ()
-    let $next := 
-                if($nID != '') then 
-                    (' | ', <a href="{$global:nav-base}{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
-                else ()  
-    return 
-    <p>{($prev, ' ', if($model("data")/descendant-or-self::*/@type='figure') then $c else $model("data")/tei:head[1], ' ', $next)}</p>
-else
-   let $nID := substring-after($model("data")/following-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],$global:base-uri)
-   let $pID := substring-after($model("data")/preceding-sibling::tei:div[@type="entry"][1]/descendant::tei:idno[@type='URI'][1],$global:base-uri)
-   let $prev := 
-                if($pID != '') then
-                        (<a href="{$global:nav-base}{$pID}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
-                else ()
-   let $next := 
-                if($nID != '') then 
-                   (' | ', <a href="{$global:nav-base}{$nID}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)                                        
-                else ()
-   return             
-   <p>{($prev, ' ', $model("data")/tei:head[1], ' ', $next)}</p>
+
+declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){ 
+let $data := for $id in collection($global:data-root)//tei:idno[@type="entry"] order by xs:integer($id) return $id
+let $title := if($model("data")/tei:head[1]) then $model("data")/tei:head[1] else $model("data")/child::*[1]
+let $current := xs:integer($model("data")//tei:idno[@type="entry"])
+let $nextURI := 
+            if($model("data")//tei:idno[@type=('back','front')] or $model("data")/descendant-or-self::*/@type='figure') then 
+               $model("data")/following-sibling::tei:div[1]/descendant::tei:idno[1]
+            else collection($global:data-root)//tei:idno[@type="entry"][. = ($current + 1)]/preceding-sibling::tei:idno[@type='URI']
+let $next := 
+            if($nextURI) then
+                (' | ', <a href="{replace($nextURI,$global:base-uri,$global:nav-base)}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>)
+            else ()  
+let $prevURI := 
+            if($model("data")//tei:idno[@type=('back','front')] or $model("data")/descendant-or-self::*/@type='figure') then
+               $model("data")/preceding-sibling::tei:div[1]/descendant::tei:idno[1]
+            else  collection($global:data-root)//tei:idno[@type="entry"][. = ($current + 1)]/preceding-sibling::tei:idno[@type='URI']
+let $prev := 
+            if($prevURI) then
+                (<a href="{replace($prevURI,$global:base-uri,$global:nav-base)}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>,' | ')
+            else () 
+return             
+  <p>{($prev, ' ', $title//text(), ' ', $next)}</p>
 };
 
 (: Data formats and sharing:)

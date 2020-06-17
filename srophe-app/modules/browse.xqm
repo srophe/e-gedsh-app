@@ -138,7 +138,7 @@ let $data :=
         let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
         let $num := $hit/tei:milestone/@n
         order by $num
-        return $hit        
+        return $hit   
     else if($browse:computed-lang != '') then 
         for $hit in $hits-main[@type=('entry','crossreference')][matches(substring(global:build-sort-string(tei:head[1],$browse:computed-lang),1,1),browse:get-sort(),'i')]
         let $title := global:build-sort-string($hit/tei:head[1],$browse:computed-lang)
