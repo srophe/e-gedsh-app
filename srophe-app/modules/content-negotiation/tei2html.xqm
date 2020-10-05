@@ -123,7 +123,7 @@ declare function tei2html:summary-view($nodes as node()*,$id as xs:string?, $kwi
 (: Generic short view template :)
 declare function tei2html:summary-view-generic($nodes as node()*, $id as xs:string?, $kwic as node()*) as item()* {    
     let $entryPath := concat($config:nav-base,'/entry')
-    let $recID :=  replace($id,$config:base-uri,$entryPath)
+    let $recID :=  replace(replace($id,$config:base-uri,$entryPath),'//','/')
     return 
        <div class="results-list {if($nodes[@type = ('subsection','subSubsection')]) then 'indent' else ()}">
           <span class="sort-title">  
