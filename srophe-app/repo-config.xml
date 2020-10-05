@@ -23,7 +23,7 @@
         <!-- Web Site URL -->
         <url/>
         <!-- Root of app for building dynamic links. Default is eXist app root -->
-        <nav-base>https://gedsh.bethmardutho.org</nav-base>
+        <nav-base>/</nav-base>
         <!--<nav-base>/exist/apps/e-gedsh</nav-base>-->
         <!-- eXist app root for app deployment-->
         <app-root>e-gedsh</app-root>

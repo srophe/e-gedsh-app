@@ -36,9 +36,8 @@ declare variable $global:data-root :=
 
 (: Establish main navigation for app, used in templates for absolute links. Syriaca.org uses a development and production server which each have different root directories.  :)
 declare variable $global:nav-base := 
-    if($global:get-config//repo:nav-base/text() != '') then $global:get-config//repo:nav-base/text()
-    (: For app set to root '/' see syriaca.org production site. :)
-    else if($global:get-config//repo:nav-base/text() = '/') then ''
+    if($global:get-config//repo:nav-base/text() = '/') then ''
+    else if($global:get-config//repo:nav-base/text() != '') then $global:get-config//repo:nav-base/text()
     else concat('/exist/apps/',$global:app-root);
 
 (: Base URI used in record tei:idno :)
