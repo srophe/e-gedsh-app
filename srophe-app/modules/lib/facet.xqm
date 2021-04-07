@@ -179,6 +179,7 @@ declare function facet:group-by-abc($results as item()*, $facet-definitions as e
                 let $see :=   if($sf/following-sibling::tei:ab/tei:ref) then 
                                 concat(' see ',string($sf/following-sibling::tei:ab[1]/tei:ref[1]))
                               else () 
+                order by $sf[1]
                 return <key xmlns="http://expath.org/ns/facet" count="{count($sf)}" value="{$value[1]}" label="{($sf[1],$see)}"/>
             else ()
         }
