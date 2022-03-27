@@ -189,7 +189,7 @@
         <xsl:choose>
             <xsl:when test="@url">
                 <xsl:choose>
-                    <xsl:when test="starts-with(@url,'http://cantaloupe.dh.tamu.edu/iiif')"> 
+                    <xsl:when test="starts-with(@url,'http://iiif.dh.tamu.edu/iiif')"> 
                         <div class="graphic">
                             <div style="width:100% !important;">
                                 <img src="{concat(@url,'/full/650,/0/default.jpg')}"/>
@@ -377,22 +377,22 @@
         <div>
             <h3>How to Cite This Entry</h3>
             <div id="citation-note" class="well">
-                <xsl:if test="//t:byline/t:persName">
-                    <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>,
-                </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
-                    <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:seriesStmt/t:title[@level='m'][1]" mode="cite-foot"/>
+                    <xsl:if test="//t:byline/t:persName">
+                        <xsl:value-of select="local:emit-responsible-persons-all(//t:byline/t:persName,'footnote')"/>,
+                    </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
+                    <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                 </em>, 
                 edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>, <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                 <div class="collapse" id="showcit">
                     <div id="citation-bibliography">
                         <h4>Footnote Style Citation with Date:</h4>
                         <p>
-                            <xsl:if test="//t:byline/t:persName">
-                                <xsl:value-of select="local:emit-responsible-persons-all(//t:byline//t:persName,'footnote')"/>,  
-                            </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
-                                <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:seriesStmt/t:title[@level='m'][1]" mode="cite-foot"/>
-                            </em>, 
-                            edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/> 
+                        <xsl:if test="//t:byline/t:persName">
+                           <xsl:value-of select="local:emit-responsible-persons-all(//t:byline//t:persName,'footnote')"/>,  
+                        </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>,” in <em>
+                            <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
+                        </em>, 
+                        edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/> 
                             (Gorgias Press, 2011; online ed. Beth Mardutho, 2018), <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.  
                         </p>
                         <h4>Bibliography Entry Citation:</h4>
@@ -405,17 +405,17 @@
                                     <xsl:otherwise>. </xsl:otherwise>
                                 </xsl:choose> 
                             </xsl:if>“<xsl:sequence select="normalize-space(child::t:head[1])"/>.” In <em>
-                                <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:seriesStmt/t:title[@level='m'][1]" mode="cite-foot"/>
+                                <xsl:apply-templates select="//t:teiHeader/t:fileDesc/t:titleStmt/t:title[1]" mode="cite-foot"/>
                             </em>. Edited by <xsl:value-of select="local:emit-responsible-persons(//t:fileDesc/t:sourceDesc/t:biblStruct/t:monogr/t:editor,'footnote',4)"/>. 
                             Digital edition prepared by David Michelson, Ute Possekel, and Daniel L. Schwartz. Gorgias Press, 2011; online ed. Beth Mardutho, 2018. 
                             <xsl:value-of select="//t:ab/t:idno[@type='URI'][1]"/>.
                         </p>
                         <p>A TEI-XML record with complete metadata is available at <a href="{replace(concat(//t:ab/t:idno[@type='URI'][1],'/tei'),$base-uri,$nav-base)}">
-                            <xsl:value-of select="concat(//t:ab/t:idno[@type='URI'][1],'/tei')"/>
-                        </a>.</p>
+                                <xsl:value-of select="concat(//t:ab/t:idno[@type='URI'][1],'/tei')"/>
+                            </a>.</p>
                         
                     </div>
-                </div>
+               </div>
                 <a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide">Show more information...</a>
             </div>
         </div>
@@ -1362,4 +1362,88 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
+     <!-- M -->
+    <xsl:template name="miradorViewer">
+        <xsl:variable name="manifestString">
+            <xsl:choose>
+                <xsl:when test="descendant::t:ref[@type='IIIF']">
+                    <xsl:value-of select="descendant::t:ref[@type='IIIF'][1]/@target"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="descendant::t:monogr/t:ref[1]/@target"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="manifest">
+            <xsl:choose>
+                <xsl:when test="matches($manifestString, 'https?://archive.org/details/(.*)')">
+                    <xsl:value-of select="replace($manifestString,'https?://archive.org/details/(.*)','https://iiif.archivelab.org/iiif/$1/manifest.json')"/>
+                </xsl:when>
+                <xsl:when test="matches($manifestString, 'https?://reader.digitale-sammlungen.de/resolve/display/(.*?).html')">
+                    <xsl:value-of select="replace($manifestString,'https?://reader.digitale-sammlungen.de/resolve/display/(.*?).html','https://api.digitale-sammlungen.de/iiif/presentation/v2/$1/manifest')"/>
+                </xsl:when>
+                <xsl:when test="matches($manifestString, 'https?://mdz-nbn-resolving.de/urn:nbn:de:bvb:(\d+)-([a-z0-9]+)-([a-z0-9]+)')">
+                    <xsl:value-of select="replace($manifestString,'https?://mdz-nbn-resolving.de/urn:nbn:de:bvb:(\d+)-([a-z0-9]+)-([a-z0-9]+)','https://api.digitale-sammlungen.de/iiif/presentation/v2/$2/manifest')"/>
+                </xsl:when>
+                <xsl:when test="matches($manifestString, 'https?://(www.)?mdz-nbn-resolving.de/urn/resolver.pl\?urn=urn:nbn:de:bvb:(\d+)-([a-z0-9]+)-([a-z0-9]+)')">
+                    <xsl:value-of select="replace($manifestString,'https?://(www.)?mdz-nbn-resolving.de/urn/resolver.pl\?urn=urn:nbn:de:bvb:(\d+)-([a-z0-9]+)-([a-z0-9]+)','https://api.digitale-sammlungen.de/iiif/presentation/v2/$3/manifest')"/>
+                </xsl:when>
+                <xsl:when test="matches($manifestString, 'https://gallica.bnf.fr/(ark:/[A-Za-z0-9]+/[A-Za-z0-9]+)(.*)')">
+                    <xsl:value-of select="replace($manifestString,'https://gallica.bnf.fr/(ark:/[A-Za-z0-9]+/[A-Za-z0-9]+)(.*)','https://gallica.bnf.fr/iiif/$1/manifest.json')"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:if test="$manifest != ''">
+            <div>
+                <script src="https://unpkg.com/mirador@latest/dist/mirador.min.js"/>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mirador" style="margin:1em; padding:1em; z-index: 1; min-height:600px; poisition: relative;">
+                            <div id="mirador"/>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript"> 
+                    <![CDATA[
+                                var mirador = Mirador.viewer({
+                                "id": "mirador",
+                                "manifests": {"]]><xsl:value-of select="$manifest"/><![CDATA[": {
+                                "provider": ""
+                                }
+                                },
+                                "windows": [
+                                  {
+                                  "loadedManifest": "]]><xsl:value-of select="$manifest"/><![CDATA[",
+                                  "thumbnailNavigationPosition": 'far-right'
+                                  }
+                                ],
+                                "window": {
+                                  "allowFullscreen": "true",
+                                  "views": [ 
+                                    { "key": 'single' },
+                                    { "key": 'book' },
+                                    { "key": 'gallery' },
+                                  ]
+                                },
+                               "workspace": {
+                                  "type": 'mosaic',
+                                },
+                                "workspaceControlPanel": {
+                                  "enabled": "false"
+                                },
+                                "theme" :{
+                                  "palette": {
+                                    "primary": {
+                                      "main": '#009440'
+                                    }
+                                  }
+                                }
+                                });]]>
+                </script>
+            </div> 
+        </xsl:if>
+    </xsl:template>
+    
+    
 </xsl:stylesheet>
