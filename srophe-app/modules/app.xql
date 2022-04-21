@@ -4,7 +4,6 @@ module namespace app="http://srophe.org/srophe/templates";
 (: eXist modules :)
 import module namespace templates="http://exist-db.org/xquery/templates" ;
 import module namespace config="http://srophe.org/srophe/config" at "config.xqm";
-import module namespace functx="http://www.functx.com";
 (: Srophe modules :)
 import module namespace teiDocs="http://srophe.org/srophe/teiDocs" at "teiDocs/teiDocs.xqm";
 import module namespace tei2html="http://srophe.org/srophe/tei2html" at "content-negotiation/tei2html.xqm";
@@ -17,6 +16,14 @@ declare namespace http="http://expath.org/ns/http-client";
 declare namespace html="http://www.w3.org/1999/xhtml";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+declare function app:contains-word( $arg as xs:string?,$word as xs:string )  as xs:boolean {
+   matches(upper-case($arg),
+           concat('^(.*\W)?',
+                     upper-case(replace($word,
+           '(\.|\[|\]|\\|\||\-|\^|\$|\?|\*|\+|\{|\}|\(|\))','\\$1')),
+                     '(\W.*)?$'))
+ };
+ 
 (:~    
  : Simple get record function, get tei record based on tei:idno
  : Builds URL from the following URL patterns defined in the controller.xql or uses the id paramter
@@ -164,8 +171,8 @@ let $rec := $data
 let $relType := $relType
 let $recid := replace($rec/descendant::tei:idno[@type='URI'][starts-with(.,$global:base-uri)][1]/text(),'/tei','')
 let $works := 
-            for $w in collection($global:data-root)//tei:body[child::*/tei:listRelation/tei:relation[@passive[functx:contains-word(.,$recid)]][@ref=$relType or @name=$relType]]
-            let $part := xs:integer($w/child::*/tei:listRelation/tei:relation[@passive[functx:contains-word(.,$recid)]]/tei:desc/tei:label[@type='order'][1]/@n)
+            for $w in collection($global:data-root)//tei:body[child::*/tei:listRelation/tei:relation[@passive[app:contains-word(.,$recid)]][@ref=$relType or @name=$relType]]
+            let $part := xs:integer($w/child::*/tei:listRelation/tei:relation[@passive[app:contains-word(.,$recid)]]/tei:desc/tei:label[@type='order'][1]/@n)
             order by $part
             return $w
 let $count := count($works)
