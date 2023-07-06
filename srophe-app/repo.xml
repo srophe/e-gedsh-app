@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <meta xmlns="http://exist-db.org/xquery/repo">
     <description>e-gedsh</description>
     <author>Winona Salesky</author>
@@ -49,5 +48,5 @@
     </config>
 
 
-<deployed>2020-05-21T13:14:27.761-04:00</deployed>
-</meta>
+
+<deployed>2023-06-23T10:52:02.589-04:00</deployed></meta>

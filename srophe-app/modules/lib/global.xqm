@@ -64,7 +64,9 @@ declare function global:internal-links($uri){
 
 (:
  : Addapted from https://github.com/eXistSolutions/hsg-shell
- : Recurse through menu output absolute urls based on config.xml values. 
+ : Recurse through menu output absolute urls based on config.xml values.
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"/>
+<script type="text/javascript" src="$app-root/resources/js/jquery-1.9.1.min.js"/>
 :)
 declare function global:fix-links($nodes as node()*) {
     for $node in $nodes
@@ -76,6 +78,24 @@ declare function global:fix-links($nodes as node()*) {
                     <a href="{$href}">
                         {$node/@* except $node/@href, $node/node()}
                     </a>
+            case element(html:link) return
+                let $href := replace($node/@href, "\$app-root", $global:nav-base)
+                return
+                    <link href="{$href}">
+                        {$node/@* except $node/@href, $node/node()}
+                    </link>  
+            case element(html:script) return
+                let $src := replace($node/@src, "\$app-root", $global:nav-base)
+                return
+                    <script src="{$src}">
+                        {$node/@* except $node/@src, $node/node()}
+                    </script>
+            case element(html:img) return
+                let $src := replace($node/@src, "\$app-root", $global:nav-base)
+                return
+                    <img src="{$src}">
+                        {$node/@* except $node/@src, $node/node()}
+                    </img>                    
             case element(html:form) return
                 let $action := replace($node/@action, "\$app-root", $global:nav-base)
                 return

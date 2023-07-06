@@ -2,7 +2,8 @@ xquery version "3.0";
 (: Main module for interacting with eXist-db templates :)
 module namespace app="http://srophe.org/srophe/templates";
 (: eXist modules :)
-import module namespace templates="http://exist-db.org/xquery/templates" ;
+import module namespace templates="http://exist-db.org/xquery/html-templating";
+import module namespace lib="http://exist-db.org/xquery/html-templating/lib";
 import module namespace config="http://srophe.org/srophe/config" at "config.xqm";
 (: Srophe modules :)
 import module namespace teiDocs="http://srophe.org/srophe/teiDocs" at "teiDocs/teiDocs.xqm";
@@ -11,6 +12,7 @@ import module namespace global="http://srophe.org/srophe/global" at "lib/global.
 import module namespace rel="http://srophe.org/srophe/related" at "lib/get-related.xqm";
 import module namespace maps="http://srophe.org/srophe/maps" at "lib/maps.xqm";
 import module namespace timeline="http://srophe.org/srophe/timeline" at "lib/timeline.xqm";
+
 (: Namespaces :)
 declare namespace http="http://expath.org/ns/http-client";
 declare namespace html="http://www.w3.org/1999/xhtml";
@@ -32,7 +34,9 @@ declare function app:contains-word( $arg as xs:string?,$word as xs:string )  as 
  : @param request:get-parameter('id', '') syriaca.org uri   
 :)                 
 declare function app:get-rec($node as node(), $model as map(*), $collection as xs:string?) { 
-if(request:get-parameter('id', '') != '') then 
+if($model("data") != '') then
+       $model 
+else if(request:get-parameter('id', '') != '') then 
     let $id := global:resolve-id()   
     return 
         let $rec := 
@@ -61,7 +65,7 @@ else map {"data" : <div>'Page data'</div>}
  : dynamic maps, timelines and xquery enhanced relationships.
  : @param $view swap in functions for other page views/layouts
 :)
-declare function app:display-rec($node as node(), $model as map(*), $collection as xs:string?){
+declare %templates:wrap function app:display-rec($node as node(), $model as map(*), $collection as xs:string?){
  global:tei2html($model("data"))    
 };
 
@@ -78,7 +82,7 @@ declare function app:h1($node as node(), $model as map(*)){
  : Used by templating module, defaults to tei:body if no nodes are passed. 
  : @param $paths comma separated list of xpaths for display. Passed from html page  
 :)
-declare function app:display-nodes($node as node(), $model as map(*), $paths as xs:string*){
+declare %templates:wrap function app:display-nodes($node as node(), $model as map(*), $paths as xs:string*){
     let $data := $model("data")
     return 
         if($paths != '') then 
@@ -250,6 +254,18 @@ return
     else
     <span class="rec-status {$status} btn btn-info">Status: {$status}</span>
 };
+
+(:~
+ : Dynamically build html title based on TEI record and/or sub-module. 
+ : @param request:get-parameter('id', '') if id is present find TEI title, otherwise use title of sub-module
+:)
+declare %templates:wrap function app:record-title($node as node(), $model as map(*), $collection as xs:string?){
+    if(request:get-parameter('id', '')) then
+       if($model("data")/tei:head[1]/text()) then
+            normalize-space(string-join($model("data")/tei:head[1]/text()))
+       else $model("data")/descendant::tei:titleStmt[1]/tei:title[1]/text()
+    else $config:app-title
+};  
 
 (:~
  : Dynamically build html title based on TEI record and/or sub-module. 
@@ -675,7 +691,7 @@ declare %templates:wrap function app:contributors-count($node as node(), $model 
 
 declare %templates:wrap function app:next-entry($node as node(), $model as map(*), $collection as xs:string?){ 
 let $data := for $id in collection($global:data-root)//tei:idno[@type="entry"] order by xs:integer($id) return $id
-let $title := if($model("data")/tei:head[1]) then $model("data")/tei:head[1] else $model("data")/child::*[1]
+let $title := if($model("data")/descendant-or-self::tei:head[1]) then $model("data")/descendant-or-self::tei:head[1] else $model("data")/child::*[1]
 let $current := xs:integer($model("data")//tei:idno[@type="entry"])
 let $nextURI := 
             if($model("data")//tei:idno[@type=('back','front')] or $model("data")/descendant-or-self::*/@type='figure') then 
@@ -707,7 +723,7 @@ return
                 for $f in tokenize($formats,',')
                 return 
                     if($f = 'tei') then
-                        (<a href="{concat(replace(request:get-parameter('id', '')[1],$global:base-uri,$global:nav-base),'/tei')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the TEI XML data for this record." >
+                        (<a href="{concat(replace($id[1],$global:base-uri,$global:nav-base),'/tei')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the TEI XML data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> TEI/XML
                         </a>, '&#160;')
                     else if($f = 'print') then                        
@@ -715,11 +731,11 @@ return
                              <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
                         </a>, '&#160;')  
                    else if($f = 'rdf') then
-                        (<a href="{concat(replace(request:get-parameter('id', '')[1],$global:base-uri,$global:nav-base),'/rdf')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-XML data for this record." >
+                        (<a href="{concat(replace($id[1],$global:base-uri,$global:nav-base),'/rdf')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-XML data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/XML
                         </a>, '&#160;')
                   else if($f = 'ttl') then
-                        (<a href="{concat(replace(request:get-parameter('id', '')[1],$global:base-uri,$global:nav-base),'/ttl')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-Turtle data for this record." >
+                        (<a href="{concat(replace($id[1],$global:base-uri,$global:nav-base),'/ttl')}" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the RDF-Turtle data for this record." >
                              <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> RDF/TTL
                         </a>, '&#160;')
                   else if($f = 'buy') then
@@ -756,7 +772,7 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
         <div class="panel-body">
             {(
                 let $subject-uri := string($model("data")/descendant::tei:idno[@type="subject"][contains(.,'http://syriaca.org/')][1])
-                let $article-title := $model('data')/tei:head[1]
+                let $article-title := $model('data')/descendant::tei:head[1]
                 return 
                 <div class="related-resources" id="relatedResources">
                     <h4>Resources related to {if($subject-uri) then <a href="{$subject-uri}">{$article-title}</a> else $article-title}</h4>
@@ -921,4 +937,8 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
         ]]></script>
     </div>
 else()
+};
+
+declare %templates:wrap function app:include-toc($node as node(), $model as map(*)){
+    lib:include($node, $model, '/html/toc.html')
 };

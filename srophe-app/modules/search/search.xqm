@@ -9,7 +9,7 @@ import module namespace global="http://srophe.org/srophe/global" at "../lib/glob
 import module namespace sf = "http://srophe.org/srophe/facets" at "../lib/facets.xql";
 
 import module namespace kwic="http://exist-db.org/xquery/kwic";
-import module namespace templates="http://exist-db.org/xquery/templates" ;
+import module namespace templates="http://exist-db.org/xquery/html-templating";
 import module namespace functx="http://www.functx.com";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";

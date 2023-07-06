@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <search-config>
     <!--  <field name="author" expression="./ancestor::tei:TEI//tei:author" function="functionName"/> -->
     <field name="head" expression="descendant::tei:head" boost="5.5"/>
