@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" data-template="app:get-rec">
-    <head>
+    <head data-template="app:fix-links">
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -22,7 +21,7 @@
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
         <link rel="stylesheet" href="$app-root/resources/leaflet/leaflet.awesome-markers.css"/>   
         -->
-        <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"></script>
+        <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"/>
         <script type="text/javascript" src="$app-root/resources/js/clipboard.min.js"/>
         <!-- temporary until migrate to bootstrap 3.0 -->
         <script type="text/javascript" src="$app-root/resources/js/jquery-1.9.1.min.js"/>
@@ -122,13 +121,14 @@
         </div>
         <!-- Footer -->
         <footer data-template="app:shared-content" data-template-path="/templates/footer.html"/>
-        
-        <!-- Additional Javascript -->
-        <script type="text/javascript" src="$app-root/resources/js/bootstrap.min.js"/>
-        <script type="text/javascript" src="$app-root/resources/js/jquery.validate.min.js"/>
-        <script type="text/javascript" src="$app-root/resources/js/main.js"/>
-        <script type="text/javascript" src="$app-root/resources/js/lightslider.min.js"/>
-        <!-- Google analytics. Values pulled from config.xml -->
-        <script data-template="app:google-analytics"/>
+        <div data-template="app:fix-links">
+            <!-- Additional Javascript -->
+            <script type="text/javascript" src="$app-root/resources/js/bootstrap.min.js"/>
+            <script type="text/javascript" src="$app-root/resources/js/jquery.validate.min.js"/>
+            <script type="text/javascript" src="$app-root/resources/js/main.js"/>
+            <script type="text/javascript" src="$app-root/resources/js/lightslider.min.js"/>
+            <!-- Google analytics. Values pulled from config.xml -->
+            <script data-template="app:google-analytics"/>
+        </div>
     </body>
 </html>

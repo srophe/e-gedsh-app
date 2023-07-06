@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <meta xmlns="http://exist-db.org/xquery/repo">
     <description>e-GEDSH</description>
     <author>Winona Salesky</author>
@@ -23,7 +22,7 @@
         <!-- Web Site URL -->
         <url/>
         <!-- Root of app for building dynamic links. Default is eXist app root -->
-        <nav-base>/</nav-base>
+        <nav-base></nav-base>
         <!--<nav-base>/exist/apps/e-gedsh</nav-base>-->
         <!-- eXist app root for app deployment-->
         <app-root>e-gedsh</app-root>

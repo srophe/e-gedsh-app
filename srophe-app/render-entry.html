@@ -1,0 +1,51 @@
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <div class="banner-title full-page">
+    <span class="img-credit">
+        <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
+    </span>
+</div>
+    <div class="section indent top-padding">
+        <!--Main Content-->
+        <div class="row row-centered top-padding">
+            <div class="col-md-6 col-md-push-3 entry">
+                <br/>
+                <div data-template="app:display-rec"/>
+                <br/>
+                <div data-template="app:display-citation"/>
+            </div>
+            <div class="col-md-3 col-md-pull-6 toc noprint">
+                <div data-template="app:next-entry"/>
+                <div data-template="browse:group-abc-entries"/>
+            </div>
+            <div class="col-md-3">
+                <div data-template="app:other-data-formats" data-template-formats="uri,print,tei,buy" class="noprint"/>
+                <div data-template="app:srophe-related"/>
+            </div>
+        </div>  
+    </div>
+    <!-- Floating footnotes display -->
+    <div id="footnoteDisplay" class="footnote">
+        <div class="content"/>  
+    </div>
+    <!-- Modal email form-->
+    <div data-template="app:contact-form-linked-data"/>
+
+    <script type="text/javascript">
+        $('html').click(function() {
+            $('#footnoteDisplay').hide();
+            $('#footnoteDisplay div.content').empty();
+        })
+        
+        $('.footnote-ref a').click(function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            var link = $(this);
+            var href = $(this).attr('href');
+            var content = $(href).html()
+            $('#footnoteDisplay').css('display','block');
+            $('#footnoteDisplay').css({'top':e.pageY-50,'left':e.pageX+25, 'position':'absolute'});
+            $('#footnoteDisplay div.content').html( content );    
+        });
+        
+    </script>
+</div>

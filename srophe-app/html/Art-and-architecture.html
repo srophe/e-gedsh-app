@@ -1,0 +1,614 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head data-template="app:fix-links">
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title data-template="app:app-title">e-GEDSH</title>
+        <link xmlns="" href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+        <link xmlns="" href="http://purl.org/dc/terms/" rel="schema.DCTERMS"/>
+        <link xmlns="" href="http://purl.org/ontology/bibo/" rel="schema.bibo"/>
+        
+        <link xmlns="" href="/resources/img/favicon.ico" rel="shortcut icon"/>
+        <link xmlns="" href="/resources/css/syr-icon-fonts.css" rel="stylesheet"/>
+        <link xmlns="" href="/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link xmlns="" href="/resources/css/main.css" rel="stylesheet" type="text/css"/>
+        <!--<link rel="stylesheet" type="text/css" href="$app-root/resources/css/syriaca.css"/>-->
+        <link xmlns="" href="/resources/css/lightslider.css" rel="stylesheet" type="text/css"/>
+        <link xmlns="" href="/resources/css/sm-core-css.css" rel="stylesheet" type="text/css"/>
+        <link xmlns="" href="/resources/css/print.css" rel="stylesheet" type="text/css" media="print"/>
+        <!-- Leaflet -->
+        <!-- Not needed for e-GEDSH
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+        <link rel="stylesheet" href="$app-root/resources/leaflet/leaflet.awesome-markers.css"/>   
+        -->
+        <script xmlns="" src="https://plausible.io/js/plausible.js" defer="defer" data-domain="gedsh.bethmardutho.org"/>
+        <script xmlns="" src="/resources/js/clipboard.min.js" type="text/javascript"/>
+        <!-- temporary until migrate to bootstrap 3.0 -->
+        <script xmlns="" src="/resources/js/jquery-1.9.1.min.js" type="text/javascript"/>
+        <script xmlns="" src="/resources/js/jquery.smartmenus.min.js" type="text/javascript"/>
+        <script xmlns="" src="https://www.google.com/recaptcha/api.js"/>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+                <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+            <![endif]-->
+        <!-- Fixed navbar -->
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation" data-template="app:fix-links">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"/>
+                        <span class="icon-bar"/>
+                        <span class="icon-bar"/>
+                    </button>
+                    <a href="/index.html" class="navbar-brand banner-container inline">
+                        <img property="logo" class="img-responsive" style="padding-bottom:.5em;display:inline;" alt="e-GEDSH" src="$app-root/resources/img/e-gedsh.png" width="20px"/>
+                        <span style="font-size:24px;margin-left:.25em; padding-top:1.5em; display:inline;">e-GEDSH</span>
+                    </a>
+                </div>
+                <div class="navbar-collapse collapse pull-right">
+                    <ul class="nav navbar-nav sm sm-vertical" id="main-menu">
+                        <li>
+                            <a href="/browse.html">Browse Entries</a>
+                        </li>
+                        <li>
+                            <a href="/index.html">Home</a>
+                        </li>
+                        <li class="dropdown" style="margin-left: 1em;">
+                            <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                                <span class="icon-nav">
+                                    <img src="$app-root/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho"/>
+                                </span>
+                                <span class="icon-text">Beth Mardutho</span>  <b class="caret"/>
+                            </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li>
+                                    <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
+                                        <span class="icon-nav">
+                                            <img src="$app-root/resources/img/beth-mardutho.png" height="18px" alt="Beth Mardutho Home"/>
+                                        </span>
+                                        <span class="icon-text">Beth Mardutho Home</span>
+                                    </a>
+                                </li>
+                                <li role="presentation" class="divider"/>
+                                <li>
+                                    <a href="http://sedra.bethmardutho.org/" class="icon-container" target="_blank">
+                                        <span class="icon-nav">
+                                            <img src="$app-root/resources/img/sedra.png" height="18px" alt="SEDRA: Syriac Dictionaries"/>
+                                        </span>
+                                        <span class="icon-text">SEDRA: Syriac Dictionaries</span>
+                                    </a>
+                                </li>
+                                <!--
+                                <li role="presentation" class="divider"/>
+                                <li>
+                                    <a href="https://hugoye.bethmardutho.org" class="icon-container" target="_blank">
+                                        <span class="icon-text">Hugoye</span>
+                                    </a>
+                                </li>
+                                <li role="presentation" class="divider"/>
+                                <li>
+                                    <a href="https://qoruyo.bethmardutho.org" class="icon-container" target="_blank">
+                                        <span class="icon-text">qoruyo.bethmardutho.org</span>
+                                    </a>
+                                </li>
+                                -->
+                            </ul>
+                        </li>
+                        <!-- Shared drop-down menu of all submodules 
+                        <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
+                        -->
+                    </ul>
+                    <form action="/search.html" class="navbar-form navbar-right navbar-input-group" role="search" method="get">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="search" name="q" id="q"/>
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">
+                                      <span class="glyphicon glyphicon-search"/>
+                                </button>
+                                <a href="/search.html" title="advanced search" class="btn btn-default">
+                                      <span class="glyphicon glyphicon-cog"/>
+                                </a>
+                            </div><!-- /btn-group -->
+                        </div>
+                    </form>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+        <div id="main">
+            <div id="content">
+    <div class="banner-title full-page">
+    <span class="img-credit">
+        <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
+    </span>
+</div>
+    <div class="section indent top-padding">
+        <!--Main Content-->
+        <div class="row row-centered top-padding">
+            <div class="col-md-6 col-md-push-3 entry">
+                <br/>
+                <div data-template="app:display-rec"><div class="entry-title" id="uri:Art-and-architecture"><h1 class="inline">Art and architecture <small/></h1></div><div class="body">
+                    <p>A comprehensive study of Syr. Christian art and architecture is still
+                        missing, and only a few subfields are relatively well covered in overview
+                        monographs, such as the architecture of Syria west of the Euphrates (Butler;
+                        Lassus; Tchalenko), floor mosaics in churches of Syria and Lebanon
+                        (Donceel-Voûte), manuscript illumination (Leroy 1964), and wall paintings in
+                        Syria and Lebanon (Cruikshank Dodd; Immerzeel 2009). Given Syr.
+                        Christianity’s intertwinement, throughout its history, with other
+                        linguistic, cultural, and religious traditions, the definition of what
+                        constitutes ‘Syr. Christian’ art or architecture is somewhat elusive and
+                        should not be attempted here. In the early period much of Syr. Christianity
+                        was situated in the Roman Empire, in which there was a great deal of overlap
+                        between Syr. Christian and Greek Christian art and culture. In the Islamic
+                        period certain forms of art were shared between Syr. Christians and Muslims.
+                        In addition, the proximity of Byzantine Christianity or even Western
+                        Christianity (esp. in the period of the <a href="/entry/Crusades" class="cross-ref">Crusades</a>) had its
+                        impact on themes and forms of expressions. There is some evidence in the
+                        early Syr. tradition of the use of portable icons (the image of <a href="/entry/Edessa" class="cross-ref">Edessa</a>,
+                        which was believed to be a portrait of Jesus, being the most famous of
+                        these), but it is only among the Christians of the Chalcedonian traditions
+                        (Melkite and Maronite) that the art of icon painting flourished and that
+                        local styles emerged, such as in the 13th cent.  in Tripoli and in the 17th
+                        cent.  in <a href="/entry/Aleppo" class="cross-ref">Aleppo</a>. In the other Syr. traditions (Syr. Orth.  and Ch. of E.)
+                        the cult of images in whatever form never became as prominent as it was in
+                        the Byzantine tradition, even though there is no evidence of any opposition
+                        to the use of figurative art, and suggestions that Syr. Christianity was
+                        somehow connected to the iconoclastic movement within the Byzantine
+                        tradition or to any other an-iconic tradition should be rejected (Brock
+                        2004; Teule). In general, the study of Syr. Christian art and architecture
+                        is seriously hampered by the fact that the surviving remains are fragmentary
+                        and mostly deprived of their original context. Accompanying <a href="/entry/Inscriptions" class="cross-ref">inscriptions</a>, occasionally containing dates and names, may
+                        provide crucial information. In the present overview only a few areas will
+                        be highlighted.</p>
+                    <label class="subsection">1. Pre-Christian Edessa</label>
+                    <p>The art of the semi-independent kingdom of Edessa is accessible to us in a
+                        number of funerary mosaics, dated or datable to the first three cent.  AD
+                        (prior to the mid–3rd cent.). Some of these show portraits of the deceased,
+                        often with their family; others have topics or figures from Greco-Roman
+                        antiquity, such as the Phoenix or Orpheus playing the lyre. Reflecting the
+                        life of the urban aristocracy, the mosaics show the proximity of the
+                        Parthian world, in particular in the costumes (Leroy 1957). Most of the
+                        mosaics (some of which are dated in their inscriptions) are contemporaneous
+                        with the nascent Christian communities in Edessa, and with our earliest
+                        Christian authors, such as <a href="/entry/Bardaisan" class="cross-ref">Bardaiṣan</a>, but
+                        none of them can be identified as specifically Christian (Drijvers and
+                        Healey; Healey; Segal).</p>
+                    <label class="subsection">2. Christian Architecture in Syria, Ṭur ʿAbdin, and
+                        Mesopotamia</label>
+                    <p>The earliest dated church in the Syr. Christian area is the church of <a href="/entry/Yaqub-of-Nisibis" class="cross-ref">Yaʿqub of Nisibis</a>  which in a baptistery inscription that survives
+                        to the present day is dated to 359, i.e., the time when <a href="/entry/Ephrem" class="cross-ref">Ephrem</a>  lived in the
+                        city. Even though we are in the easternmost corner of the Roman Empire and
+                        in the heartland of Syr. Christianity, the inscription is not in Syriac, but
+                        in Greek.
+                    </p>
+                    <p>Most of the evidence for churches between the 4th and 7th cent.  is from the
+                        region between <a href="/entry/Antioch" class="cross-ref">Antioch</a>  and Aleppo.
+                        Known as the ‘Dead cities’, because they were abandoned in the early Islamic
+                        period due to shifting patterns of economy and trade (and are still largely
+                        deserted today), numerous sites show the secular and religious buildings of
+                        villages and medium-size communities. Several churches are impressive, and
+                        the architectural skeleton of some of them is well-preserved, having been
+                        exposed to the forces of nature only, not to re-use or destruction by
+                        humans. Some churches are very small (such as the single-aisled church of
+                        Qirqbize). Other churches derive their importance from their role as pilgrim
+                        destinations, such as the church of Qalbloze, and above all the magnificent
+                        church of <a href="/entry/Shemun-the-Stylite" class="cross-ref">Shemʿun the Stylite</a>, which was built in the late 5th cent.  and which consists
+                        of four three-aisled basilicas converging on the saint’s pillar. Even today
+                        the scattered ruins and the very refined capital sculptures evoke the
+                        church’s former majesty. Another popular pilgrim destination, which
+                        flourished in the 6th cent., is the shrine of Mar Sargis (St. Sergius) in
+                        Resafa, more eastwards in the Syrian steppe (ca.  160  km. southeast of
+                        Aleppo).</p>
+                    <p>The region of <a href="/entry/Tur-Abdin" class="cross-ref">Ṭur ʿAbdin</a>  and
+                        the wider area around it also preserve some of the earliest churches of Syr.
+                        Christianity, some of which were expanded throughout the centuries and are
+                        still in use today. The well-preserved main church of <a href="/entry/al-Zafaran-Dayr" class="cross-ref">Dayr al-Zaʿfarān</a>  dates back to the 6th cent., while some of the
+                        rebuilding and refurbishment of the church of the <a href="/entry/Gabriel-Monastery-of-Mor" class="cross-ref">Monastery of Mor Gabriel</a>  can be dated to the reign of the
+                        Byzantine emperor Anastasius (r.  491–518). Several other churches in this
+                        area go back to the early Islamic period, such as the church of Ḥaḥ and the
+                        church of the Holy Cross, in the monastery of the same name (<a href="/entry/al-Salib-Dayr" class="cross-ref">Dayr al-Ṣalīb</a>).</p>
+                    <p>A special architectural feature in some of the earliest churches is the bema.
+                        This is a raised platform, usually horseshoe-shaped and with low walls,
+                        which is located in the middle of the nave and on which the liturgy of the
+                        Word was performed. The above-mentioned churches of Qirqbize, Qalbloze, and
+                        Resafa provide interesting examples, while detached pieces of the bema
+                        construction have found their way to modern museums, such as the stone bema
+                        lectern of Bennawi, which is presently shown in the garden of the National
+                        Museum of <a href="/entry/Damascus" class="cross-ref">Damascus</a>  (Brock and Taylor, <em>Hidden Pearl</em>,
+                        vol. 2, 43). In recent years the bema has received considerable attention,
+                        both from liturgists and archeologists (Cassis, Loosley, Renhart, and
+                        Taft).</p>
+                    <p>Several other detached pieces of church decoration, chancel panels, or door
+                        lintels, exhibiting ornamental motifs or iconographical themes, are found
+                        scattered all over the world. Two chancel panels in stone, uncovered at Rasm
+                        al-Qanafez (to the east of Salamiyya, Syria) and presently in the National
+                        Museum of Damascus, show Daniel among the lions and the three Magi
+                        approaching the Virgin with Child (<em>Syrie</em>, 358–59;
+                        Peña, 84).</p>
+                    <p>Floor mosaics as well often have left their original location. Most of the
+                        mosaics belonging to churches in Syria and Lebanon have conveniently been
+                        brought together by P. Donceel-Voûte, with the ‘Adam mosaic’ in the
+                        Michaelion of Huarte (ca.  15 km. north-northeast of <a href="/entry/Apamea" class="cross-ref">Apamea</a>) as one of
+                        the highlights (Donceel-Voûte, 105), to be compared with the royal Adam
+                        shown on a mosaic panel in the Museum of Ḥama, the latter with a Greek and
+                        Syriac caption (ibid., 113; also in Brock and Taylor, <em>Hidden Pearl</em>, vol. 2, 41). More recently beautiful mosaics have
+                        been uncovered at Tall Biʿa, near Raqqaʿ/Kallinikos, in the church of a
+                        monastery that may have been the Monastery of Mar Zakkay, to which <a href="/entry/Yuhanon-of-Tella" class="cross-ref">Yuḥanon of Tella</a>  once belonged (Kalla, with further
+                        references).</p>
+                    <p>While by far the largest part of our evidence for the early period belongs to
+                        the W.-Syr. tradition (in particular Syr. Orth.  and Melkite), there has been
+                        in recent years considerable and promising archeological activity in the
+                        geographical area of the Ch. of E.  (Hauser; Kröger, with further
+                        references). The Christian monuments of Iraq (belonging to either the Ch. of
+                        E. or the Syr. Orth.  tradition), a number of which go back to the first
+                        millennium, have been surveyed by Fiey in his three-volume publication <em>Assyrie chrétienne</em>, while the same scholar devoted a
+                        separate volume to <a href="/entry/Mosul" class="cross-ref">Mosul</a>  (1959). Sites
+                        of particular significance are the city of <a href="/entry/Tagrit" class="cross-ref">Tagrit</a>  (Harrak
+                        2001), <a href="/entry/Matay-Dayro-d-Mor" class="cross-ref">Dayro d-Mor Matay</a>  and <a href="/entry/Behnam-Dayro-d-Mor" class="cross-ref">Dayro d-Mor Behnam</a>  (nowadays Syr. Cath.), with its exceptional 13th-cent.
+                        carvings on the main entrance door. There is also some evidence of building
+                        activity associated with the Ch. of E.  in the Holy Land, in particular a
+                        hermitage near Jericho (Fiey 1983, and Brock and Taylor, <em>Hidden Pearl</em>, vol. 2, 46) and possibly a monastic complex at Tel
+                        Masos, in the northern Negev (Fritz and Maiberger).</p>
+                    <label class="subsection">3. Manuscript Illumination</label>
+                    <p>An excellent survey of illuminated mss.  kept in Western and Middle-Eastern
+                        libraries, with detailed analysis, is available in Leroy 1964. The most
+                        significant set of early illuminations is found in the opening quire of the
+                        6th-cent. ms.  that contains the <a href="/entry/Rabbula-Gospels" class="cross-ref">Rabbula
+                            Gospels</a>  (named after the scribe of the Gospel text), with its
+                        richly decorated canon tables and its full-page illuminations. Of the same
+                        period, or possibly slightly later, is the so-called ‘Syriac Bible from
+                        Paris’ (Paris, Bibl. Nat. Syr. 341), which contains mostly OT  themes and
+                        figures (Sörries). The art of ms.  illumination came to full fruition in the
+                        11th to 13th cent.: along with biblical mss., such as the ‘Buchanan Bible’
+                        (ms.  Cambridge, Univ. Libr. Oo. I.1,2; on which, see Hunt), there are a
+                        number of lectionaries, most of them belonging to the Syr. Orth.  tradition.
+                        The number of E.-Syr. illuminated mss.  is very limited (for some 15th-cent.
+                        examples, see Leroy, 417–18 and 393–403; Brock and Taylor, <em>Hidden Pearl</em>, vol. 2, 237–38). In the 16th cent.  the tradition of
+                        ms.  illumination was given new life among the Chaldeans (see e.g. ms.  Borgia
+                        Syr. 169, Leroy, 404–8). For more recent studies, esp. on the Syr. Orth. 
+                        mss.  of the 11th–13th cent., see e.g. Doumato. It should also be noted that
+                        ms.  illumination is not limited to the mss.  of the mainstream ecclesiastical
+                        traditions, but is also found, e.g., in magic mss.  (Balicka-Witakowska
+                        2008).</p>
+                    <label class="subsection">4. Wall Paintings</label>
+                    <p>Most of the late antique churches must have contained painting, either of a
+                        purely ornamental nature or intended to provide instruction or to impart
+                        devotion. Remains of painting can be found on some of the ruins, but no full
+                        Christian wall paintings from the first millennium have survived. The <a href="/entry/Wall-paintings-in-Syria-and-Lebanon" class="cross-ref">wall paintings in Syria and Lebanon</a>  deserve separate attention,
+                        with those of <a href="/entry/Musa-al-Habashi-Dayr-Mar" class="cross-ref">Dayr Mār Mūsā al-Ḥabashī</a>, <a href="/entry/Qara" class="cross-ref">Qara</a>, and the Lebanese
+                        Qadisha Valley as unmistakable highlights. Most of these belong to the
+                        period between the 11th and 13th century. To the same period in all
+                        likelihood belongs a newly discovered wall painting in the church of Mar
+                        Gewargis in <a href="/entry/Qaraqosh" class="cross-ref">Qaraqosh</a>, near Mosul, representing the Baptism of Jesus (Snelders
+                        2007). The art of wall painting continued well into the modern area.
+                        Interesting 18th-cent. examples are found in the Syr. Orth.  church of
+                        Sergius and Bacchus in Ṣadad, ca.  100 km. north east of Damascus (Brock and
+                        Taylor, <em>Hidden Pearl</em>, vol. 2, 147–50).</p>
+                    <p>In addition to the heartlands of Syr. Christianity, wall paintings reflecting
+                        Syriac Christianity may be found in <a href="/entry/al-Suryan-Dayr" class="cross-ref">Dayr al-Suryān</a>  in Egypt, which from the early 9th cent.  onwards had a
+                        mixed Coptic and Syriac monastic population. While the earliest paintings in
+                        the main Church of the monastery predate the arrival of Syr. monks, some of
+                        the later paintings must reflect the interests and taste of the Syr. monks.
+                        This may be the case for the probably 10th-cent. painting of the Three
+                        Patriarchs (Innemée 1998), and even more so for the very fragmentarily
+                        preserved paintings of Emperor Constantine and King Abgar (holding the <em>mandylion</em>), both of which are accompanied by Syriac
+                        inscriptions and may also belong to the 10th  cent. (Innemée and Van
+                        Rompay). Fully preserved paintings in three half-domes of the church, with
+                        Syriac inscriptions, belong to the early 13th cent.  (Leroy 1982).</p>
+                    <label class="subsection">5. Liturgical Vessels and Accessories</label>
+                    <p>A large number of 5th- or 6th-cent. liturgical objects from Syria have been
+                        uncovered in the course of the 20th cent., in the area south-west of Aleppo
+                        (Mundell Mango). In some cases inscriptions provide information on the date
+                        and on the church to which the objects belonged: Kaper Koraon (the exact
+                        location of which is uncertain) and Beth Misona (three chalices and a paten,
+                        now in the Cleveland Museum of Art). While the link with Syriac Christianity
+                        seems to be obvious, the inscriptions are in Greek, not in Syriac. A rare
+                        Syriac inscribed silver dish from the 6th cent., in the collection of the
+                        Hermitage Museum, St. Petersburg, has been made popular among Syr. scholars
+                        by R. Murray’s <em>Symbols of Church and Kingdom</em> (1975
+                        and 2004). It represents the Ascension, the women at the tomb, and the
+                        Crucifixion, along with soldiers, Peter and the cock, and Daniel in the
+                        lions’ den.</p>
+                    <p>To a slightly later period, perhaps 8th or 9th cent., belongs a very well
+                        preserved bronze incense burner uncovered in Takrit (now in the National
+                        Museum of Baghdad); it has nine scenes from the life of Jesus (Harrak 2006),
+                        but no inscriptions.</p>
+                    <p>From the early 13th-cent. a bronze liturgical fan is preserved (<em>marwḥā</em> or <em>marwaḥtā</em>,
+                        ‘flabellum’), now housed in the Belgian Museum of Mariemont. The Syr.
+                        inscription reports that it was made in 1202/3 for Dayr al-Suryān in Egypt;
+                        it may have been produced in a workshop in the Mosul area (Snelders and
+                        Immerzeel). To the same period belongs the church treasure of Resafa, which
+                        includes a skillfully decorated silver chalice and a paten, both bearing
+                        inscriptions in Syriac (even though the objects may have been of Western
+                        origin or inspiration). The paten was a gift to the church of St. Sergius at
+                        Resafa by Ḥasnon of Edessa. These objects had probably been buried in order
+                        to be saved from the Mongol invasions of 1259/60 (Ulbert; Brock and Taylor,
+                            <em>Hidden Pearl</em>, vol. 2, 212).</p>
+                    <label class="subsection">6. Liturgical Vestments</label>
+                    <p>While some information on liturgical vestments may be extracted from literary
+                        sources and from depictions in ms.  illuminations and wall paintings, a rare
+                        piece, presently housed in the New York Metropolitan Museum of Art, has
+                        recently been studied: a bishop’s stole (<em>batrashil</em>),
+                            bearing inscriptions in Syriac and Arabic. It was made for
+                        Bp.  Athanasius Abraham Yaghmur of Nabk in 1534–35 (Ball).</p>
+                    <label class="subsection">7. Syr. Christian Art in the 21st Century</label>
+                    <p>While the precious remains of ancient Syr. Christian art and architecture
+                        nowadays are receiving more attention from Syr. scholars and Syr. Christians
+                        alike, Syr. Christians at the same time are creating their own art forms,
+                        often inspired by the treasures of the past, to which they add new layers of
+                        interpretation and meaning according to their present-day situation.
+                        Churches are being renovated or new churches are being built in the Middle
+                        East, in India, and in the worldwide <a href="/entry/Diaspora" class="cross-ref">
+                            diaspora
+                        </a>. In many
+                        of these churches the ancient art of wall painting is brought to new life,
+                        while present-day liturgical publications often reflect the illuminated
+                        manuscripts of the past (for the Maronite tradition, see e.g. Badwi).</p>
+                    <p>See <a href="/fig/1" class="ref">Fig. 1</a>, 
+                                <a href="/fig/9" class="ref">9</a>, <a href="/fig/10" class="ref">10</a>, <a href="/fig/11" class="ref">11</a>, <a href="/fig/12c" class="ref">12c</a>, <a href="/fig/13" class="ref">13</a>, <a href="/fig/14" class="ref">14</a>, <a href="/fig/15" class="ref">15</a> 
+                            , <a href="/fig/62" class="ref">62</a>, <a href="/fig/63" class="ref">63</a>, <a href="/fig/64" class="ref">64</a>, <a href="/fig/65" class="ref">65</a>, <a href="/fig/71c" class="ref">71c</a>, <a href="/fig/77c" class="ref">77c</a>, <a href="/fig/80" class="ref">80</a>, <a href="/fig/86" class="ref">86</a>, <a href="/fig/88c" class="ref">88c</a>, <a href="/fig/101" class="ref">101</a>, <a href="/fig/104c" class="ref">104c</a>, <a href="/fig/112" class="ref">112</a>, <a href="/fig/115" class="ref">115</a>, 
+                                <a href="/fig/116" class="ref">116</a>,
+                                    <a href="/fig/117" class="ref">117</a>,
+                                and <a href="/fig/118" class="ref">118</a> 
+                            .</p>
+                </div><div class="bibl">
+                    <h3 class="head div">Sources</h3>
+                    <ul class="listBibl list-unstyled"><li>A.  Badwi, <span class="title-italic">The liturgical year iconography
+                                of the Syro-Maronite Church</span> (2006).</li><li>E.  Balicka-Witakowska, ‘Illustrating charms: A Syriac manuscript with
+                            magic drawings in the collection of the British Library’, in <span class="title-italic">Malphono w-Rabo d-Malphone</span>, ed. G. A. Kiraz,
+                            779–808.</li><li>J. L.  Ball, ‘A sixteenth-century Batrashil in the Metropolitan Museum
+                            of Art’, <span class="title-italic">Hugoye
+                            </span> 9.1 (2006).</li><li>S.P.  Brock, ‘Iconoclasm and the Monophysites’, in <span class="title-italic">Iconoclasm. Papers given at the ninth Spring Symposium of Byzantine
+                                Studies</span>, ed. A. Bryer and J. Herrin (1977), 53–7.</li><li>
+                     S. P. Brock, ‘Transformations of the Edessa portrait of Christ’, <span class="title-italic">JAAS
+                            </span> 18 (2004), 46–56.</li><li>Brock and Taylor, <span class="title-italic">Hidden Pearl</span>, vol. 2,
+                            esp. 209–41. (‘The arts: Architecture, wall painting and manuscript
+                            illumination’)</li><li>H. C.  Butler, <span class="title-italic">Early Churches in Syria</span>
+                            (1929).</li><li>M.  Cassis, ‘The bema in the East Syriac church in light of new
+                            archaeological evidence’, <span class="title-italic">Hugoye
+                            </span> 5.2
+                            (2002).</li><li>E.  Cruikshank Dodd, <span class="title-italic">Medieval Painting in the
+                                Lebanon</span> (2004).</li><li>P.  Donceel-Voûte, <span class="title-italic">Les pavements des églises
+                                byzantines de Syrie et du Liban. Décor, archéologie et
+                                liturgie</span> (Publications d’histoire de l’art et d’archéologie
+                            de l’Université catholique de Louvain 69; 1988).</li><li>L.  Doumato, ‘Patriarch Michael the Great: iconoclast or art patron’,
+                                <span class="title-italic">CahArch
+                            </span> 49 (2001), 29–38.</li><li>L.  Doumato, ‘The illustrated pontifical of Patriarch Ignatius II:
+                            text, image and reader in the Syriac tradition’, <span class="title-italic">Arte cristiana</span> 91 (2003), 423–36.</li><li>Drijvers and Healey, <span class="title-italic">The Old Syriac
+                                inscriptions</span>.</li><li>Fiey, <span class="title-italic">Assyrie chrétienne</span>.</li><li>
+                     L.  Doumato, <span class="title-italic">Mossoul chrétienne. Essai sur l’histoire,
+                                l’archéologie et l’état actuel des monuments chrétiens de la ville
+                                de Mossoul</span> (Recherches publiées sous la direction de
+                            l’Institut de lettres orientales de Beyrouth 12; 1959).</li><li>
+                     L.  Doumato, ‘Rabban Bûya de Shaqlâwâ et de Jéricho’, <span class="title-italic">POC
+                            </span> 33 (1983), 34–8.</li><li>V.  Fritz and P.  Maiberger, ‘Das nestorianische Kloster’, in <span class="title-italic">Ergebnisse der Ausgrabungen auf der Hirbet al-Msas
+                                (Tel Masos) 1972–1975</span>, ed. V. Fritz and A. Kempinski,
+                            (1983), 138–216.</li><li>A.  Harrak, ‘Recent archaeological excavations in Takrit and the
+                            discovery of Syriac inscriptions’, <span class="title-italic">JCSSS
+                            </span> 1
+                            (2001), 11–40.</li><li>
+                     A.  Harrak, ‘The incense burner of Takrit: An iconographical analysis’,
+                                <span class="title-italic">ECA
+                            </span> 3 (2006), 47–52.</li><li>S. R.  Hauser, ‘Christliche Archäologie im Sasanidenreich: Grundlagen
+                            der Interpretation und Bestandsaufnahme der Evidenz’, in <span class="title-italic">Inkulturation des Christentums im
+                                Sasanidenreich</span>, ed. A.  Mustafa, J.  Tubach, and G. S.
+                            Vashalomidze (2007), 93–136.</li><li>J. F.  Healey, ‘A new Syriac mosaic inscription’, <span class="title-italic">JSS
+                            </span> 51 (2006), 313–27.</li><li>N.  Hélou, ‘À propos d’une école syro-libanaise d’icônes au XIII<sup>e</sup> siècle’, <span class="title-italic">ECA
+                            </span>
+                            3 (2006), 53–72.</li><li>L.-A.  Hunt, ‘The Syriac Buchanan Bible in Cambridge: Book
+                            illumination in Syria, Cilicia and Jerusalem of the later twelfth
+                            century’, <span class="title-italic">OCP
+                            </span> 57 (1991), 331–69.</li><li>M.  Immerzeel, <span class="title-italic">Identity puzzles. Medieval
+                                Christian art in Syria and Lebanon</span> (OLA 184; 2009).</li><li>M. Immerzeel and N. Hélou, ‘Icon painting in the County of Tripoli of
+                            the thirteenth century’, in <span class="title-italic">Interactions. Artistic
+                                interchange between the eastern and western worlds in the Medieval
+                                period</span> (The Index of Christian Art Occasional Papers 9;
+                            2007), 67–83.</li><li>K. C.  Innemée, ‘Recent discoveries of wall-paintings in Deir
+                            al-Surian’, <span class="title-italic">Hugoye
+                            </span> 1.2 (1998).</li><li>K. C.  Innemée and L.  Van Rompay, ‘Deir al-Surian (Egypt): New
+                            discoveries of 2001–2002’, <span class="title-italic">Hugoye
+                            </span> 5.2
+                            (2002).</li><li>G. Kalla, ‘Christentum am oberen Euphrat. Das byzantinische Kloster
+                            von Tall Biʿa’, <span class="title-italic">Antike Welt</span> 30 (1999),
+                            131–42.</li><li>J. Kröger, ‘Die Kirche auf dem Hügel Qaṣr bint al-Qāḍī und weitere
+                            Zeugnisse christlichen Lebens im Bereich des sasanidischen Metropole
+                            Ktesiphon’, in <span class="title-italic">Inkulturation des Christentums im
+                                Sasanidenreich</span>, ed. A. Mustafa, J. Tubach, and G. S.
+                            Vashalomidze (2007), 137–57.</li><li>J. Lassus, <span class="title-italic">Sanctuaires chrétiens de Syrie. Essai
+                                sur la genèse, la forme et l’usage liturgique des édifices du culte
+                                chrétien, en Syrie, du III<sup>e</sup> siècle à la
+                                conquête musulmane</span> (Institut français d’archéologie de
+                            Beyrouth. Bibliothèque archéologique et historique 42; 1947).</li><li>J. Leroy, ‘Mosaïques funéraires d’Édesse’, <span class="title-italic">Syria</span> 34 (1957), 306–342, with plates XXI–XXII.</li><li>
+                     J. Leroy, <span class="title-italic">Les manuscrits syriaques à peintures
+                                conservés dans les bibliothèques d’Europe et d’Orient. Contribution
+                                à l’étude de l’iconographie des églises de langue syriaque</span>
+                            (Institut français d’archéologie de Beyrouth. Bibliothèque archéologique
+                            et historique 77; 1964) (with separate Album).</li><li>J. Leroy, <span class="title-italic">Les peintures des couvents du Ouadi
+                                Natroun</span> (= La peinture murale chez les Coptes 2; Mémoires
+                            publiés par les membres de l’Institut français d’archéologie orientale
+                            du Caire 101; 1982).</li><li>E. Loosley, <span class="title-italic">The architecture and liturgy of the
+                                bema in fourth- to sixth-century Syrian churches</span> (Patrimoine
+                            syriaque 2; 2003).</li><li>M. Mundell Mango, <span class="title-italic">Silver from early Byzantium.
+                                The Kaper Koraon and related treasures</span> (1986).</li><li>I. Peña, <span class="title-italic">The Christian art of Byzantine
+                                Syria</span> (1996).</li><li>E.  Renhart, <span class="title-italic">Das syrische Bema.
+                                Liturgisch-archäologische Untersuchungen</span> (Grazer Theologische
+                            Studien 20; 1995).</li><li>J.  Rumscheid, ‘Familienbilder im Haus der Ewigkeit. Zu Grabmosaiken
+                            aus Edessa’, in <span class="title-italic">Edessa in hellenistisch-römischer
+                                Zeit. Religion, Kultur und Politik zwischen Ost und West</span>,
+                            ed. L. Greisiger et al. (BTS 116; 2009), 255–65.</li><li>E. M.  Ruprechtsberger (ed.), <span class="title-italic">Syrien. Von den
+                                Aposteln zu den Khalifen</span> (Linzer archäologische Forschungen
+                            21; 1993).</li><li>A. Schmidt and S. Westphalen (ed.), <span class="title-italic">Christliche
+                                Wandmalereien in Syrien. Qara und das Kloster Mar Yakub</span>
+                            (SKCO 14; 2005).</li><li>J. B. Segal, <span class="title-italic">Edessa, the blessed city</span>
+                            (1970).</li><li>B. Snelders, ‘A newly discovered wall painting in the Church of Mar
+                            Giworgis in Qaraqosh, Iraq’, <span class="title-italic">ECA
+                            </span> 4 (2007),
+                            27–48.</li><li>
+                     B. Snelders, <span class="title-italic">Identity and Christian-Muslim interaction.
+                                Medieval art from the Syrian Orthodox in the Mosul area</span> (OLA
+                            198; 2010).</li><li>B.  Snelders and M.  Immerzeel, ‘The thirteenth-century flabellum from
+                            Deir al-Surian in the Musée Royal de Mariemont (Morlanwelz, Belgium).
+                            With an appendix on the Syriac inscriptions by L. Van Rompay’, <span class="title-italic">ECA
+                            </span> 1 (2004), 113–39.</li><li>R. Sörries, <span class="title-italic">Die Syrische Bibel von Paris. Paris,
+                                Bibliothèque Nationale, syr. 341. Eine frühchristliche
+                                Bilderhandschrift aus dem 6. Jahrhundert</span> (1991).</li><li>C.  Strube, <span class="title-italic">Baudekoration im nordsyrischen
+                                Kalksteinmassiv</span> (Damaszener Forschungen 5; 1993).</li><li>eadem, <span class="title-italic">Die „Toten Städte“. Stadt und Land in
+                                Nordsyrien während der Spätantike</span> (1996).</li><li>
+                            <span class="title-italic">Syrie. Mémoire et civilisation</span> (Exhibition
+                            catalogue Institut du monde arabe, Paris; 1993).</li><li>R.  Taft, ‘Some notes on the Bema in the East and West Syrian
+                            traditions’, <span class="title-italic">OCP
+                            </span> 34 (1968), 326–59.</li><li>G. Tchalenko, <span class="title-italic">Villages antiques de la Syrie du
+                                Nord. Le massif du Bélus à l’époque romaine</span>, I–III (Institut
+                            français d’archéologie de Beyrouth. Bibliothèque archéologique et
+                            historique 50; 1953–8).</li><li>H.  Teule, ‘The veneration of images in the East Syriac tradition’, in
+                                <span class="title-italic">Die Welt der Götterbilder</span>, ed. B.
+                            Groneberg and H. Spieckermann (Beihefte zur ZAW 376; 2007),
+                            324–46.</li><li>T. Ulbert, <span class="title-italic">Der kreuzfahrerzeitliche Silberschatz
+                                aus Resafa-Sergiupolis</span> (Resafa 3; 1990).</li><li>G. Wiessner, <span class="title-italic">Christliche Kultbauten im Tur
+                                Abdin</span> (GOF II.4; 1982).</li><li>E.  Zayat and M. Immerzeel (ed.), <span class="title-italic">Documentation
+                                and conservation of art in Syria. Papers of the workshop held at
+                                Damascus University 16–19 September 1996</span> (2000). (in English
+                            and Arabic)</li></ul>
+                </div><p class="byline">
+                    <span class="persName"><i>
+                  Lucas  
+                  Van Rompay
+               </i></span>
+                </p><hr/><div><h3>How to Cite This Entry</h3><div id="citation-note" class="well">
+                  Lucas 
+                   Van Rompay
+               ,
+                “Art and architecture,” in <em>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</em>, 
+                edited by Sebastian P. Brock, Aaron M. Butts, George A. Kiraz and Lucas Van Rompay, https://gedsh.bethmardutho.org/Art-and-architecture.  
+                <div class="collapse" id="showcit"><div id="citation-bibliography"><h4>Footnote Style Citation with Date:</h4><p>
+                  Lucas 
+                   Van Rompay
+               ,  
+                            “Art and architecture,” in <em>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</em>, 
+                            edited by Sebastian P. Brock, Aaron M. Butts, George A. Kiraz and Lucas Van Rompay 
+                            (Gorgias Press, 2011; online ed. Beth Mardutho, 2018), https://gedsh.bethmardutho.org/Art-and-architecture.  
+                        </p><h4>Bibliography Entry Citation:</h4><p>Van Rompay, Lucas. “Art and architecture.” In <em>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</em>. Edited by Sebastian P. Brock, Aaron M. Butts, George A. Kiraz and Lucas Van Rompay. 
+                            Digital edition prepared by David Michelson, Ute Possekel, and Daniel L. Schwartz. Gorgias Press, 2011; online ed. Beth Mardutho, 2018. 
+                            https://gedsh.bethmardutho.org/Art-and-architecture.
+                        </p><p>A TEI-XML record with complete metadata is available at <a href="/tei">/tei</a>.</p></div></div><a class="togglelink pull-right btn-link" data-toggle="collapse" data-target="#showcit" data-text-swap="Hide">Show more information...</a></div></div></div>
+            </div>
+            <div class="col-md-3 col-md-pull-6 toc noprint">
+                <div data-template="app:next-entry"><p xmlns=""><a href="/Asad-Gabriel"><span class="glyphicon glyphicon-backward" aria-hidden="true"/></a> |   Art and architecture   | <a href="/Asad-Gabriel"><span class="glyphicon glyphicon-forward" aria-hidden="true"/></a></p></div>
+                <div data-template="app:include-toc"><div><div>
+   <div><h4>Browse</h4><div class="facet-list show"><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#frontMatter">Front Matter</a><div id="frontMatter" class="collapse"><a href="/entry/Editors-Preface-print" class="facet-label btn btn-default sub-menu">
+                  Editors’ Preface
+               </a><a href="/entry/List-Contributors" class="facet-label btn btn-default sub-menu">
+                  List of Contributors [2011]
+               </a><a href="/entry/List-of-Figures" class="facet-label btn btn-default sub-menu">
+                  List of Figures and Color Plates
+               </a><a href="/entry/Sigila-Abbreviations" class="facet-label btn btn-default sub-menu">
+                  Sigla and Abbreviations
+               </a><a href="/entry/Making-e-GEDSH" class="facet-label btn btn-default sub-menu">
+                  The Making of the Electronic Edition
+               </a><a href="/entry/Making-GEDSH-print" class="facet-label btn btn-default sub-menu">
+                  The Making of the Gorgias Encyclopedic Dictionary of the Syriac Heritage
+                  
+               </a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#A">A (73)</a><div id="A" class="collapse"><a href="/entry/Aba" class="facet-label btn btn-default sub-menu">Aba</a><a href="/entry/Aba-I" class="facet-label btn btn-default sub-menu">Aba I</a><a href="/entry/Aba-II-of-Kashkar" class="facet-label btn btn-default sub-menu">Aba II of Kashkar</a><a href="/entry/Abgar-the-Hagiographer" class="facet-label btn btn-default sub-menu">Abgar the Hagiographer</a><a href="/entry/Abgarids-of-Edessa" class="facet-label btn btn-default sub-menu">Abgarids of Edessa</a><a href="/entry/Abraham-bar-Dashandad" class="facet-label btn btn-default sub-menu">Abraham bar Dashandad</a><a href="/entry/Abraham-bar-Lipeh" class="facet-label btn btn-default sub-menu">Abraham bar Lipeh</a><a href="/entry/Abraham-of-Beth-Rabban" class="facet-label btn btn-default sub-menu">Abraham of Beth Rabban</a><a href="/entry/Abraham-of-Kashkar" class="facet-label btn btn-default sub-menu">Abraham of Kashkar</a><a href="/entry/Abraham-of-Nathpar" class="facet-label btn btn-default sub-menu">Abraham of Nathpar</a><a href="/entry/Abrohom-II-Gharib" class="facet-label btn btn-default sub-menu">Abrohom II Gharīb</a><a href="/entry/Abrohom-Nahshirtono" class="facet-label btn btn-default sub-menu">Abrohom Naḥshirtono</a><a href="/entry/Addai-Teaching-of" class="facet-label btn btn-default sub-menu">Addai, Teaching of</a><a href="/entry/Adiabene" class="facet-label btn btn-default sub-menu">Adiabene</a><a href="/entry/Aesop" class="facet-label btn btn-default sub-menu">Aesop</a><a href="/entry/Aitalaha" class="facet-label btn btn-default sub-menu">Aitalaha</a><a href="/entry/Albonesi-Teseo-Ambrogio-degli" class="facet-label btn btn-default sub-menu">Albonesi, Teseo Ambrogio degli</a><a href="/entry/Aleppo" class="facet-label btn btn-default sub-menu">Aleppo</a><a href="/entry/Alexander-Cycle" class="facet-label btn btn-default sub-menu">Alexander Cycle</a><a href="/entry/Alqosh" class="facet-label btn btn-default sub-menu">Alqosh</a><a href="/entry/Alqosh-School-of" class="facet-label btn btn-default sub-menu">Alqosh, School of</a><a href="/entry/Amid" class="facet-label btn btn-default sub-menu">Amid</a><a href="/entry/Amyun" class="facet-label btn btn-default sub-menu">Amyūn</a><a href="/entry/Antioch" class="facet-label btn btn-default sub-menu">Antioch</a><a href="/entry/Antun-of-Tagrit" class="facet-label btn btn-default sub-menu">Anṭun of Tagrit</a><a href="/entry/Apamea" class="facet-label btn btn-default sub-menu">Apamea</a><a href="/entry/Aphrahat" class="facet-label btn btn-default sub-menu">Aphrahaṭ</a><a href="/entry/Apocalypses" class="facet-label btn btn-default sub-menu">Apocalypses</a><a href="/entry/Aqaq" class="facet-label btn btn-default sub-menu">Aqaq</a><a href="/entry/Arabic-Syriac-translations-from" class="facet-label btn btn-default sub-menu">Arabic, Syriac translations from</a><a href="/entry/Aramaic" class="facet-label btn btn-default sub-menu">Aramaic</a><a href="/entry/Arameans" class="facet-label btn btn-default sub-menu">Arameans</a><a href="/entry/Arbela" class="facet-label btn btn-default sub-menu">Arbela</a><a href="/entry/Aristides-of-Athens" class="facet-label btn btn-default sub-menu">Aristides of Athens</a><a href="/entry/Aristotle" class="facet-label btn btn-default sub-menu">Aristotle</a><a href="/entry/Armalah-Ishaq" class="facet-label btn btn-default sub-menu">Armalah, Isḥāq</a><a href="/entry/Armenian-Christianity-Syriac-contacts-with" class="facet-label btn btn-default sub-menu">Armenian Christianity, Syriac contacts with</a><a href="/entry/Art-and-architecture" class="facet-label btn btn-default sub-menu">Art and architecture</a><a href="/entry/Assemani-Elia" class="facet-label btn btn-default sub-menu">Assemani, Elia</a><a href="/entry/Assemani-Joseph-Aloysius" class="facet-label btn btn-default sub-menu">Assemani, Joseph Aloysius</a><a href="/entry/Assemani-Josephus-Simonius" class="facet-label btn btn-default sub-menu">Assemani, Josephus Simonius</a><a href="/entry/Assemani-Stephanus-Evodius" class="facet-label btn btn-default sub-menu">Assemani, Stephanus Evodius</a><a href="/entry/Assfalg-Julius" class="facet-label btn btn-default sub-menu">Assfalg, Julius</a><a href="/entry/Assyrians" class="facet-label btn btn-default sub-menu">Assyrians</a><a href="/entry/Asad-Gabriel" class="facet-label btn btn-default sub-menu">Asʿad, Gabriel</a><a href="/entry/Athanasios-Aslan" class="facet-label btn btn-default sub-menu">Athanasios Aṣlan</a><a href="/entry/Athanasios-I-Gamolo" class="facet-label btn btn-default sub-menu">Athanasios I Gamolo</a><a href="/entry/Athanasios-II-of-Balad" class="facet-label btn btn-default sub-menu">Athanasios II of Balad</a><a href="/entry/Athanasius-of-Alexandria" class="facet-label btn btn-default sub-menu">Athanasius of Alexandria</a><a href="/entry/Audo-Toma" class="facet-label btn btn-default sub-menu">Audo, Toma</a><a href="/entry/Awgen-Mar" class="facet-label btn btn-default sub-menu">Awgen, Mar</a><a href="/entry/Aydin-Numan" class="facet-label btn btn-default sub-menu">Aydin, Nuʿmān</a><a href="/entry/Ayyub-Barsoum" class="facet-label btn btn-default sub-menu">Ayyub, Barsoum</a><a href="/entry/Ahiqar" class="facet-label btn btn-default sub-menu">Aḥiqar</a><a href="/entry/Ahob-Qatraya" class="facet-label btn btn-default sub-menu">Aḥob Qaṭraya</a><a href="/entry/Ahudemmeh" class="facet-label btn btn-default sub-menu">Aḥudemmeh</a><a href="/entry/Ahudemmeh-of-Balad" class="facet-label btn btn-default sub-menu">Aḥudemmeh of Balad</a><a href="/entry/al-Anbar" class="facet-label btn btn-default sub-menu">al-Anbār</a><a href="/entry/al-Dibs-Yusuf" class="facet-label btn btn-default sub-menu">al-Dibs, Yūsuf</a><a href="/entry/al-Duwayhi-Istifan" class="facet-label btn btn-default sub-menu">al-Duwayhī, Isṭifān</a><a href="/entry/al-Rahib-Elias" class="facet-label btn btn-default sub-menu">al-Rāhib, Elias</a><a href="/entry/al-Suryan-Dayr" class="facet-label btn btn-default sub-menu">al-Suryān, Dayr</a><a href="/entry/al-Zafaran-Dayr" class="facet-label btn btn-default sub-menu">al-Zaʿfarān, Dayr</a><a href="/entry/al-Haqilani-Ibrahim" class="facet-label btn btn-default sub-menu">al-Ḥāqilānī, Ibrāhīm</a><a href="/entry/al-Sahyuni-Jibrail" class="facet-label btn btn-default sub-menu">al-Ṣahyūnī, Jibrāʾīl</a><a href="/entry/al-Salib-Dayr" class="facet-label btn btn-default sub-menu">al-Ṣalīb, Dayr</a><a href="/entry/Abdisho-bar-Bahriz" class="facet-label btn btn-default sub-menu">ʿAbdishoʿ bar Bahrīz</a><a href="/entry/Abdisho-bar-Brikha" class="facet-label btn btn-default sub-menu">ʿAbdishoʿ bar Brikha</a><a href="/entry/Abdisho-of-Gazarta" class="facet-label btn btn-default sub-menu">ʿAbdishoʿ of Gazarta</a><a href="/entry/Abdullah-I-bar-Stephanos" class="facet-label btn btn-default sub-menu">ʿAbdullāh I bar Sṭephanos</a><a href="/entry/Abdullah-II-Sattuf" class="facet-label btn btn-default sub-menu">ʿAbdullāh II Saṭṭūf</a><a href="/entry/Abdulmasih-II" class="facet-label btn btn-default sub-menu">ʿAbdulmasīḥ II</a><a href="/entry/Amira-Jirjis" class="facet-label btn btn-default sub-menu">ʿAmīra, Jirjis</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#B">B (53)</a><div id="B" class="collapse"><a href="/entry/Bnay-Qyama-Bnat-Qyama" class="facet-label btn btn-default sub-menu">
+                    Bnay Qyāmā, Bnāt Qyāmā
+                </a><a href="/entry/Babai-of-Nisibis" class="facet-label btn btn-default sub-menu">Babai of Nisibis</a><a href="/entry/Babai-the-Great" class="facet-label btn btn-default sub-menu">Babai the Great</a><a href="/entry/Baghdad" class="facet-label btn btn-default sub-menu">Baghdad</a><a href="/entry/Bahdeidat" class="facet-label btn btn-default sub-menu">Bahdeidat</a><a href="/entry/Balad" class="facet-label btn btn-default sub-menu">Balad</a><a href="/entry/Balai" class="facet-label btn btn-default sub-menu">Balai</a><a href="/entry/Bar-Bahlul-Hasan" class="facet-label btn btn-default sub-menu">Bar Bahlul, Ḥasan</a><a href="/entry/Bar-Ali-Isho" class="facet-label btn btn-default sub-menu">Bar ʿAli, Ishoʿ</a><a href="/entry/Bar-Ebroyo-Grigorios" class="facet-label btn btn-default sub-menu">Bar ʿEbroyo, Grigorios</a><a href="/entry/Bar-Edta-Rabban" class="facet-label btn btn-default sub-menu">Bar ʿEdta, Rabban</a><a href="/entry/Bardaisan" class="facet-label btn btn-default sub-menu">Bardaiṣan</a><a href="/entry/Barlaam-and-Josaphat" class="facet-label btn btn-default sub-menu">Barlaam and Josaphat</a><a href="/entry/Barsoum-Ignatius-Afram" class="facet-label btn btn-default sub-menu">Barsoum, Ignatius Afram</a><a href="/entry/Barsoum-Murad-Saliba" class="facet-label btn btn-default sub-menu">Barsoum, Murad Ṣaliba</a><a href="/entry/Barhadbshabba-Arbaya" class="facet-label btn btn-default sub-menu">Barḥadbshabba ʿArbaya</a><a href="/entry/Barsawma-of-Nisibis" class="facet-label btn btn-default sub-menu">Barṣawma of Nisibis</a><a href="/entry/Barsawmo" class="facet-label btn btn-default sub-menu">Barṣawmo</a><a href="/entry/Barsawmo-Safi-Grigorios" class="facet-label btn btn-default sub-menu">Barṣawmo Ṣafī, Grigorios</a><a href="/entry/Barsawmo-Dayro-d-Mor" class="facet-label btn btn-default sub-menu">Barṣawmo, Dayro d-Mor</a><a href="/entry/Bartelle" class="facet-label btn btn-default sub-menu">Barṭelle</a><a href="/entry/Baselios-Gewargis" class="facet-label btn btn-default sub-menu">Baselios Gewargis</a><a href="/entry/Basil-of-Caesarea" class="facet-label btn btn-default sub-menu">Basil of Caesarea</a><a href="/entry/Baumstark-Anton" class="facet-label btn btn-default sub-menu">Baumstark, Anton</a><a href="/entry/Beck-Edmund" class="facet-label btn btn-default sub-menu">Beck, Edmund</a><a href="/entry/Bedjan-Paul" class="facet-label btn btn-default sub-menu">Bedjan, Paul</a><a href="/entry/Behnam-Hadloyo" class="facet-label btn btn-default sub-menu">Behnam Ḥadloyo</a><a href="/entry/Behnam-Dayro-d-Mor" class="facet-label btn btn-default sub-menu">Behnam, Dayro d-Mor</a><a href="/entry/Beirut" class="facet-label btn btn-default sub-menu">Beirut</a><a href="/entry/Bello-Estipan" class="facet-label btn btn-default sub-menu">Bello, Estipān</a><a href="/entry/Benjamin-of-Edessa" class="facet-label btn btn-default sub-menu">Benjamin of Edessa</a><a href="/entry/Beth-Aramaye" class="facet-label btn btn-default sub-menu">Beth Aramaye</a><a href="/entry/Beth-Garmai" class="facet-label btn btn-default sub-menu">Beth Garmai</a><a href="/entry/Beth-Lapat" class="facet-label btn btn-default sub-menu">Beth Lapaṭ</a><a href="/entry/Beth-Nuhadra" class="facet-label btn btn-default sub-menu">Beth Nuhadra</a><a href="/entry/Beth-Qatraye" class="facet-label btn btn-default sub-menu">Beth Qaṭraye</a><a href="/entry/Beth-Abe-Monastery-of" class="facet-label btn btn-default sub-menu">Beth ʿAbe, Monastery of</a><a href="/entry/Beth-Arbaye" class="facet-label btn btn-default sub-menu">Beth ʿArbaye</a><a href="/entry/Beulay-Robert" class="facet-label btn btn-default sub-menu">Beulay, Robert</a><a href="/entry/Bible-General" class="facet-label btn btn-default sub-menu">Bible (General)</a><a href="/entry/Bible-New-Testament-manuscripts" class="facet-label btn btn-default sub-menu">Bible, New Testament manuscripts</a><a href="/entry/Bible-Old-Testament-manuscripts" class="facet-label btn btn-default sub-menu">Bible, Old Testament manuscripts</a><a href="/entry/Bibliography" class="facet-label btn btn-default sub-menu">Bibliography</a><a href="/entry/Bidawid-Raphael-I" class="facet-label btn btn-default sub-menu">Bidawid, Raphael I</a><a href="/entry/Bidary-Pawlos" class="facet-label btn btn-default sub-menu">Bidāry, Pawlos</a><a href="/entry/Book-of-Steps" class="facet-label btn btn-default sub-menu">Book of Steps</a><a href="/entry/Bostra" class="facet-label btn btn-default sub-menu">Bostra</a><a href="/entry/Braun-Oskar" class="facet-label btn btn-default sub-menu">Braun, Oskar</a><a href="/entry/British-Orthodox-Church" class="facet-label btn btn-default sub-menu">British Orthodox Church</a><a href="/entry/Brockelmann-Carl" class="facet-label btn btn-default sub-menu">Brockelmann, Carl</a><a href="/entry/Brooks-Ernest-Walter" class="facet-label btn btn-default sub-menu">Brooks, Ernest Walter</a><a href="/entry/Budge-Sir-Ernest-Alfred-Wallis" class="facet-label btn btn-default sub-menu">Budge, Sir Ernest Alfred Wallis</a><a href="/entry/Burkitt-Francis-Crawford" class="facet-label btn btn-default sub-menu">Burkitt, Francis Crawford</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#C">C (26)</a><div id="C" class="collapse"><a href="/entry/Cardahi-Gabriel" class="facet-label btn btn-default sub-menu">Cardahi, Gabriel</a><a href="/entry/Catherine-Monastery-of-St" class="facet-label btn btn-default sub-menu">Catherine, Monastery of St.</a><a href="/entry/Cause-of-Causes" class="facet-label btn btn-default sub-menu">Cause of Causes</a><a href="/entry/Cave-of-Treasures" class="facet-label btn btn-default sub-menu">Cave of Treasures</a><a href="/entry/Ceriani-Antonio-Maria" class="facet-label btn btn-default sub-menu">Ceriani, Antonio Maria</a><a href="/entry/Chabot-Jean-Baptiste" class="facet-label btn btn-default sub-menu">Chabot, Jean-Baptiste</a><a href="/entry/Chaldean-Catholic-Church" class="facet-label btn btn-default sub-menu">Chaldean Catholic Church</a><a href="/entry/Chaldean-Syrian-Church" class="facet-label btn btn-default sub-menu">Chaldean Syrian Church</a><a href="/entry/Chaldeans" class="facet-label btn btn-default sub-menu">Chaldeans</a><a href="/entry/Chicago" class="facet-label btn btn-default sub-menu">Chicago</a><a href="/entry/China-Syriac-Christianity-in" class="facet-label btn btn-default sub-menu">China, Syriac Christianity in</a><a href="/entry/Christian-Palestinian-Aramaic" class="facet-label btn btn-default sub-menu">Christian Palestinian Aramaic</a><a href="/entry/Chronicle-of-1234" class="facet-label btn btn-default sub-menu">Chronicle of 1234</a><a href="/entry/Chronicle-of-Edessa" class="facet-label btn btn-default sub-menu">Chronicle of Edessa</a><a href="/entry/Chronicles-Syriac" class="facet-label btn btn-default sub-menu">Chronicles, Syriac</a><a href="/entry/Church-of-the-East" class="facet-label btn btn-default sub-menu">Church of the East</a><a href="/entry/Clement-of-Rome-and-Pseudo-Clementine-literature" class="facet-label btn btn-default sub-menu">Clement of Rome and Pseudo-Clementine literature</a><a href="/entry/Colophons" class="facet-label btn btn-default sub-menu">Colophons</a><a href="/entry/Computing-Syriac" class="facet-label btn btn-default sub-menu">Computing, Syriac</a><a href="/entry/Coptic-Christianity-Syriac-contacts-with" class="facet-label btn btn-default sub-menu">Coptic Christianity, Syriac contacts with</a><a href="/entry/Costaz-Louis" class="facet-label btn btn-default sub-menu">Costaz, Louis</a><a href="/entry/Crusades" class="facet-label btn btn-default sub-menu">Crusades</a><a href="/entry/Cureton-William" class="facet-label btn btn-default sub-menu">Cureton, William</a><a href="/entry/Cyril-of-Alexandria" class="facet-label btn btn-default sub-menu">Cyril of Alexandria</a><a href="/entry/Cyril-of-Jerusalem" class="facet-label btn btn-default sub-menu">Cyril of Jerusalem</a><a href="/entry/Cicek-Julius-Yeshu" class="facet-label btn btn-default sub-menu">Çiçek, Julius Yeshu</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#D">D (36)</a><div id="D" class="collapse"><a href="/entry/Dorektha" class="facet-label btn btn-default sub-menu">
+                    Dorekthā
+                </a><a href="/entry/Dabbus-Antoine" class="facet-label btn btn-default sub-menu">Dabbūs, Antoine</a><a href="/entry/Dadisho-I" class="facet-label btn btn-default sub-menu">Dadishoʿ I</a><a href="/entry/Dadisho-Qatraya" class="facet-label btn btn-default sub-menu">Dadishoʿ Qaṭraya</a><a href="/entry/Damascus" class="facet-label btn btn-default sub-menu">Damascus</a><a href="/entry/Damyanos-of-Alqosh" class="facet-label btn btn-default sub-menu">Damyanos of Alqosh</a><a href="/entry/Danhash-George" class="facet-label btn btn-default sub-menu">Danhash, George</a><a href="/entry/Daniel-bar-Maryam" class="facet-label btn btn-default sub-menu">Daniel bar Maryam</a><a href="/entry/Daniel-bar-Tubanitha" class="facet-label btn btn-default sub-menu">Daniel bar Ṭubanitha</a><a href="/entry/Daniel-of-Mardin" class="facet-label btn btn-default sub-menu">Daniel of Mardin</a><a href="/entry/Daniel-of-Salah" class="facet-label btn btn-default sub-menu">Daniel of Ṣalaḥ</a><a href="/entry/Daoud-Francis" class="facet-label btn btn-default sub-menu">Daoud, Francis</a><a href="/entry/Darmo-Toma" class="facet-label btn btn-default sub-menu">Darmo, Toma</a><a href="/entry/David-Clemens-Joseph" class="facet-label btn btn-default sub-menu">David, Clemens Joseph</a><a href="/entry/Dawid-Puniqoyo" class="facet-label btn btn-default sub-menu">Dawid Puniqoyo</a><a href="/entry/Dawid-bar-Pawlos" class="facet-label btn btn-default sub-menu">Dawid bar Pawlos</a><a href="/entry/Denha" class="facet-label btn btn-default sub-menu">Denḥa</a><a href="/entry/De-Rossi-Azariah-Buonaiuto" class="facet-label btn btn-default sub-menu">De’ Rossi, Azariah (Buonaiuto)</a><a href="/entry/Diamper-Synod-of" class="facet-label btn btn-default sub-menu">Diamper, Synod of</a><a href="/entry/Diaspora" class="facet-label btn btn-default sub-menu">Diaspora</a><a href="/entry/Diatessaron" class="facet-label btn btn-default sub-menu">Diatessaron</a><a href="/entry/Didascalia-Apostolorum" class="facet-label btn btn-default sub-menu">Didascalia Apostolorum</a><a href="/entry/Dinno-Nimatullah" class="facet-label btn btn-default sub-menu">Dinno, Niʿmatullāh</a><a href="/entry/Diodore-of-Tarsus" class="facet-label btn btn-default sub-menu">Diodore of Tarsus</a><a href="/entry/Dionysios-bar-Salibi" class="facet-label btn btn-default sub-menu">Dionysios bar Ṣalibi</a><a href="/entry/Dionysios-of-Tel-Mahre" class="facet-label btn btn-default sub-menu">Dionysios of Tel Maḥre</a><a href="/entry/Dionysius-Thrax" class="facet-label btn btn-default sub-menu">Dionysius Thrax</a><a href="/entry/Dionysius-the-Areopagite-Pseudo-" class="facet-label btn btn-default sub-menu">Dionysius the Areopagite, Pseudo-</a><a href="/entry/Diosqoros-of-Gozarto" class="facet-label btn btn-default sub-menu">Diosqoros of Gozarto</a><a href="/entry/Dolabani-Philoxenos-Yuhanon" class="facet-label btn btn-default sub-menu">Dolabani, Philoxenos Yuḥanon</a><a href="/entry/Draguet-Rene" class="facet-label btn btn-default sub-menu">Draguet, René</a><a href="/entry/Drijvers-Hendrik-Han-Jan-Willem" class="facet-label btn btn-default sub-menu">Drijvers, Hendrik (Han) Jan Willem</a><a href="/entry/Dura-Europos" class="facet-label btn btn-default sub-menu">Dura-Europos</a><a href="/entry/Duval-Paul-Rubens" class="facet-label btn btn-default sub-menu">Duval, Paul-Rubens</a><a href="/entry/de-Halleux-Andre" class="facet-label btn btn-default sub-menu">de Halleux, André</a><a href="/entry/de-Lagarde-Paul-Anton" class="facet-label btn btn-default sub-menu">de Lagarde, Paul Anton</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#E">E (27)</a><div id="E" class="collapse"><a href="/entry/Editors-Preface-print" class="facet-label btn btn-default sub-menu">
+                  Editors’ Preface
+               </a><a href="/entry/Ecumenical-dialogue" class="facet-label btn btn-default sub-menu">Ecumenical dialogue</a><a href="/entry/Edde" class="facet-label btn btn-default sub-menu">Eddé</a><a href="/entry/Edessa" class="facet-label btn btn-default sub-menu">Edessa</a><a href="/entry/Edessa-School-of" class="facet-label btn btn-default sub-menu">Edessa, School of</a><a href="/entry/Eli-of-Qartmin" class="facet-label btn btn-default sub-menu">Eli of Qarṭmin</a><a href="/entry/Elias-Ghattas-Danho-Maqdisi" class="facet-label btn btn-default sub-menu">Elias, Ghaṭṭās (Danḥo) Maqdisī</a><a href="/entry/Elisha-bar-Quzbaye" class="facet-label btn btn-default sub-menu">Elishaʿ bar Quzbaye</a><a href="/entry/Eliya-late-8th-early-9th-cent" class="facet-label btn btn-default sub-menu">Eliya (late 8th/early 9th cent.)</a><a href="/entry/Eliya-mid-6th-cent" class="facet-label btn btn-default sub-menu">Eliya (mid-6th cent.)</a><a href="/entry/Eliya-I-of-Tirhan" class="facet-label btn btn-default sub-menu">Eliya I of Ṭirhan</a><a href="/entry/Eliya-III-Shakir" class="facet-label btn btn-default sub-menu">Eliya III Shakir</a><a href="/entry/Eliya-of-Nisibis" class="facet-label btn btn-default sub-menu">Eliya of Nisibis</a><a href="/entry/Eliya-of-al-Anbar" class="facet-label btn btn-default sub-menu">Eliya of al-Anbār</a><a href="/entry/Emmanuel-bar-Shahhare" class="facet-label btn btn-default sub-menu">Emmanuel bar Shahhare</a><a href="/entry/Ephrem" class="facet-label btn btn-default sub-menu">Ephrem</a><a href="/entry/Ephrem-Life-of" class="facet-label btn btn-default sub-menu">Ephrem, Life of</a><a href="/entry/Epiphanius-of-Salamis" class="facet-label btn btn-default sub-menu">Epiphanius of Salamis</a><a href="/entry/Ethiopic-Christianity-Syriac-contacts-with" class="facet-label btn btn-default sub-menu">Ethiopic Christianity, Syriac contacts with</a><a href="/entry/Euphemia-and-the-Goth" class="facet-label btn btn-default sub-menu">Euphemia and the Goth</a><a href="/entry/Eusebius-of-Caesarea" class="facet-label btn btn-default sub-menu">Eusebius of Caesarea</a><a href="/entry/Eusebius-of-Emesa" class="facet-label btn btn-default sub-menu">Eusebius of Emesa</a><a href="/entry/Eutyches" class="facet-label btn btn-default sub-menu">Eutyches</a><a href="/entry/Evagrius-of-Pontus" class="facet-label btn btn-default sub-menu">Evagrius</a><a href="/entry/Exegesis-New-Testament" class="facet-label btn btn-default sub-menu">Exegesis, New Testament</a><a href="/entry/Exegesis-Old-Testament" class="facet-label btn btn-default sub-menu">Exegesis, Old Testament</a><a href="/entry/Enanisho" class="facet-label btn btn-default sub-menu">ʿEnanishoʿ</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#F">F (5)</a><div id="F" class="collapse"><a href="/entry/Fars" class="facet-label btn btn-default sub-menu">Fars</a><a href="/entry/Fathallah-Elias" class="facet-label btn btn-default sub-menu">Fatḥallāh, Elias</a><a href="/entry/Fiey-Jean-Maurice" class="facet-label btn btn-default sub-menu">Fiey, Jean-Maurice</a><a href="/entry/Furlani-Giuseppe" class="facet-label btn btn-default sub-menu">Furlani, Giuseppe</a><a href="/entry/Faiq-Naum" class="facet-label btn btn-default sub-menu">Fāʾiq, Naʿʿūm</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#G">G (30)</a><div id="G" class="collapse"><a href="/entry/Gannat-Bussame" class="facet-label btn btn-default sub-menu">
+                    Gannat Bussāme
+                </a><a href="/entry/Gabriel-Qamsa" class="facet-label btn btn-default sub-menu">Gabriel Qamṣa</a><a href="/entry/Gabriel-Qatraya" class="facet-label btn btn-default sub-menu">Gabriel Qaṭraya</a><a href="/entry/Gabriel-bar-Bokhtisho" class="facet-label btn btn-default sub-menu">Gabriel bar Bokhtishoʿ</a><a href="/entry/Gabriel-of-Basra" class="facet-label btn btn-default sub-menu">Gabriel of Baṣra</a><a href="/entry/Gabriel-Fawlos" class="facet-label btn btn-default sub-menu">Gabriel, Fawlos</a><a href="/entry/Gabriel-Monastery-of-Mor" class="facet-label btn btn-default sub-menu">Gabriel, Monastery of Mor</a><a href="/entry/Galen" class="facet-label btn btn-default sub-menu">Galen</a><a href="/entry/Garshuni" class="facet-label btn btn-default sub-menu">Garshuni</a><a href="/entry/Geoponika" class="facet-label btn btn-default sub-menu">Geoponika</a><a href="/entry/Georgian-Christianity-Syriac-contacts-with" class="facet-label btn btn-default sub-menu">Georgian Christianity, Syriac contacts with</a><a href="/entry/Gewargis-I" class="facet-label btn btn-default sub-menu">Gewargis I</a><a href="/entry/Gewargis-Warda" class="facet-label btn btn-default sub-menu">Gewargis Warda</a><a href="/entry/Gewargis-of-Arbela" class="facet-label btn btn-default sub-menu">Gewargis of Arbela</a><a href="/entry/Gewargis-of-Arbela-Pseudo-" class="facet-label btn btn-default sub-menu">Gewargis of Arbela, Pseudo-</a><a href="/entry/Giwargi-bp-of-the-Arab-tribes" class="facet-label btn btn-default sub-menu">Giwargi, bp. of the Arab tribes</a><a href="/entry/Giwargis-II-Ignatius" class="facet-label btn btn-default sub-menu">Giwargis II, Ignatius</a><a href="/entry/Giwargis-of-Beltan" class="facet-label btn btn-default sub-menu">Giwargis of Bʿeltan</a><a href="/entry/Gospel-of-the-Twelve-Apostles" class="facet-label btn btn-default sub-menu">Gospel of the Twelve Apostles</a><a href="/entry/Graffin-Francois" class="facet-label btn btn-default sub-menu">Graffin, François</a><a href="/entry/Graffin-Rene" class="facet-label btn btn-default sub-menu">Graffin, René</a><a href="/entry/Greek-Syriac-translations-from" class="facet-label btn btn-default sub-menu">Greek, Syriac translations from</a><a href="/entry/Gregory-Thaumaturgus" class="facet-label btn btn-default sub-menu">Gregory Thaumaturgus</a><a href="/entry/Gregory-of-Nazianzus" class="facet-label btn btn-default sub-menu">Gregory of Nazianzus</a><a href="/entry/Gregory-of-Nyssa" class="facet-label btn btn-default sub-menu">Gregory of Nyssa</a><a href="/entry/Grigor-I" class="facet-label btn btn-default sub-menu">Grigor I</a><a href="/entry/Grigorios-Yawseph" class="facet-label btn btn-default sub-menu">Grigorios Yawseph</a><a href="/entry/Grigorios-of-Cyprus" class="facet-label btn btn-default sub-menu">Grigorios of Cyprus</a><a href="/entry/Guidi-Ignazio" class="facet-label btn btn-default sub-menu">Guidi, Ignazio</a><a href="/entry/Guillaumont-Antoine" class="facet-label btn btn-default sub-menu">Guillaumont, Antoine</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#H">H (22)</a><div id="H" class="collapse"><a href="/entry/Habbi-Yusuf" class="facet-label btn btn-default sub-menu">Habbi, Yusuf</a><a href="/entry/Hagiography" class="facet-label btn btn-default sub-menu">Hagiography</a><a href="/entry/Hakkari" class="facet-label btn btn-default sub-menu">Hakkari</a><a href="/entry/Harris-James-Rendel" class="facet-label btn btn-default sub-menu">Harris, James Rendel</a><a href="/entry/Hatch-William-Henry-Paine" class="facet-label btn btn-default sub-menu">Hatch, William Henry Paine</a><a href="/entry/Hiba" class="facet-label btn btn-default sub-menu">Hiba</a><a href="/entry/Hippolytus-of-Rome" class="facet-label btn btn-default sub-menu">Hippolytus of Rome</a><a href="/entry/Historiography-Syriac" class="facet-label btn btn-default sub-menu">Historiography, Syriac</a><a href="/entry/Hormizd-Monastery-of-Rabban" class="facet-label btn btn-default sub-menu">Hormizd, Monastery of Rabban</a><a href="/entry/Hanno-Sulayman" class="facet-label btn btn-default sub-menu">Ḥanno, Sulayman</a><a href="/entry/Harqlean-Version" class="facet-label btn btn-default sub-menu">Ḥarqlean Version</a><a href="/entry/Harran" class="facet-label btn btn-default sub-menu">Ḥarran</a><a href="/entry/Hazqiel-I" class="facet-label btn btn-default sub-menu">Ḥazqiel I</a><a href="/entry/Henana" class="facet-label btn btn-default sub-menu">Ḥenana</a><a href="/entry/Henanisho-I" class="facet-label btn btn-default sub-menu">Ḥenanishoʿ I</a><a href="/entry/Henanisho-II" class="facet-label btn btn-default sub-menu">Ḥenanishoʿ II</a><a href="/entry/Henanisho-bar-Seroshway" class="facet-label btn btn-default sub-menu">Ḥenanishoʿ bar Seroshway</a><a href="/entry/Himyar" class="facet-label btn btn-default sub-menu">Ḥimyar</a><a href="/entry/Hims" class="facet-label btn btn-default sub-menu">Ḥimṣ</a><a href="/entry/Hirta" class="facet-label btn btn-default sub-menu">Ḥirta</a><a href="/entry/Hubeika-Joseph" class="facet-label btn btn-default sub-menu">Ḥubeika, Joseph</a><a href="/entry/Hunayn-b-Ishaq" class="facet-label btn btn-default sub-menu">Ḥunayn b. Isḥāq</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#I">I (31)</a><div id="I" class="collapse"><a href="/entry/Ihidaya" class="facet-label btn btn-default sub-menu">
+                    Iḥidāyā
+                </a><a href="/entry/Ibn-al-Tayyib" class="facet-label btn btn-default sub-menu">Ibn al-Ṭayyib</a><a href="/entry/Ignatius-Yaqub-III" class="facet-label btn btn-default sub-menu">Ignatius Yaʿqub III</a><a href="/entry/Ignatius-of-Antioch" class="facet-label btn btn-default sub-menu">Ignatius of Antioch</a><a href="/entry/Inscriptions" class="facet-label btn btn-default sub-menu">Inscriptions</a><a href="/entry/Isaiah-of-Scetis" class="facet-label btn btn-default sub-menu">Isaiah of Scetis</a><a href="/entry/Ishaya-of-Beth-Sbirina" class="facet-label btn btn-default sub-menu">Ishaʿya of Beth Sbirina</a><a href="/entry/Isho-bar-Nun" class="facet-label btn btn-default sub-menu">Ishoʿ bar Nun</a><a href="/entry/Isho-of-Merv" class="facet-label btn btn-default sub-menu">Ishoʿ of Merv</a><a href="/entry/Ishobokht-of-Rev-Ardashir" class="facet-label btn btn-default sub-menu">Ishoʿbokht of Rev Ardashir</a><a href="/entry/Ishodad-of-Merv" class="facet-label btn btn-default sub-menu">Ishoʿdad of Merv</a><a href="/entry/Ishodnah" class="facet-label btn btn-default sub-menu">Ishoʿdnaḥ</a><a href="/entry/Ishoyahb-I" class="facet-label btn btn-default sub-menu">Ishoʿyahb I</a><a href="/entry/Ishoyahb-II-of-Gdala" class="facet-label btn btn-default sub-menu">Ishoʿyahb II of Gdala</a><a href="/entry/Ishoyahb-III-of-Adiabene" class="facet-label btn btn-default sub-menu">Ishoʿyahb III of Adiabene</a><a href="/entry/Ishoyahb-IV" class="facet-label btn btn-default sub-menu">Ishoʿyahb IV</a><a href="/entry/Ishoyahb-bar-Malkon" class="facet-label btn btn-default sub-menu">Ishoʿyahb bar Malkon</a><a href="/entry/Isidore-of-Pelusium" class="facet-label btn btn-default sub-menu">Isidore of Pelusium</a><a href="/entry/Islam-Syriac-contacts-with" class="facet-label btn btn-default sub-menu">Islam, Syriac interactions with</a><a href="/entry/Israel-of-Alqosh" class="facet-label btn btn-default sub-menu">Israel of Alqosh</a><a href="/entry/Ishaq" class="facet-label btn btn-default sub-menu">Isḥaq</a><a href="/entry/Ishaq-Shbadnaya" class="facet-label btn btn-default sub-menu">Isḥaq Shbadnaya</a><a href="/entry/Ishaq-of-Amid" class="facet-label btn btn-default sub-menu">Isḥaq of Amid</a><a href="/entry/Ishaq-of-Antioch" class="facet-label btn btn-default sub-menu">Isḥaq of Antioch</a><a href="/entry/Ishaq-of-Edessa" class="facet-label btn btn-default sub-menu">Isḥaq of Edessa</a><a href="/entry/Ishaq-of-Nineveh" class="facet-label btn btn-default sub-menu">Isḥaq of Nineveh</a><a href="/entry/Ishoq-Azar" class="facet-label btn btn-default sub-menu">Isḥoq ʿAzar</a><a href="/entry/Ishoq-Saliba" class="facet-label btn btn-default sub-menu">Isḥoq Ṣaliba</a><a href="/entry/Iwannis-Yuhanon" class="facet-label btn btn-default sub-menu">Iwannis Yuḥanon</a><a href="/entry/Iwannis-of-Dara" class="facet-label btn btn-default sub-menu">Iwannis of Dara</a><a href="/entry/Iyob-of-Edessa" class="facet-label btn btn-default sub-menu">Iyob of Edessa</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#J">J (15)</a><div id="J" class="collapse"><a href="/entry/Jacob-Cyril" class="facet-label btn btn-default sub-menu">Jacob, Cyril</a><a href="/entry/Jamil-Shmuel" class="facet-label btn btn-default sub-menu">Jamīl, Shmuʾel</a><a href="/entry/Jansma-Taeke" class="facet-label btn btn-default sub-menu">Jansma, Taeke</a><a href="/entry/Jerusalem" class="facet-label btn btn-default sub-menu">Jerusalem</a><a href="/entry/John-Chrysostom" class="facet-label btn btn-default sub-menu">John Chrysostom</a><a href="/entry/John-Climacus" class="facet-label btn btn-default sub-menu">John Climacus</a><a href="/entry/John-Philoponos" class="facet-label btn btn-default sub-menu">John Philoponos</a><a href="/entry/John-Rufus" class="facet-label btn btn-default sub-menu">John Rufus</a><a href="/entry/John-bar-Aphtonia" class="facet-label btn btn-default sub-menu">John bar Aphtonia</a><a href="/entry/John-of-Damascus" class="facet-label btn btn-default sub-menu">John of Damascus</a><a href="/entry/Josephus" class="facet-label btn btn-default sub-menu">Josephus</a><a href="/entry/Judaism-Syriac-contacts-with" class="facet-label btn btn-default sub-menu">Judaism, Syriac contacts with</a><a href="/entry/Julian-Romance" class="facet-label btn btn-default sub-menu">Julian Romance</a><a href="/entry/Julian-of-Halicarnassus" class="facet-label btn btn-default sub-menu">Julian of Halicarnassus</a><a href="/entry/Juridical-literature" class="facet-label btn btn-default sub-menu">Juridical literature</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#K">K (11)</a><div id="K" class="collapse"><a href="/entry/Kaftun-Dayr" class="facet-label btn btn-default sub-menu">Kaftun, Dayr</a><a href="/entry/Kalila-and-Dimna" class="facet-label btn btn-default sub-menu">Kalila and Dimna</a><a href="/entry/Karamlish" class="facet-label btn btn-default sub-menu">Karamlish</a><a href="/entry/Karka-d-Beth-Slokh" class="facet-label btn btn-default sub-menu">Karka d-Beth Slokh</a><a href="/entry/Kfar-Helda" class="facet-label btn btn-default sub-menu">Kfar Helda</a><a href="/entry/Khamis-bar-Qardahe" class="facet-label btn btn-default sub-menu">Khamis bar Qardaḥe</a><a href="/entry/Khouri-Sarkis-Gabriel" class="facet-label btn btn-default sub-menu">Khouri-Sarkis, Gabriel</a><a href="/entry/Khoury-Asmar" class="facet-label btn btn-default sub-menu">Khoury, Asmar</a><a href="/entry/Kokhe" class="facet-label btn btn-default sub-menu">Kokhe</a><a href="/entry/Konat-Matta" class="facet-label btn btn-default sub-menu">Konat, Matta</a><a href="/entry/Kthobonoyo-Syriac" class="facet-label btn btn-default sub-menu">Kthobonoyo Syriac</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#L">L (12)</a><div id="L" class="collapse"><a href="/entry/List-Contributors" class="facet-label btn btn-default sub-menu">
+                  List of Contributors [2011]
+               </a><a href="/entry/List-of-Figures" class="facet-label btn btn-default sub-menu">
+                  List of Figures and Color Plates
+               </a><a href="/entry/List-of-Patriarchs-Churches-Middle-East" class="facet-label btn btn-default sub-menu">
+               List of Patriarchs of the Main Syriac Churches in the Middle East
+            </a><a href="/entry/Lamsa-George" class="facet-label btn btn-default sub-menu">Lamsa, George</a><a href="/entry/Land-Jan-Pieter-Nicolaas" class="facet-label btn btn-default sub-menu">Land, Jan Pieter Nicolaas</a><a href="/entry/Leloir-Louis" class="facet-label btn btn-default sub-menu">Leloir, Louis</a><a href="/entry/Leon-of-Harran" class="facet-label btn btn-default sub-menu">Leon of Ḥarran</a><a href="/entry/Leroy-Jules" class="facet-label btn btn-default sub-menu">Leroy, Jules</a><a href="/entry/Levi-Della-Vida-Giorgio" class="facet-label btn btn-default sub-menu">Levi Della Vida, Giorgio</a><a href="/entry/Liturgy" class="facet-label btn btn-default sub-menu">Liturgy</a><a href="/entry/Loozar-bar-Sobtho" class="facet-label btn btn-default sub-menu">Loʿozar bar Sobtho</a><a href="/entry/Loozar-of-Beth-Qandasa" class="facet-label btn btn-default sub-menu">Loʿozar of Beth Qandasa</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#M">M (56)</a><div id="M" class="collapse"><a href="/entry/Manuscript-Index" class="facet-label btn btn-default sub-menu">
+               Manuscript Index
+            </a><a href="/entry/Maps" class="facet-label btn btn-default sub-menu">
+               Maps
+            </a><a href="/entry/Macarian-Homilies" class="facet-label btn btn-default sub-menu">Macarian Homilies</a><a href="/entry/Malabar-Catholic-Church" class="facet-label btn btn-default sub-menu">Malabar Catholic Church</a><a href="/entry/Malabar-Independent-Syrian-Church" class="facet-label btn btn-default sub-menu">Malabar Independent Syrian Church</a><a href="/entry/Malankara-Catholic-Church" class="facet-label btn btn-default sub-menu">Malankara Catholic Church</a><a href="/entry/Malankara-Orthodox-Syrian-Church" class="facet-label btn btn-default sub-menu">Malankara Orthodox Syrian Church</a><a href="/entry/Malankara-Syriac-Orthodox-Church" class="facet-label btn btn-default sub-menu">Malankara Syriac Orthodox Church</a><a href="/entry/Man-of-God-of-Edessa" class="facet-label btn btn-default sub-menu">Man of God of Edessa</a><a href="/entry/Mani" class="facet-label btn btn-default sub-menu">Mani</a><a href="/entry/Manna-Yaqob-Awgen" class="facet-label btn btn-default sub-menu">Manna, Yaʿqob Awgen</a><a href="/entry/Manuscripts" class="facet-label btn btn-default sub-menu">Manuscripts</a><a href="/entry/Maphrian" class="facet-label btn btn-default sub-menu">Maphrian</a><a href="/entry/Maqdisi-Jeremiah" class="facet-label btn btn-default sub-menu">Maqdisī, Jeremiah</a><a href="/entry/Mar-Thoma-Syrian-Church-Malankara" class="facet-label btn btn-default sub-menu">Mar Thoma Syrian Church (Malankara)</a><a href="/entry/Mara-bar-Serapion-Letter-of" class="facet-label btn btn-default sub-menu">Mara bar Serapion, Letter of</a><a href="/entry/Marcian-the-Monk" class="facet-label btn btn-default sub-menu">Marcian</a><a href="/entry/Marcion" class="facet-label btn btn-default sub-menu">Marcion</a><a href="/entry/Mardin" class="facet-label btn btn-default sub-menu">Mardin</a><a href="/entry/Mari-Acts-of" class="facet-label btn btn-default sub-menu">Mari, Acts of</a><a href="/entry/Mark-the-Monk" class="facet-label btn btn-default sub-menu">Mark the Monk</a><a href="/entry/Mark-Monastery-of-St" class="facet-label btn btn-default sub-menu">Mark, Monastery of St.</a><a href="/entry/Maron" class="facet-label btn btn-default sub-menu">Maron</a><a href="/entry/Maronite-Church" class="facet-label btn btn-default sub-menu">Maronite Church</a><a href="/entry/Martyrs-and-persecutions" class="facet-label btn btn-default sub-menu">Martyrs and persecutions</a><a href="/entry/Marutha-of-Maypherqat" class="facet-label btn btn-default sub-menu">Marutha of Maypherqaṭ</a><a href="/entry/Marutha-of-Tagrit" class="facet-label btn btn-default sub-menu">Marutha of Tagrit</a><a href="/entry/Mary" class="facet-label btn btn-default sub-menu">Mary</a><a href="/entry/Masius-Andreas" class="facet-label btn btn-default sub-menu">Masius, Andreas</a><a href="/entry/Masora" class="facet-label btn btn-default sub-menu">Masora</a><a href="/entry/Masud-of-Tur-Abdin" class="facet-label btn btn-default sub-menu">Masʿūd of Ṭur ʿAbdin</a><a href="/entry/Matay-Dayro-d-Mor" class="facet-label btn btn-default sub-menu">Matay, Dayro d-Mor</a><a href="/entry/Maximus" class="facet-label btn btn-default sub-menu">Maximus</a><a href="/entry/Maad" class="facet-label btn btn-default sub-menu">Maʿad</a><a href="/entry/Medicine" class="facet-label btn btn-default sub-menu">Medicine</a><a href="/entry/Melitene" class="facet-label btn btn-default sub-menu">Melitene</a><a href="/entry/Meliton-the-Philosopher" class="facet-label btn btn-default sub-menu">Meliton the Philosopher</a><a href="/entry/Melkite" class="facet-label btn btn-default sub-menu">Melkite</a><a href="/entry/Melkite-literature-in-Syriac" class="facet-label btn btn-default sub-menu">Melkite literature in Syriac</a><a href="/entry/Menander-Syriac-sentences-of" class="facet-label btn btn-default sub-menu">Menander, Syriac sentences of</a><a href="/entry/Methodius-Apocalypse-of-Pseudo-" class="facet-label btn btn-default sub-menu">Methodius, Apocalypse of Pseudo-</a><a href="/entry/Michael-Badoqa" class="facet-label btn btn-default sub-menu">Michael Badoqa</a><a href="/entry/Michael-I-Rabo" class="facet-label btn btn-default sub-menu">Michael I Rabo</a><a href="/entry/Michael-II-the-Younger" class="facet-label btn btn-default sub-menu">Michael II the Younger</a><a href="/entry/Midyat" class="facet-label btn btn-default sub-menu">Midyat</a><a href="/entry/Mingana-Alphonse" class="facet-label btn btn-default sub-menu">Mingana, Alphonse</a><a href="/entry/Moberg-Axel" class="facet-label btn btn-default sub-menu">Moberg, Axel</a><a href="/entry/Monasticism" class="facet-label btn btn-default sub-menu">Monasticism</a><a href="/entry/Mosul" class="facet-label btn btn-default sub-menu">Mosul</a><a href="/entry/Mubarak-Butros" class="facet-label btn btn-default sub-menu">Mubārak, Buṭros</a><a href="/entry/Murad-Michael" class="facet-label btn btn-default sub-menu">Murad, Michael</a><a href="/entry/Mushe-bar-Kipho" class="facet-label btn btn-default sub-menu">Mushe bar Kipho</a><a href="/entry/Mushe-of-Aggel" class="facet-label btn btn-default sub-menu">Mushe of Aggel</a><a href="/entry/Mushe-of-Mardin" class="facet-label btn btn-default sub-menu">Mushe of Mardin</a><a href="/entry/Mushe-of-Nisibis" class="facet-label btn btn-default sub-menu">Mushe of Nisibis</a><a href="/entry/Musa-al-Habashi-Dayr-Mar" class="facet-label btn btn-default sub-menu">Mūsā al-Ḥabashī, Dayr Mār</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#N">N (19)</a><div id="N" class="collapse"><a href="/entry/Nagran" class="facet-label btn btn-default sub-menu">Nagran</a><a href="/entry/Naqqasheh-Afram" class="facet-label btn btn-default sub-menu">Naqqāsheh, Afram</a><a href="/entry/Narsai" class="facet-label btn btn-default sub-menu">Narsai</a><a href="/entry/Nathniel-of-Sirzor" class="facet-label btn btn-default sub-menu">Nathniel of Sirzor</a><a href="/entry/Nau-Francois" class="facet-label btn btn-default sub-menu">Nau, François</a><a href="/entry/Nestorianism" class="facet-label btn btn-default sub-menu">Nestorianism</a><a href="/entry/Nestorios-of-Beth-Nuhadra" class="facet-label btn btn-default sub-menu">Nestorios of Beth Nuhadra</a><a href="/entry/Nestorius" class="facet-label btn btn-default sub-menu">Nestorius</a><a href="/entry/Nicolaus-of-Damascus" class="facet-label btn btn-default sub-menu">Nicolaus of Damascus</a><a href="/entry/Nilus-the-Solitary" class="facet-label btn btn-default sub-menu">Nilus the Solitary</a><a href="/entry/Nineveh" class="facet-label btn btn-default sub-menu">Nineveh</a><a href="/entry/Nisibis" class="facet-label btn btn-default sub-menu">Nisibis</a><a href="/entry/Nisibis-School-of" class="facet-label btn btn-default sub-menu">Nisibis, School of</a><a href="/entry/Nimatullah-Ignatius" class="facet-label btn btn-default sub-menu">Niʿmatullāh, Ignatius</a><a href="/entry/Nonos-of-Nisibis" class="facet-label btn btn-default sub-menu">Nonos of Nisibis</a><a href="/entry/Nuro-Abrohom" class="facet-label btn btn-default sub-menu">Nuro, Abrohom</a><a href="/entry/Nuh-the-Lebanese" class="facet-label btn btn-default sub-menu">Nuḥ the Lebanese</a><a href="/entry/Noldeke-Theodor" class="facet-label btn btn-default sub-menu">Nöldeke, Theodor</a><a href="/entry/Nuri-Athanasios-Ignatios" class="facet-label btn btn-default sub-menu">Nūrī, Athanasios Ignatios</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#O">O (3)</a><div id="O" class="collapse"><a href="/entry/Onitha" class="facet-label btn btn-default sub-menu">
+                    ʿOnithā
+                </a><a href="/entry/Old-Syriac-Version" class="facet-label btn btn-default sub-menu">Old Syriac Version</a><a href="/entry/Old-Syriac-documents" class="facet-label btn btn-default sub-menu">Old Syriac documents</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#P">P (28)</a><div id="P" class="collapse"><a href="/entry/Palimpsests" class="facet-label btn btn-default sub-menu">Palimpsests</a><a href="/entry/Palladius" class="facet-label btn btn-default sub-menu">Palladius</a><a href="/entry/Papa-bar-Aggai" class="facet-label btn btn-default sub-menu">Papa bar ʿAggai</a><a href="/entry/Papyri-Syriac" class="facet-label btn btn-default sub-menu">Papyri, Syriac</a><a href="/entry/Paradise-of-the-Fathers-Book-of" class="facet-label btn btn-default sub-menu">Paradise of the Fathers, Book of</a><a href="/entry/Pawla-of-Edessa" class="facet-label btn btn-default sub-menu">Pawla of Edessa</a><a href="/entry/Pawlos-of-Beth-Ukome" class="facet-label btn btn-default sub-menu">Pawlos of Beth Ukome</a><a href="/entry/Pawlos-of-Kallinikos" class="facet-label btn btn-default sub-menu">Pawlos of Kallinikos</a><a href="/entry/Pawlos-of-Nisibis" class="facet-label btn btn-default sub-menu">Pawlos of Nisibis</a><a href="/entry/Pawlos-of-Tella" class="facet-label btn btn-default sub-menu">Pawlos of Tella</a><a href="/entry/Pawlos-the-Persian" class="facet-label btn btn-default sub-menu">Pawlos the Persian</a><a href="/entry/Pawlos-the-Philosopher" class="facet-label btn btn-default sub-menu">Pawlos the Philosopher</a><a href="/entry/Payne-Smith-Mrs-Margoliouth-Jessie" class="facet-label btn btn-default sub-menu">Payne Smith (Mrs. Margoliouth), Jessie</a><a href="/entry/Payne-Smith-Robert" class="facet-label btn btn-default sub-menu">Payne Smith, Robert</a><a href="/entry/Perley-David-Barsum" class="facet-label btn btn-default sub-menu">Perley, David Barsum</a><a href="/entry/Peshitta" class="facet-label btn btn-default sub-menu">Peshitta</a><a href="/entry/Peter-of-Kallinikos" class="facet-label btn btn-default sub-menu">Peter of Kallinikos</a><a href="/entry/Peter-the-Iberian" class="facet-label btn btn-default sub-menu">Peter the Iberian</a><a href="/entry/Philoxenos-of-Mabbug" class="facet-label btn btn-default sub-menu">Philoxenos of Mabbug</a><a href="/entry/Physiologus" class="facet-label btn btn-default sub-menu">Physiologus</a><a href="/entry/Poetry" class="facet-label btn btn-default sub-menu">Poetry</a><a href="/entry/Polykarpos" class="facet-label btn btn-default sub-menu">Polykarpos</a><a href="/entry/Porphyry" class="facet-label btn btn-default sub-menu">Porphyry</a><a href="/entry/Printing" class="facet-label btn btn-default sub-menu">Printing</a><a href="/entry/Proba" class="facet-label btn btn-default sub-menu">Proba</a><a href="/entry/Proba-metr-of-Chalcedon" class="facet-label btn btn-default sub-menu">Proba</a><a href="/entry/Proclus-of-Constantinople" class="facet-label btn btn-default sub-menu">Proclus of Constantinople</a><a href="/entry/Psalms-Syriac-Apocryphal" class="facet-label btn btn-default sub-menu">Psalms, Syriac Apocryphal</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#Q">Q (11)</a><div id="Q" class="collapse"><a href="/entry/Qdam-w-Bathar" class="facet-label btn btn-default sub-menu">
+                    Qdām w-Bāthar
+                </a><a href="/entry/Qara" class="facet-label btn btn-default sub-menu">Qara</a><a href="/entry/Qarabashi-Abd-al-Masih-Numan" class="facet-label btn btn-default sub-menu">Qarabashī, ʿAbd al-Masīḥ Nuʿmān</a><a href="/entry/Qaraqosh" class="facet-label btn btn-default sub-menu">Qaraqosh</a><a href="/entry/Qarqaphto-Monastery-of" class="facet-label btn btn-default sub-menu">Qarqaphto, Monastery of</a><a href="/entry/Qenneshre-Monastery-of" class="facet-label btn btn-default sub-menu">Qenneshre, Monastery of</a><a href="/entry/Qiryo-Yuhanna" class="facet-label btn btn-default sub-menu">Qiryo, Yuḥanna</a><a href="/entry/Qiyore-of-Edessa" class="facet-label btn btn-default sub-menu">Qiyore of Edessa</a><a href="/entry/Qoro-Elias-Malke" class="facet-label btn btn-default sub-menu">Qoro, Elias Malke</a><a href="/entry/Qurillona" class="facet-label btn btn-default sub-menu">Qurillona</a><a href="/entry/Quryaqos" class="facet-label btn btn-default sub-menu">Quryaqos</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#R">R (8)</a><div id="R" class="collapse"><a href="/entry/Rabbula-Gospels" class="facet-label btn btn-default sub-menu">Rabbula Gospels</a><a href="/entry/Rabbula-of-Edessa" class="facet-label btn btn-default sub-menu">Rabbula of Edessa</a><a href="/entry/Rahmani-Ignatius-Ephrem-II" class="facet-label btn btn-default sub-menu">Raḥmani, Ignatius Ephrem II</a><a href="/entry/Renaissance-Syriac" class="facet-label btn btn-default sub-menu">Renaissance, Syriac</a><a href="/entry/Reshayna" class="facet-label btn btn-default sub-menu">Reshʿayna</a><a href="/entry/Rhetoric" class="facet-label btn btn-default sub-menu">Rhetoric</a><a href="/entry/Rhetore-Jacques" class="facet-label btn btn-default sub-menu">Rhétoré, Jacques</a><a href="/entry/Romanos-the-Melodist" class="facet-label btn btn-default sub-menu">Romanos the Melodist</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#S">S (71)</a><div id="S" class="collapse"><a href="/entry/Sigila-Abbreviations" class="facet-label btn btn-default sub-menu">
+                  Sigla and Abbreviations
+               </a><a href="/entry/Saba-Boutros" class="facet-label btn btn-default sub-menu">Saba, Boutros</a><a href="/entry/Sabrisho-I" class="facet-label btn btn-default sub-menu">Sabrishoʿ I</a><a href="/entry/Sabrisho-bar-Pawlos" class="facet-label btn btn-default sub-menu">Sabrishoʿ bar Pawlos</a><a href="/entry/Sachau-Eduard" class="facet-label btn btn-default sub-menu">Sachau, Eduard</a><a href="/entry/Sahdona-Martyrius" class="facet-label btn btn-default sub-menu">Sahdona (Martyrius)</a><a href="/entry/Saka-Yaqub" class="facet-label btn btn-default sub-menu">Saka, Yaʿqub</a><a href="/entry/Salman-Hanna" class="facet-label btn btn-default sub-menu">Salmān, Ḥanna</a><a href="/entry/Salomon-Desire" class="facet-label btn btn-default sub-menu">Salomon, Désiré</a><a href="/entry/Samuel-Athanasios-Yeshu" class="facet-label btn btn-default sub-menu">Samuel, Athanasios Yeshuʿ</a><a href="/entry/Sargis-Bhira" class="facet-label btn btn-default sub-menu">Sargis Bḥira</a><a href="/entry/Sargis-bar-Wahle" class="facet-label btn btn-default sub-menu">Sargis bar Waḥle</a><a href="/entry/Sargis-the-Stylite" class="facet-label btn btn-default sub-menu">Sargis the Stylite</a><a href="/entry/Sauget-Joseph-Marie" class="facet-label btn btn-default sub-menu">Sauget, Joseph-Marie</a><a href="/entry/Sawma-Abrohom" class="facet-label btn btn-default sub-menu">Sawma, Abrohom</a><a href="/entry/Sayfo" class="facet-label btn btn-default sub-menu">Sayfo</a><a href="/entry/Scher-Addai" class="facet-label btn btn-default sub-menu">Scher, Addai</a><a href="/entry/Schulthess-Friedrich" class="facet-label btn btn-default sub-menu">Schulthess, Friedrich</a><a href="/entry/Scribes" class="facet-label btn btn-default sub-menu">Scribes</a><a href="/entry/Script-Syriac" class="facet-label btn btn-default sub-menu">Script, Syriac</a><a href="/entry/Secundus" class="facet-label btn btn-default sub-menu">Secundus</a><a href="/entry/Selb-Walter" class="facet-label btn btn-default sub-menu">Selb, Walter</a><a href="/entry/Seleucia-Ctesiphon" class="facet-label btn btn-default sub-menu">Seleucia-Ctesiphon</a><a href="/entry/Seminary-of-St-John" class="facet-label btn btn-default sub-menu">Seminary of St. John</a><a href="/entry/Sergios-of-Reshayna" class="facet-label btn btn-default sub-menu">Sergios of Reshʿayna</a><a href="/entry/Severos-Sebokht" class="facet-label btn btn-default sub-menu">Severos Sebokht</a><a href="/entry/Severos-bar-Mashqo" class="facet-label btn btn-default sub-menu">Severos bar Mashqo</a><a href="/entry/Severos-Commentary-of-the-monk" class="facet-label btn btn-default sub-menu">Severos, Commentary of the monk</a><a href="/entry/Severus-of-Antioch" class="facet-label btn btn-default sub-menu">Severus of Antioch</a><a href="/entry/Sextus-Sentences-of" class="facet-label btn btn-default sub-menu">Sextus, Sentences of</a><a href="/entry/Shahdost" class="facet-label btn btn-default sub-menu">Shahdost</a><a href="/entry/Shalita-Mar" class="facet-label btn btn-default sub-menu">Shaliṭa, Mar</a><a href="/entry/Shallita-of-Reshayna" class="facet-label btn btn-default sub-menu">Shalliṭa of Reshʿayna</a><a href="/entry/Shamsi-Clan" class="facet-label btn btn-default sub-menu">Shamsi Clan</a><a href="/entry/Sharfeh" class="facet-label btn btn-default sub-menu">Sharfeh</a><a href="/entry/Shaya-Elias" class="facet-label btn btn-default sub-menu">Shaʿya, Elias</a><a href="/entry/Shemon-Shanqlawi" class="facet-label btn btn-default sub-menu">Shemʿon Shanqlawi</a><a href="/entry/Shemon-bar-Sabbae" class="facet-label btn btn-default sub-menu">Shemʿon bar Ṣabbaʿe</a><a href="/entry/Shemon-d-Taybutheh" class="facet-label btn btn-default sub-menu">Shemʿon d-Ṭaybutheh</a><a href="/entry/Shemon-of-Rev-Ardashir" class="facet-label btn btn-default sub-menu">Shemʿon of Rev Ardashir</a><a href="/entry/Shemon-Eshai" class="facet-label btn btn-default sub-menu">Shemʿon, Eshai</a><a href="/entry/Shemun-II-Basileios" class="facet-label btn btn-default sub-menu">Shemʿun II, Basileios</a><a href="/entry/Shemun-Quqoyo" class="facet-label btn btn-default sub-menu">Shemʿun Quqoyo</a><a href="/entry/Shemun-of-Beth-Arsham" class="facet-label btn btn-default sub-menu">Shemʿun of Beth Arsham</a><a href="/entry/Shemun-of-Edessa" class="facet-label btn btn-default sub-menu">Shemʿun of Edessa</a><a href="/entry/Shemun-the-Stylite" class="facet-label btn btn-default sub-menu">Shemʿun the Stylite</a><a href="/entry/Shlemon-of-Basra" class="facet-label btn btn-default sub-menu">Shlemon of Baṣra</a><a href="/entry/Shubhalmaran" class="facet-label btn btn-default sub-menu">Shubḥalmaran</a><a href="/entry/Siirt" class="facet-label btn btn-default sub-menu">Siirt</a><a href="/entry/Silwanos-of-Qardu" class="facet-label btn btn-default sub-menu">Silwanos of Qardu</a><a href="/entry/Sindbad" class="facet-label btn btn-default sub-menu">Sindbad</a><a href="/entry/Sleepers-of-Ephesus-Legend-of-the" class="facet-label btn btn-default sub-menu">Sleepers of Ephesus, Legend of the</a><a href="/entry/Smith-Agnes-and-Margaret" class="facet-label btn btn-default sub-menu">Smith, Agnes and Margaret</a><a href="/entry/Sobo-Ignatius" class="facet-label btn btn-default sub-menu">Sobo, Ignatius</a><a href="/entry/Sobo-Malki-al-Qas-Afram" class="facet-label btn btn-default sub-menu">Sobo, Malki al-Qas Afram</a><a href="/entry/Sogdian" class="facet-label btn btn-default sub-menu">Sogdian</a><a href="/entry/Solomon-Odes-of" class="facet-label btn btn-default sub-menu">Solomon, Odes of</a><a href="/entry/Sophronius" class="facet-label btn btn-default sub-menu">Sophronius</a><a href="/entry/Strothmann-Werner" class="facet-label btn btn-default sub-menu">Strothmann, Werner</a><a href="/entry/Sureth" class="facet-label btn btn-default sub-menu">Sureth</a><a href="/entry/Symmachus" class="facet-label btn btn-default sub-menu">Symmachus</a><a href="/entry/Synodicon-Orientale" class="facet-label btn btn-default sub-menu">Synodicon Orientale</a><a href="/entry/Syriac-Catholic-Church" class="facet-label btn btn-default sub-menu">Syriac Catholic Church</a><a href="/entry/Syriac-Conferences" class="facet-label btn btn-default sub-menu">Syriac Conferences</a><a href="/entry/Syriac-Language" class="facet-label btn btn-default sub-menu">Syriac Language</a><a href="/entry/Syriac-Lexicography" class="facet-label btn btn-default sub-menu">Syriac Lexicography</a><a href="/entry/Syriac-Orthodox-Church" class="facet-label btn btn-default sub-menu">Syriac Orthodox Church</a><a href="/entry/Syro-Hexapla" class="facet-label btn btn-default sub-menu">Syro-Hexapla</a><a href="/entry/Stephanos-bar-Sudayli" class="facet-label btn btn-default sub-menu">Sṭephanos bar Ṣudayli</a><a href="/entry/Sawma-Rabban" class="facet-label btn btn-default sub-menu">Ṣawma, Rabban</a><a href="/entry/Sharbokht-bar-Msargis" class="facet-label btn btn-default sub-menu">Ṣharbokht bar Msargis</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#T">T (39)</a><div id="T" class="collapse"><a href="/entry/Making-e-GEDSH" class="facet-label btn btn-default sub-menu">
+                  The Making of the Electronic Edition
+               </a><a href="/entry/Making-GEDSH-print" class="facet-label btn btn-default sub-menu">
+                  The Making of the Gorgias Encyclopedic Dictionary of the Syriac Heritage
+                  
+               </a><a href="/entry/Tagrit" class="facet-label btn btn-default sub-menu">Tagrit</a><a href="/entry/Tappuni-Gabriel" class="facet-label btn btn-default sub-menu">Tappuni, Gabriel</a><a href="/entry/Tatian" class="facet-label btn btn-default sub-menu">Tatian</a><a href="/entry/Taw-Mim-Simkath" class="facet-label btn btn-default sub-menu">Taw Mim Simkath</a><a href="/entry/Telkepe" class="facet-label btn btn-default sub-menu">Telkepe</a><a href="/entry/Tell-Ada-Monastery-of" class="facet-label btn btn-default sub-menu">Tell ʿAda, Monastery of</a><a href="/entry/Testament-of-Adam" class="facet-label btn btn-default sub-menu">Testament of Adam</a><a href="/entry/Testament-of-our-Lord-Jesus-Christ" class="facet-label btn btn-default sub-menu">Testament of our Lord Jesus Christ</a><a href="/entry/The-Enaton" class="facet-label btn btn-default sub-menu">The Enaton</a><a href="/entry/Theano" class="facet-label btn btn-default sub-menu">Theano</a><a href="/entry/Theodora-Empress" class="facet-label btn btn-default sub-menu">Theodora (Empress)</a><a href="/entry/Theodore-of-Mopsuestia" class="facet-label btn btn-default sub-menu">Theodore of Mopsuestia</a><a href="/entry/Theodoret-of-Cyrrhus" class="facet-label btn btn-default sub-menu">Theodoret of Cyrrhus</a><a href="/entry/Theodoros-Abu-Qurra" class="facet-label btn btn-default sub-menu">Theodoros Abū Qurra</a><a href="/entry/Theodoros-bar-Koni" class="facet-label btn btn-default sub-menu">Theodoros bar Koni</a><a href="/entry/Theodoros-bar-Wahbun" class="facet-label btn btn-default sub-menu">Theodoros bar Wahbun</a><a href="/entry/Theodosios-patr" class="facet-label btn btn-default sub-menu">Theodosios</a><a href="/entry/Theodosios-of-Edessa" class="facet-label btn btn-default sub-menu">Theodosios of Edessa</a><a href="/entry/Theodosius-of-Alexandria" class="facet-label btn btn-default sub-menu">Theodosius of Alexandria</a><a href="/entry/Theodotos-of-Amid" class="facet-label btn btn-default sub-menu">Theodotos of Amid</a><a href="/entry/Theodotus-of-Ancyra" class="facet-label btn btn-default sub-menu">Theodotus of Ancyra</a><a href="/entry/Theophilos-of-Edessa" class="facet-label btn btn-default sub-menu">Theophilos of Edessa</a><a href="/entry/Thomas-Christians" class="facet-label btn btn-default sub-menu">Thomas Christians</a><a href="/entry/Thomas-Acts-of" class="facet-label btn btn-default sub-menu">Thomas, Acts of</a><a href="/entry/Thabit-b-Qurra" class="facet-label btn btn-default sub-menu">Thābit b. Qurra</a><a href="/entry/Timotheos-I" class="facet-label btn btn-default sub-menu">Timotheos I</a><a href="/entry/Timotheos-II" class="facet-label btn btn-default sub-menu">Timotheos II</a><a href="/entry/Timotheos-II-of-Alexandria" class="facet-label btn btn-default sub-menu">Timotheos II of Alexandria</a><a href="/entry/Timotheus-Abimalek" class="facet-label btn btn-default sub-menu">Timotheus, Abimalek</a><a href="/entry/Titus-of-Bostra" class="facet-label btn btn-default sub-menu">Titus of Bostra</a><a href="/entry/Toma-of-Edessa" class="facet-label btn btn-default sub-menu">Toma of Edessa</a><a href="/entry/Toma-of-Marga" class="facet-label btn btn-default sub-menu">Toma of Marga</a><a href="/entry/Tsereteli-Konstantin" class="facet-label btn btn-default sub-menu">Tsereteli, Konstantin</a><a href="/entry/Tumo-of-Harqel" class="facet-label btn btn-default sub-menu">Tumo of Ḥarqel</a><a href="/entry/Turfan-Syriac-texts-from" class="facet-label btn btn-default sub-menu">Turfan, Syriac texts from</a><a href="/entry/Tur-Abdin" class="facet-label btn btn-default sub-menu">Ṭur ʿAbdin</a><a href="/entry/Turoyo" class="facet-label btn btn-default sub-menu">Ṭuroyo</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#U">U (1)</a><div id="U" class="collapse"><a href="/entry/Urmia" class="facet-label btn btn-default sub-menu">Urmia</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#V">V (5)</a><div id="V" class="collapse"><a href="/entry/Van-Roey-Albert" class="facet-label btn btn-default sub-menu">Van Roey, Albert</a><a href="/entry/Van-den-Eynde-Ceslas-Florent" class="facet-label btn btn-default sub-menu">Van den Eynde, Ceslas Florent</a><a href="/entry/Vaschalde-Arthur-Adolphe-CSB" class="facet-label btn btn-default sub-menu">Vaschalde, Arthur Adolphe, C.S.B.</a><a href="/entry/Voobus-Arthur" class="facet-label btn btn-default sub-menu">Vööbus, Arthur</a><a href="/entry/van-der-Ploeg-Johannes-P-M" class="facet-label btn btn-default sub-menu">van der Ploeg, Johannes P. M.</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#W">W (3)</a><div id="W" class="collapse"><a href="/entry/Wall-paintings-in-Syria-and-Lebanon" class="facet-label btn btn-default sub-menu">Wall paintings in Syria and Lebanon</a><a href="/entry/Women-in-the-Syriac-Tradition" class="facet-label btn btn-default sub-menu">Women in the Syriac Tradition</a><a href="/entry/Wright-William" class="facet-label btn btn-default sub-menu">Wright, William</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#X">X (1)</a><div id="X" class="collapse"><a href="/entry/Xian" class="facet-label btn btn-default sub-menu">Xi’an</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#Y">Y (41)</a><div id="Y" class="collapse"><a href="/entry/Yahbalaha-I" class="facet-label btn btn-default sub-menu">Yahbalaha I</a><a href="/entry/Yahbalaha-III" class="facet-label btn btn-default sub-menu">Yahbalaha III</a><a href="/entry/Yawsep-Busnaya" class="facet-label btn btn-default sub-menu">Yawsep Busnaya</a><a href="/entry/Yawsep-Huzaya" class="facet-label btn btn-default sub-menu">Yawsep Huzaya</a><a href="/entry/Yawsep-I-of-Seleucia-Ctesiphon" class="facet-label btn btn-default sub-menu">Yawsep I of Seleucia-Ctesiphon</a><a href="/entry/Yawsep-II" class="facet-label btn btn-default sub-menu">Yawsep II</a><a href="/entry/Yawsep-d-Beth-Qelayta" class="facet-label btn btn-default sub-menu">Yawsep d-Beth Qelayta</a><a href="/entry/Yawsep-of-Telkepe" class="facet-label btn btn-default sub-menu">Yawsep of Telkepe</a><a href="/entry/Yawsep-Hazzaya" class="facet-label btn btn-default sub-menu">Yawsep Ḥazzaya</a><a href="/entry/Yaqub-Burdoyo" class="facet-label btn btn-default sub-menu">Yaʿqub Burdʿoyo</a><a href="/entry/Yaqub-bar-Shakko" class="facet-label btn btn-default sub-menu">Yaʿqub bar Shakko</a><a href="/entry/Yaqub-of-Edessa" class="facet-label btn btn-default sub-menu">Yaʿqub of Edessa</a><a href="/entry/Yaqub-of-Nisibis" class="facet-label btn btn-default sub-menu">Yaʿqub of Nisibis</a><a href="/entry/Yaqub-of-Serugh" class="facet-label btn btn-default sub-menu">Yaʿqub of Serugh</a><a href="/entry/Yahya-b-Adi" class="facet-label btn btn-default sub-menu">Yaḥyā b. ʿAdī</a><a href="/entry/Yeshu-bar-Khayrun" class="facet-label btn btn-default sub-menu">Yeshuʿ bar Khayrun</a><a href="/entry/Yeshu-the-Stylite" class="facet-label btn btn-default sub-menu">Yeshuʿ the Stylite</a><a href="/entry/Yohannan-Azraq" class="facet-label btn btn-default sub-menu">Yoḥannan Azraq</a><a href="/entry/Yohannan-Ihidaya" class="facet-label btn btn-default sub-menu">Yoḥannan Iḥidaya</a><a href="/entry/Yohannan-Sullaqa" class="facet-label btn btn-default sub-menu">Yoḥannan Sullaqa</a><a href="/entry/Yohannan-bar-Abgare" class="facet-label btn btn-default sub-menu">Yoḥannan bar Abgare</a><a href="/entry/Yohannan-bar-Penkaye" class="facet-label btn btn-default sub-menu">Yoḥannan bar Penkaye</a><a href="/entry/Yohannan-bar-Sarapion" class="facet-label btn btn-default sub-menu">Yoḥannan bar Sarapion</a><a href="/entry/Yohannan-bar-Zobi" class="facet-label btn btn-default sub-menu">Yoḥannan bar Zoʿbi</a><a href="/entry/Yohannan-of-Beth-Rabban" class="facet-label btn btn-default sub-menu">Yoḥannan of Beth Rabban</a><a href="/entry/Yohannan-of-Dailam" class="facet-label btn btn-default sub-menu">Yoḥannan of Dailam</a><a href="/entry/Yohannan-of-Dalyatha" class="facet-label btn btn-default sub-menu">Yoḥannan of Dalyatha</a><a href="/entry/Yohannan-of-Mosul" class="facet-label btn btn-default sub-menu">Yoḥannan of Mosul</a><a href="/entry/Yulyana-Saba" class="facet-label btn btn-default sub-menu">Yulyana Saba</a><a href="/entry/Yuhanon-Barbur" class="facet-label btn btn-default sub-menu">Yuḥanon Barbur</a><a href="/entry/Yuhanon-Maron" class="facet-label btn btn-default sub-menu">Yuḥanon Maron</a><a href="/entry/Yuhanon-Naqar" class="facet-label btn btn-default sub-menu">Yuḥanon Naqar</a><a href="/entry/Yuhanon-Qashisho" class="facet-label btn btn-default sub-menu">Yuḥanon Qashisho</a><a href="/entry/Yuhanon-X-Isho-bar-Shushan" class="facet-label btn btn-default sub-menu">Yuḥanon X, Ishoʿ bar Shushan</a><a href="/entry/Yuhanon-XIV-bar-Shayullah" class="facet-label btn btn-default sub-menu">Yuḥanon XIV bar Shayullāh</a><a href="/entry/Yuhanon-bar-Madani" class="facet-label btn btn-default sub-menu">Yuḥanon bar Maʿdani</a><a href="/entry/Yuhanon-of-Ephesus" class="facet-label btn btn-default sub-menu">Yuḥanon of Ephesus</a><a href="/entry/Yuhanon-of-Litarba" class="facet-label btn btn-default sub-menu">Yuḥanon of Litarba</a><a href="/entry/Yuhanon-of-Mardin" class="facet-label btn btn-default sub-menu">Yuḥanon of Mardin</a><a href="/entry/Yuhanon-of-Tella" class="facet-label btn btn-default sub-menu">Yuḥanon of Tella</a><a href="/entry/Yuhanon-of-the-Sedre" class="facet-label btn btn-default sub-menu">Yuḥanon of the Sedre</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#Z">Z (4)</a><div id="Z" class="collapse"><a href="/entry/Zacharias-Rhetor" class="facet-label btn btn-default sub-menu">Zacharias Rhetor</a><a href="/entry/Zacharias-Pseudo-" class="facet-label btn btn-default sub-menu">Zacharias, Pseudo-</a><a href="/entry/Zingerle-Pius-Jacob" class="facet-label btn btn-default sub-menu">Zingerle, Pius (Jacob)</a><a href="/entry/Zuqnin-Chronicle-of" class="facet-label btn btn-default sub-menu">Zuqnin, Chronicle of</a></div><a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#backMatter">Back Matter</a><div id="backMatter" class="collapse"><a href="/entry/List-of-Patriarchs-Churches-Middle-East" class="facet-label btn btn-default sub-menu">
+               List of Patriarchs of the Main Syriac Churches in the Middle East
+            </a><a href="/entry/Manuscript-Index" class="facet-label btn btn-default sub-menu">
+               Manuscript Index
+            </a><a href="/entry/Maps" class="facet-label btn btn-default sub-menu">
+               Maps
+            </a></div></div></div>
+</div></div></div>
+                <!--
+                <xi:include href="toc.html">
+                    <xi:fallback>
+                        <p>No toc is available</p>
+                    </xi:fallback>
+                </xi:include>
+                -->
+<!--                <div data-template="browse:group-abc-entries"/>-->
+            </div>
+            <div class="col-md-3">
+                <div data-template="app:other-data-formats" data-template-formats="uri,print,tei,buy" class="noprint"><div xmlns="" class="container" style="width:100%;clear:both;margin-bottom:1em; text-align:right;"><a class="btn btn-default btn-xs" id="copyBtn" data-toggle="tooltip" title="Copy URI to clipboard: https://gedsh.bethmardutho.org/Art-and-architecture" data-clipboard-action="copy" data-clipboard-text="https://gedsh.bethmardutho.org/Art-and-architecture"><span class="glyphicon glyphicon-copy" aria-hidden="true"/> URI</a> <script><![CDATA[new Clipboard('#copyBtn');]]></script><a href="javascript:window.print();" type="button" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to send this page to the printer."><span class="glyphicon glyphicon-print" aria-hidden="true"/></a> <a href="/Art-and-architecture/tei" class="btn btn-default btn-xs" id="teiBtn" data-toggle="tooltip" title="Click to view the TEI XML data for this record."><span class="glyphicon glyphicon-download-alt" aria-hidden="true"/> TEI/XML
+                        </a> <a href="https://www.gorgiaspress.com/gorgias-encyclopedic-dictionary-of-the-syriac-heritage-students-and-scholars" target="_blank" class="btn btn-default btn-xs" id="buyBtn" data-toggle="tooltip" title="Purchase a copy of the printed edition"><span class="glyphicon glyphicon-book" aria-hidden="true"/> Purchase
+                        </a> <br/></div></div>
+                <!--<div data-template="app:srophe-related"/>-->
+            </div>
+        </div>  
+    </div>
+    <!-- Floating footnotes display -->
+    <div id="footnoteDisplay" class="footnote">
+        <div class="content"/>  
+    </div>
+    <!-- Modal email form-->
+    <div data-template="app:contact-form-linked-data"><div class="modal fade" id="submitLinkedData" tabindex="-1" role="dialog" aria-labelledby="submitLinkedDataLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">x</span><span class="sr-only">Close</span></button><h2 class="modal-title" id="feedbackLabel">Submit Linked Data</h2></div><form action="/modules/email.xql" method="post" id="email" role="form"><div class="modal-body" id="modal-body"><input type="text" name="name" placeholder="Name" class="form-control" style="max-width:300px"/><br/><input type="text" name="email" placeholder="email" class="form-control" style="max-width:300px"/><br/><input type="text" name="subject" placeholder="subject" class="form-control" style="max-width:300px"/><br/><textarea name="comments" id="comments" rows="3" class="form-control" placeholder="Comments" style="max-width:500px"/><input type="hidden" name="id" value=""/><input type="hidden" name="formID" value="linkedData"/><!-- start reCaptcha API--><div class="g-recaptcha" data-sitekey=""/></div><div class="modal-footer"><button class="btn btn-default" data-dismiss="modal">Close</button><input id="email-submit" type="submit" value="Send e-mail" class="btn"/></div></form></div></div></div></div>
+
+    <script type="text/javascript">
+        $('html').click(function() {
+            $('#footnoteDisplay').hide();
+            $('#footnoteDisplay div.content').empty();
+        })
+        
+        $('.footnote-ref a').click(function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            var link = $(this);
+            var href = $(this).attr('href');
+            var content = $(href).html()
+            $('#footnoteDisplay').css('display','block');
+            $('#footnoteDisplay').css({'top':e.pageY-50,'left':e.pageX+25, 'position':'absolute'});
+            $('#footnoteDisplay div.content').html( content );    
+        });
+        
+    </script>
+</div>
+        </div>
+        <!-- Footer -->
+        <!-- Footer with Syriaca.org branding --><footer>
+    <div class="container">
+        <img src="/resources/img/cc.png" alt="Creative Commons License" style="border-width:0" height="18px"/>
+        This work is licensed under a 
+        <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="license" style="color:white;">Creative Commons Attribution-NonCommercial 4.0 license (CC BY-NC 4.0)</a>.
+        <br/>Copyright © 2011 Beth Mardutho: The Syriac Institute.
+        </div>
+</footer>
+        <div data-template="app:fix-links">
+            <!-- Additional Javascript -->
+            <script xmlns="" src="/resources/js/bootstrap.min.js" type="text/javascript"/>
+            <script xmlns="" src="/resources/js/jquery.validate.min.js" type="text/javascript"/>
+            <script xmlns="" src="/resources/js/main.js" type="text/javascript"/>
+            <script xmlns="" src="/resources/js/lightslider.min.js" type="text/javascript"/>
+            <!-- Google analytics. Values pulled from config.xml -->
+            <script xmlns="" src="" data-template="app:google-analytics"/>
+        </div>
+    </body>
+</html>

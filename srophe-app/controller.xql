@@ -51,6 +51,10 @@ else if (ends-with($exist:path,"/")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <redirect url="index.html"/>
     </dispatch>
+else if (contains($exist:path,"/html/")) then
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <cache-control cache="yes"/>
+    </dispatch>
 (: Resource paths starting with $app-root are resolved relative to app :)
 else if (contains($exist:path, "/$app-root/")) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
@@ -69,13 +73,16 @@ else if (contains($exist:path, "/$shared/")) then
 (: Checks for any record uri patterns as defined in repo.xml :)    
 else if(contains($exist:path,"/entry/") or contains($exist:path,"/fig/") or ends-with($exist:path, ("/atom","/tei","/rdf","/ttl",'.tei','.atom','.rdf','.ttl'))) then
     (: Sends to restxql to handle /atom, /tei,/rdf:)
+    let $id := replace(xmldb:decode($exist:resource), "^(.*)\..*$", "$1")
+    let $document-uri := concat($config:app-root,'/html/',tokenize($id,'/')[last()],'.html')
+    let $path2html := concat('/html/',tokenize($id,'/')[last()],'.html')
+    return 
     if(request:get-parameter('format', '') != '' and request:get-parameter('format', '') != 'html') then
         local:content-negotiation($exist:path, $exist:resource)
     else if(ends-with($exist:path,('/tei','/xml','/txt','/pdf','/json','/geojson','/kml','/jsonld','/rdf','/ttl','/atom'))) then
         local:content-negotiation($exist:path, $exist:resource)
     else if(ends-with($exist:resource,('.tei','.xml','.txt','.pdf','.json','.geojson','.kml','.jsonld','.rdf','.ttl','.atom'))) then
         local:content-negotiation($exist:path, $exist:resource)
-
     (: Special handling for collections with app-root that matches record-URI-pattern sends html pages to html, others are assumed to be records :)
     else if($exist:resource = ('index.html','search.html','browse.html','about.html')) then 
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
@@ -92,6 +99,18 @@ else if(contains($exist:path,"/entry/") or contains($exist:path,"/fig/") or ends
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="index.html"/>
         </dispatch>
+    else if(doc-available(xs:anyURI($document-uri))) then
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                    <forward url="{$exist:controller}{$path2html}">
+                        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                            <cache-control cache="yes"/>
+                        </dispatch>
+                    </forward>
+                    <error-handler>
+                        <forward url="{$exist:controller}/error-page.html" method="get"/>
+                        <forward url="{$exist:controller}/modules/view.xql"/>
+                    </error-handler>
+                </dispatch>
     else if(contains($exist:path,"/map/")) then 
        let $id := 
             if(matches($exist:resource,"\*.html")) then substring-before($exist:resource,'.html')
@@ -146,6 +165,7 @@ else if(contains($exist:path,"/entry/") or contains($exist:path,"/fig/") or ends
                     <forward url="{$exist:controller}/modules/view.xql"/>
                 </error-handler>
          </dispatch> 
+
 else if (contains($exist:path,'/api/')) then
   if (ends-with($exist:path,"/")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
@@ -180,11 +200,26 @@ else if (ends-with($exist:resource, ".html")) then
     </dispatch>    
 (: Redirects paths with directory, and no trailing slash to index.html in that directory :)    
 else if (matches($exist:resource, "^([^.]+)$")) then
-      let $id := 
+    let $id := 
             if(matches($exist:resource,"\*.html")) then substring-before($exist:resource,'.html')
             else $exist:resource
-       let $html-path := '/entry.html'
-       return 
+    let $html-path := '/entry.html'
+    let $document-uri := concat($config:app-root,'/html/',tokenize($id,'/')[last()],'.html')
+    let $path2html := concat('/html/',tokenize($id,'/')[last()],'.html')
+    return  
+        if(doc-available(xs:anyURI($document-uri))) then
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <forward url="{$exist:controller}{$path2html}">
+                <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                    <cache-control cache="yes"/>
+                </dispatch>
+            </forward>
+            <error-handler>
+                <forward url="{$exist:controller}/error-page.html" method="get"/>
+                <forward url="{$exist:controller}/modules/view.xql"/>
+            </error-handler>
+        </dispatch>
+        else
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <forward url="{$exist:controller}{$html-path}"></forward>
                 <view>

@@ -16,7 +16,7 @@ import module namespace facet="http://expath.org/ns/facet" at "lib/facet.xqm";
 import module namespace facet-defs="http://srophe.org/srophe/facet-defs" at "facet-defs.xqm";
 import module namespace page="http://srophe.org/srophe/page" at "lib/paging.xqm";
 import module namespace maps="http://srophe.org/srophe/maps" at "lib/maps.xqm";
-import module namespace templates="http://exist-db.org/xquery/templates";
+import module namespace templates="http://exist-db.org/xquery/html-templating";
 
 declare namespace xslt="http://exist-db.org/xquery/transform";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -157,7 +157,74 @@ return map{"browse-data" : $data }
 declare function browse:group-abc-entries($node as node(), $model as map(*)){
 let $hits := util:eval(concat(browse:collection-path(''),'//tei:div[@type=("entry","crossreference","section")]'))
 return
-    facet:html-list-facets-as-buttons(facet:count($hits, facet-defs:facet-definition('e-gedsh')/child::*))
+    if(request:get-parameter('id', '')[1]) then 
+        facet:html-list-facets-as-buttons(facet:count($hits, facet-defs:facet-definition('e-gedsh')/child::*))
+    else 
+    <div xmlns="http://www.w3.org/1999/xhtml">
+        <h4>Browse</h4>
+        <div class="facet-list show">
+            <a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#frontMatter">Front Matter</a>
+            <div id="frontMatter" class="collapse">
+                {
+            
+                let $back :=$hits[descendant::tei:idno[@type="front"]]
+                for $sf in $back
+                let $title := $sf/descendant::tei:head[1]
+                let $idno := $sf/descendant::tei:ab[@type="idnos"]/tei:idno[@type='URI'][1]
+                order by $title[1]
+                return 
+                        <a href="{concat($global:nav-base,'/entry',substring-after($idno,$global:base-uri))}" class="facet-label btn btn-default sub-menu">
+                            {
+                                if($sf/descendant::tei:ab/tei:ref) then 
+                                      (<span class="browse cross-ref"> see </span>,string($sf/descendant::tei:ab[1]/tei:ref[1])) 
+                                else string($title)
+                            }
+                            </a>
+            }
+            </div>
+            {
+                for $e in $hits
+                let $sort-string := translate(translate(translate(translate(upper-case(substring(global:build-sort-string(replace($e[1],'ʿ',''),''),1,1)),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H')
+                group by $facet-grp := $sort-string
+                order by $facet-grp ascending
+                return 
+                    (<a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#{$facet-grp}">{$facet-grp} ({count($e)})</a>,
+                     <div id="{$facet-grp}" class="collapse">{
+                        for $sf in $e
+                        let $title := $sf/descendant::tei:head[1]
+                        let $idno := $sf/descendant::tei:ab[@type="idnos"]/tei:idno[@type='URI'][1]
+                        order by $title[1]
+                        return 
+                                <a href="{concat($global:nav-base,'/entry',substring-after($idno,$global:base-uri))}" class="facet-label btn btn-default sub-menu">
+                                    {
+                                        if($sf/descendant::tei:ab/tei:ref) then 
+                                              (<span class="browse cross-ref"> see </span>,string($sf/descendant::tei:ab[1]/tei:ref[1])) 
+                                        else string($title)
+                                    }
+                                    </a>
+                     }</div>
+                    )
+            }
+            <a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#backMatter">Back Matter</a>
+             <div id="backMatter" class="collapse">
+                {
+                let $back :=$hits[descendant::tei:idno[@type="back"]]
+                for $sf in $back
+                let $title := $sf/descendant::tei:head[1]
+                let $idno := $sf/descendant::tei:ab[@type="idnos"]/tei:idno[@type='URI'][1]
+                order by $title[1]
+                return 
+                                <a href="{concat($global:nav-base,'/entry',substring-after($idno,$global:base-uri))}" class="facet-label btn btn-default sub-menu">
+                                    {
+                                        if($sf/descendant::tei:ab/tei:ref) then 
+                                              (<span class="browse cross-ref"> see </span>,string($sf/descendant::tei:ab[1]/tei:ref[1])) 
+                                        else string($title)
+                                    }
+                                    </a>
+            }
+            </div>
+        </div>
+    </div>
 };
 
 (:~

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
     <div class="banner-title full-page">
     <span class="img-credit">
@@ -11,16 +10,22 @@
             <div class="col-md-6 col-md-push-3 entry">
                 <br/>
                 <div data-template="app:display-rec"/>
-                <br/>
-                <div data-template="app:display-citation"/>
             </div>
             <div class="col-md-3 col-md-pull-6 toc noprint">
                 <div data-template="app:next-entry"/>
-                <div data-template="browse:group-abc-entries"/>
+                <div data-template="app:include-toc"/>
+                <!--
+                <xi:include href="toc.html">
+                    <xi:fallback>
+                        <p>No toc is available</p>
+                    </xi:fallback>
+                </xi:include>
+                -->
+<!--                <div data-template="browse:group-abc-entries"/>-->
             </div>
             <div class="col-md-3">
                 <div data-template="app:other-data-formats" data-template-formats="uri,print,tei,buy" class="noprint"/>
-                <div data-template="app:srophe-related"/>
+                <!--<div data-template="app:srophe-related"/>-->
             </div>
         </div>  
     </div>
