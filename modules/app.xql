@@ -776,32 +776,27 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
                 return 
                 <div class="related-resources" id="relatedResources">
                     <h4>Resources related to {if($subject-uri) then <a href="{$subject-uri}">{$article-title}</a> else $article-title}</h4>
-                    <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post" id="lod1">
+                    <form class="form-inline hidden" action="https://sparql.vanderbilt.edu/sparql" method="get" id="lod1">
                         <input type="hidden" name="format" id="format" value="json"/>
                         <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
-                           <![CDATA[prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                           <![CDATA[
+                            prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                             prefix lawd: <http://lawd.info/ontology/>
                             prefix skos: <http://www.w3.org/2004/02/skos/core#>
                             prefix dcterms: <http://purl.org/dc/terms/>  
-                            	SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
-                                    {
-                                       ?uri rdfs:label ?l
-                                       FILTER (?uri IN ( <]]>{$subject-uri}<![CDATA[ >)).
-                                       FILTER ( langMatches(lang(?l), 'en')).
-                                       OPTIONAL{
-                                             {SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
-                                       OPTIONAL{
-                                             {SELECT ?uri ( count(?o) as ?uriCitations ) { 
-                                                     ?uri lawd:hasCitation ?o 
-                                                       OPTIONAL{
-                                                              ?uri skos:closeMatch ?o.}
-                                                             } GROUP BY ?uri }
-                                             }           
-                                     }
+                            SELECT ?uri (SAMPLE(?l) AS ?label) (SAMPLE(?uriSubject) AS ?subjects) (SAMPLE(?uriCitations) AS ?citations)
+                            {
+                            ?uri rdfs:label ?l
+                            FILTER (?uri IN ( <]]>{$subject-uri}<![CDATA[>)).
+                            FILTER ( langMatches(lang(?l), 'en')).
+                            OPTIONAL{{SELECT ?uri ( count(?s) as ?uriSubject ) { ?s dcterms:relation ?uri } GROUP BY ?uri }  }
+                            OPTIONAL{{SELECT ?uri ( count(?o) as ?uriCitations ) { ?uri lawd:hasCitation ?o OPTIONAL{?uri skos:closeMatch ?o.}} GROUP BY ?uri }}           
+                            }
                             GROUP BY ?uri                                          
                            ]]>  
                        </textarea>
                     </form>
+                    <div id="listRelatedResources"></div>
                  </div>,
                 if($model("data")//@ref[contains(.,'http://syriaca.org/')]) then
                     let $other-resources := distinct-values($model("data")//@ref[contains(.,'http://syriaca.org/')])
@@ -810,7 +805,7 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
                             <div class="other-resources" xmlns="http://www.w3.org/1999/xhtml">
                                 <h4>Resources related to {$count} other topics in this article. </h4>
                                 <div class="collapse" id="showOtherResources">
-                                    <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post">
+                                    <form class="form-inline hidden" action="https://sparql.vanderbilt.edu/sparql" method="get">
                                         <input type="hidden" name="format" id="format" value="json"/>
                                         <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
                                           <![CDATA[
@@ -832,8 +827,7 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
                                                      } GROUP BY ?uri }
                                                }           
                                             }
-                                            GROUP BY ?uri                                            
-                                                
+                                            GROUP BY ?uri                                               
                                           ]]>  
                                         </textarea>
                                     </form>
@@ -841,7 +835,7 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
                                     {if($count gt 10) then
                                         <div>
                                             <div class="collapse" id="showMoreResources">
-                                                <form class="form-inline hidden" action="{$global:nav-base}/modules/sparql-requests.xql" method="post">
+                                                <form class="form-inline hidden" action="https://sparql.vanderbilt.edu/sparql" method="post">
                                                     <input type="hidden" name="format" id="format" value="json"/>
                                                     <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
                                                       <![CDATA[
@@ -882,8 +876,8 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
             $(document).ready(function () {
             $('#relatedResources').children('form').each(function () {
                 var url = $(this).attr('action');
-                $.post(url, $(this).serialize(), function (data) {
-                    var showOtherResources = $("#listOtherResources");
+                $.get(url, $(this).serialize(), function (data) {
+                    var showOtherResources = $("#listRelatedResources");
                     var dataArray = data.results.bindings;
                     if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
                     $.each(dataArray, function (currentIndex, currentElem) {
@@ -891,7 +885,7 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
                         var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>': ''
                         var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>': ''
                         showOtherResources.append(
-                        '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>');
+                        '<div>' + relatedCitations + relatedSubjects + '</div>');
                     });
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus);
@@ -899,7 +893,7 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
             });
             $('#showOtherResources').children('form').each(function () {
                 var url = $(this).attr('action');
-                $.post(url, $(this).serialize(), function (data) {
+                $.get(url, $(this).serialize(), function (data) {
                     var showOtherResources = $("#listOtherResources");
                     var dataArray = data.results.bindings;
                     if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
@@ -917,7 +911,7 @@ if($model("data")//@ref[contains(.,'http://syriaca.org/')] or $model("data")//te
             $('#getMoreLinkedData').one("click", function (e) {
                 $('#showMoreResources').children('form').each(function () {
                     var url = $(this).attr('action');
-                    $.post(url, $(this).serialize(), function (data) {
+                    $.get(url, $(this).serialize(), function (data) {
                         var showOtherResources = $("#showMoreResources");
                         var dataArray = data.results.bindings;
                         if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
