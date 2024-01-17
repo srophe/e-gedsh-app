@@ -44,7 +44,7 @@ else if(request:get-parameter('id', '') != '') then
                         collection($global:data-root)//tei:front
                     else if(request:get-parameter('id', '')[1] = 'back') then 
                         collection($global:data-root)//tei:back
-                    else collection($global:data-root)//tei:idno[. = $id]/ancestor::tei:div[1]
+                    else collection($global:data-root)//tei:idno[. = $id]/ancestor::tei:TEI[1]
         return 
             if(empty($rec)) then response:redirect-to(xs:anyURI(concat($global:nav-base, '/404.html')))
             else 
