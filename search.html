@@ -1,19 +1,313 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
-    <div class="banner-title full-page">
-    <span class="img-credit">
-        <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
-    </span>
-</div>
-    <div class="container top-padding">
-        <div data-template="search:show-form"/>
-        <div data-template="search:get-results">
-            <!-- Calls paging and search parameters string  -->
-            <div data-template="search:pageination" data-template-sort-options="relevance,title"/>
-            <!-- Prints search results  -->
-            <div data-template="search:build-page"/>
-            <div class="page-bottom">
-                <div data-template="search:pageination" data-template-sort-options="relevance,title"/>
+<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:srophe="https://srophe.app">
+   <head data-template="app:fix-links">
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      
+      <meta charset="utf-8" />
+      
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      
+      <title data-template="app:app-title">Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</title>
+      
+      <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+      
+      <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
+      
+      <link rel="schema.bibo" href="http://purl.org/ontology/bibo/" />
+      
+      <link data-template="app:metadata" />
+      
+      <link rel="shortcut icon" href="/resources/img/favicon.ico" />
+      
+      <link rel="stylesheet" href="/resources/css/syr-icon-fonts.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/main.css" />
+      
+      <!--<link rel="stylesheet" type="text/css" href="/resources/css/syriaca.css"/>-->
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/lightslider.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/sm-core-css.css" />
+      
+      <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css" />
+      
+      <!-- Leaflet -->
+      
+      <!-- Not needed for e-GEDSH
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+        <link rel="stylesheet" href="/resources/leaflet/leaflet.awesome-markers.css"/>   
+        -->
+      <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"></script>
+      <script type="text/javascript" src="/resources/js/clipboard.min.js"></script>
+      
+      <!-- temporary until migrate to bootstrap 3.0 -->
+      <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="/resources/js/jquery.smartmenus.min.js"></script>
+      <script src="https://www.google.com/recaptcha/api.js"></script>
+      </head>
+   <body id="body">
+      <nav class="navbar navbar-default navbar-fixed-top" role="navigation" data-template="app:fix-links">
+         
+         <div class="container">
+            
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  </button>
+               <a class="navbar-brand banner-container inline" href="/index.html">
+                  <img property="logo" class="img-responsive" style="padding-bottom:.5em;display:inline;" alt="e-GEDSH" src="/resources/img/e-gedsh.png" width="20px" />
+                  <span style="font-size:24px;margin-left:.25em; padding-top:1.5em; display:inline;">e-GEDSH</span>
+                  </a>
+               
             </div>
-        </div>
-    </div>
-</div>
+            
+            <div class="navbar-collapse collapse pull-right">
+               
+               <ul class="nav navbar-nav sm sm-vertical" id="main-menu">
+                  
+                  <li>
+                     <a href="/browse.html">Browse Entries</a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="/index.html">Home</a>
+                     
+                  </li>
+                  
+                  <li class="dropdown" style="margin-left: 1em;">
+                     <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                        <span class="icon-nav">
+                           <img src="/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho" />
+                           </span>
+                        <span class="icon-text">Beth Mardutho</span>  <b class="caret"></b>
+                        </a>
+                     
+                     <ul class="dropdown-menu pull-right">
+                        
+                        <li>
+                           <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
+                              <span class="icon-nav">
+                                 <img src="/resources/img/beth-mardutho.png" height="18px" alt="Beth Mardutho Home" />
+                                 </span>
+                              <span class="icon-text">Beth Mardutho Home</span>
+                              </a>
+                           
+                        </li>
+                        
+                        <li role="presentation" class="divider"></li>
+                        
+                        <li>
+                           <a href="http://sedra.bethmardutho.org/" class="icon-container" target="_blank">
+                              <span class="icon-nav">
+                                 <img src="/resources/img/sedra.png" height="18px" alt="SEDRA: Syriac Dictionaries" />
+                                 </span>
+                              <span class="icon-text">SEDRA: Syriac Dictionaries</span>
+                              </a>
+                           
+                        </li>
+                        
+                     </ul>
+                     
+                  </li>
+                  
+                  <!-- Shared drop-down menu of all submodules 
+                        <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
+                        -->
+                  
+               </ul>
+               
+               <form class="navbar-form navbar-right navbar-input-group" role="search" action="/search.html" method="get">
+                  
+                  <div class="input-group">
+                     <input type="text" class="form-control" placeholder="search" name="q" id="q" />
+                     
+                     <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                             <span class="glyphicon glyphicon-search"></span>
+                           </button>
+                        <a href="/search.html" title="advanced search" class="btn btn-default">
+                             <span class="glyphicon glyphicon-cog"></span>
+                           </a>
+                        
+                     </div>
+                     <!-- /btn-group -->
+                     
+                  </div>
+                  
+               </form>
+               
+            </div>
+            <!--/.nav-collapse -->
+            
+         </div>
+         
+      </nav>
+      <div xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
+         
+         <div class="banner-title full-page">
+            <span class="img-credit">
+               
+               <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
+               </span>
+            
+         </div>
+         
+         <div class="container top-padding">
+            <form method="get" action="search.html" style="margin-top:2em;" class="form-horizontal indent" role="form">
+               <div class="well well-small"><button type="button" class="btn btn-info pull-right" data-toggle="collapse" data-target="#searchTips">
+                  Search Help <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button>&nbsp;<p></p>
+                  <div class="panel panel-default collapse" id="searchTips">
+                     <div class="panel-body">
+                        <h3 class="panel-title">Search Tips</h3>
+                        <p>For best results, users are recommended to use the <a href="search.html">advanced search</a> functions.
+                           Search results can also be improved by the use of the the following Boolean search characters:</p>
+                        <h4>Wildcard Characters:</h4>
+                        <p>Given the prevalence of variant spellings in names, using Wildcard Characters may help.</p>
+                        <p>
+                           <strong>"?"</strong> can be inserted as a variant for any single character.</p>
+                        <div class="indent">
+                           <p>Thus a search for:
+                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                              <span class="btn code">G?wargis</span>
+                              <a href="/search.html?q=G?wargis" type="button" class="btn btn-primary">
+                                 <span class="glyphicon glyphicon-search"></span>&nbsp;
+                              </a>
+                           </div>
+                           returns results which contain either "Gewargis" or "Giwargis".<p></p>
+                           <p>Similarly a search for:
+                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                              <span class="btn code">M?r</span>
+                              <a href="/search.html?q=M?r" type="button" class="btn btn-primary">
+                                 <span class="glyphicon glyphicon-search"></span>&nbsp;
+                              </a>
+                           </div>
+                           returns results which contain either "Mar" or "Mor".<p></p>
+                        </div>
+                        <p>
+                           <strong>"*"</strong> can be inserted as a variant for multiple characters or a truncated word.</p>
+                        <div class="indent">
+                           <p>Thus a search for:
+                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                              <span class="btn code">Dayr*</span>
+                              <a href="/search.html?q=Dayr*" type="button" class="btn btn-primary">
+                                 <span class="glyphicon glyphicon-search"></span>&nbsp;
+                              </a>
+                           </div> 
+                           returns results for "Dayr" and "Dayro" and more.<p></p>
+                           <p>Similarly a search for
+                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                              <span class="btn code">Ab*</span>
+                              <a href="/search.html?q=Ab*" type="button" class="btn btn-primary">
+                                 <span class="glyphicon glyphicon-search"></span>&nbsp;
+                              </a>
+                           </div>
+                           returns results for "ʿAbdishoʿ" and "ʿAbda" and more.<p></p>
+                        </div>
+                        <p class="bg-info" style="padding:.5em;">
+                           <small>Note: Because the sources we quote use a variety of transliteration formats, Syriaca.org ignores diacritics and punctuation in searching; for example, use of "ʿ" is not required to find results with this diacritical mark.</small>
+                        </p>
+                        <h4>Fuzzy Search Character</h4>
+                        <p>Appending the character <strong>"~"</strong> after a word returns results for words that are close but not exact matches.</p>
+                        <div class="indent">
+                           <p>Thus a search for 
+                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                              <span class="btn code">Aba~</span>
+                              <a href="/search.html?q=Aba~" type="button" class="btn btn-primary">
+                                 <span class="glyphicon glyphicon-search"></span>&nbsp;
+                              </a>
+                           </div>
+                           returns results which contain "Aba" but also "Abi", "Saba", "Aha", and other words that are "fuzzy" matches for "Aba".<p></p>
+                        </div>
+                        <h4>Exact Phrase Searches</h4>
+                        <p>To find an exact phrase, it should be enclosed in double quotes.</p>
+                        <div class="indent">
+                           <p>Thus 
+                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                              <span class="btn code">"ʿAbdishoʿ I"</span>
+                              <a href="/search.html?q=&quot;ʿAbdishoʿ I&quot;" type="button" class="btn btn-primary">
+                                 <span class="glyphicon glyphicon-search"></span>&nbsp;
+                              </a>
+                           </div>
+                           returns only one result with that exact phrase, while several results are found for the words "ʿAbdishoʿ" and "I".<p></p>
+                        </div>
+                        <h4>Proximity Characters</h4>
+                        <p>To find two or more words which occur within a specified range of each other, one can append the character "~" 
+                           followed by a number to an "Exact Phrase" search. This allows one to search for two or more words that occur within a 
+                           specified distance of each other as defined by number of words.</p>
+                        <p>Thus 
+                        </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                           <span class="btn code">"Jacob+Bishop"~2</span>
+                           <a href="/search.html?q=&quot;Jacob+Bishop&quot;~2" type="button" class="btn btn-primary">
+                              <span class="glyphicon glyphicon-search"></span>&nbsp;
+                           </a>
+                        </div>
+                        finds three results in which the words "Jacob" and "Bishop" occur within two words of each other: "Jacob , 
+                        bishop of Nisibin", "Jacob, bishop of Phesilta", and "Jacob , bishop of ‛Ānah" while a 
+                        simple search for "Jacob Bishop" returns many more results.<p></p>
+                     </div>
+                  </div>
+                  <div class="well well-small" style="background-color:white;">
+                     <div class="row">
+                        <div class="col-md-7"><!-- Keyword -->
+                           <div class="form-group"><label for="q" class="col-sm-2 col-md-3  control-label">Keyword: </label>
+                              <div class="col-sm-10 col-md-9 ">
+                                 <div class="input-group"><input type="text" id="qs" name="q" class="form-control keyboard">
+                                    <div class="input-group-btn"><input type="text" id="keywordProximity" name="keywordProximity" class="form-control"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Proximity Operator">
+                                       &nbsp; Proximity *
+                                    </button></div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="form-group"><label for="author" class="col-sm-2 col-md-3  control-label">Contributor: </label>
+                              <div class="col-sm-10 col-md-9 "><input type="text" id="author" name="author" class="form-control"></div>
+                           </div><!-- Place Name-->
+                           <div class="form-group"><label for="placeName" class="col-sm-2 col-md-3  control-label">Place Name: </label>
+                              <div class="col-sm-10 col-md-9 "><input type="text" id="placeName" name="placeName" class="form-control"></div>
+                           </div>
+                           <div class="form-group"><label for="persName" class="col-sm-2 col-md-3  control-label">Person Name: </label>
+                              <div class="col-sm-10 col-md-9 "><input type="text" id="persName" name="persName" class="form-control"></div>
+                           </div>
+                           <div class="form-group"><label for="bibl" class="col-sm-2 col-md-3  control-label">Sources: </label>
+                              <div class="col-sm-10 col-md-9 "><input type="text" id="bibl" name="bibl" class="form-control"></div>
+                           </div>
+                           <div class="form-group"><label for="uri" class="col-sm-2 col-md-3  control-label">URI <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Searches the entire XML data and returns the entries that reference the specified URI(s)."></span>: </label>
+                              <div class="col-sm-10 col-md-9 "><input type="text" id="uri" name="uri" class="form-control">
+                                 <p class="hint">*Enter e-GEDSH or Syriaca URI, ex. http://gedsh.bethmardutho.org/Aba, or http://srophe.org/srophe/person/13</p>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="pull-right"><button type="submit" class="btn btn-info">Search</button>&nbsp;
+                     <button type="reset" class="btn">Clear</button></div><br class="clearfix"><br></div>
+            </form>
+            
+         </div>
+         
+      </div>
+      <!-- Footer with Syriaca.org branding -->
+      <footer>
+         
+         <div class="container">
+            <img alt="Creative Commons License" style="border-width:0" src="$app-root/resources/img/cc.png" height="18px" />
+            This work is licensed under a 
+            <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/" style="color:white;">Creative Commons Attribution-NonCommercial 4.0 license (CC BY-NC 4.0)</a>.
+            <br />Copyright © 2011 Beth Mardutho: The Syriac Institute.
+            
+         </div>
+         
+         <!-- Additional Javascript -->
+         <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+         <script type="text/javascript" src="/resources/js/jquery.validate.min.js"></script>
+         <script type="text/javascript" src="/resources/js/main.js"></script>
+         <script type="text/javascript" src="/resources/js/lightslider.min.js"></script>
+         </footer>
+   </body>
+</html>

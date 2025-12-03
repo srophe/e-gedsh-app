@@ -1,42 +1,220 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
-    <div class="banner-title full-page">
-    <span class="img-credit">
-        <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
-    </span>
-</div>
-    <div class="section indent top-padding">
-        <!--Main Content-->
-        <div class="row row-centered top-padding">
-            <div class="col-md-6 col-md-push-3 entry">
-                <br/>
-                <div data-template="app:display-rec"/>
+<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:srophe="https://srophe.app">
+   <head data-template="app:fix-links">
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      
+      <meta charset="utf-8" />
+      
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      
+      <title data-template="app:app-title">Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</title>
+      
+      <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+      
+      <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
+      
+      <link rel="schema.bibo" href="http://purl.org/ontology/bibo/" />
+      
+      <link data-template="app:metadata" />
+      
+      <link rel="shortcut icon" href="/resources/img/favicon.ico" />
+      
+      <link rel="stylesheet" href="/resources/css/syr-icon-fonts.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/main.css" />
+      
+      <!--<link rel="stylesheet" type="text/css" href="/resources/css/syriaca.css"/>-->
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/lightslider.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/sm-core-css.css" />
+      
+      <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css" />
+      
+      <!-- Leaflet -->
+      
+      <!-- Not needed for e-GEDSH
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+        <link rel="stylesheet" href="/resources/leaflet/leaflet.awesome-markers.css"/>   
+        -->
+      <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"></script>
+      <script type="text/javascript" src="/resources/js/clipboard.min.js"></script>
+      
+      <!-- temporary until migrate to bootstrap 3.0 -->
+      <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="/resources/js/jquery.smartmenus.min.js"></script>
+      <script src="https://www.google.com/recaptcha/api.js"></script>
+      </head>
+   <body id="body">
+      <nav class="navbar navbar-default navbar-fixed-top" role="navigation" data-template="app:fix-links">
+         
+         <div class="container">
+            
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  </button>
+               <a class="navbar-brand banner-container inline" href="/index.html">
+                  <img property="logo" class="img-responsive" style="padding-bottom:.5em;display:inline;" alt="e-GEDSH" src="/resources/img/e-gedsh.png" width="20px" />
+                  <span style="font-size:24px;margin-left:.25em; padding-top:1.5em; display:inline;">e-GEDSH</span>
+                  </a>
+               
             </div>
-            <div class="col-md-3 col-md-pull-6 toc noprint">
-                <div data-template="app:next-entry"/>
-                <div data-template="app:include-toc"/>
-                <!--
+            
+            <div class="navbar-collapse collapse pull-right">
+               
+               <ul class="nav navbar-nav sm sm-vertical" id="main-menu">
+                  
+                  <li>
+                     <a href="/browse.html">Browse Entries</a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="/index.html">Home</a>
+                     
+                  </li>
+                  
+                  <li class="dropdown" style="margin-left: 1em;">
+                     <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                        <span class="icon-nav">
+                           <img src="/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho" />
+                           </span>
+                        <span class="icon-text">Beth Mardutho</span>  <b class="caret"></b>
+                        </a>
+                     
+                     <ul class="dropdown-menu pull-right">
+                        
+                        <li>
+                           <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
+                              <span class="icon-nav">
+                                 <img src="/resources/img/beth-mardutho.png" height="18px" alt="Beth Mardutho Home" />
+                                 </span>
+                              <span class="icon-text">Beth Mardutho Home</span>
+                              </a>
+                           
+                        </li>
+                        
+                        <li role="presentation" class="divider"></li>
+                        
+                        <li>
+                           <a href="http://sedra.bethmardutho.org/" class="icon-container" target="_blank">
+                              <span class="icon-nav">
+                                 <img src="/resources/img/sedra.png" height="18px" alt="SEDRA: Syriac Dictionaries" />
+                                 </span>
+                              <span class="icon-text">SEDRA: Syriac Dictionaries</span>
+                              </a>
+                           
+                        </li>
+                        
+                     </ul>
+                     
+                  </li>
+                  
+                  <!-- Shared drop-down menu of all submodules 
+                        <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
+                        -->
+                  
+               </ul>
+               
+               <form class="navbar-form navbar-right navbar-input-group" role="search" action="/search.html" method="get">
+                  
+                  <div class="input-group">
+                     <input type="text" class="form-control" placeholder="search" name="q" id="q" />
+                     
+                     <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                             <span class="glyphicon glyphicon-search"></span>
+                           </button>
+                        <a href="/search.html" title="advanced search" class="btn btn-default">
+                             <span class="glyphicon glyphicon-cog"></span>
+                           </a>
+                        
+                     </div>
+                     <!-- /btn-group -->
+                     
+                  </div>
+                  
+               </form>
+               
+            </div>
+            <!--/.nav-collapse -->
+            
+         </div>
+         
+      </nav>
+      <div xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
+         
+         <div class="banner-title full-page">
+            <span class="img-credit">
+               
+               <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
+               </span>
+            
+         </div>
+         
+         <div class="section indent top-padding">
+            
+            <!--Main Content-->
+            
+            <div class="row row-centered top-padding">
+               
+               <div class="col-md-6 col-md-push-3 entry">
+                  <br />
+                  
+                  <div data-template="app:display-rec"></div>
+                  
+               </div>
+               
+               <div class="col-md-3 col-md-pull-6 toc noprint">
+                  
+                  <div data-template="app:next-entry"></div>
+                  
+                  <div data-template="app:include-toc"></div>
+                  
+                  <!--
                 <xi:include href="toc.html">
                     <xi:fallback>
                         <p>No toc is available</p>
                     </xi:fallback>
                 </xi:include>
                 -->
-<!--                <div data-template="browse:group-abc-entries"/>-->
-            </div>
-            <div class="col-md-3">
-                <div data-template="app:other-data-formats" data-template-formats="uri,print,tei,buy" class="noprint"/>
-                <div data-template="app:srophe-related"/>
-            </div>
-        </div>  
-    </div>
-    <!-- Floating footnotes display -->
-    <div id="footnoteDisplay" class="footnote">
-        <div class="content"/>  
-    </div>
-    <!-- Modal email form-->
-    <div data-template="app:contact-form-linked-data"/>
-
-    <script type="text/javascript">
+                  
+                  <!--                <div data-template="browse:group-abc-entries"/>-->
+                  
+               </div>
+               
+               <div class="col-md-3">
+                  
+                  <div data-template="app:other-data-formats" data-template-formats="uri,print,tei,buy" class="noprint"></div>
+                  
+                  <div data-template="app:srophe-related"></div>
+                  
+               </div>
+               
+            </div>  
+            
+         </div>
+         
+         <!-- Floating footnotes display -->
+         
+         <div id="footnoteDisplay" class="footnote">
+            
+            <div class="content"></div>  
+            
+         </div>
+         
+         <!-- Modal email form-->
+         
+         <div data-template="app:contact-form-linked-data"></div>
+         
+         <script type="text/javascript">
         $('html').click(function() {
             $('#footnoteDisplay').hide();
             $('#footnoteDisplay div.content').empty();
@@ -54,4 +232,23 @@
         });
         
     </script>
-</div>
+         </div>
+      <!-- Footer with Syriaca.org branding -->
+      <footer>
+         
+         <div class="container">
+            <img alt="Creative Commons License" style="border-width:0" src="$app-root/resources/img/cc.png" height="18px" />
+            This work is licensed under a 
+            <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/" style="color:white;">Creative Commons Attribution-NonCommercial 4.0 license (CC BY-NC 4.0)</a>.
+            <br />Copyright © 2011 Beth Mardutho: The Syriac Institute.
+            
+         </div>
+         
+         <!-- Additional Javascript -->
+         <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+         <script type="text/javascript" src="/resources/js/jquery.validate.min.js"></script>
+         <script type="text/javascript" src="/resources/js/main.js"></script>
+         <script type="text/javascript" src="/resources/js/lightslider.min.js"></script>
+         </footer>
+   </body>
+</html>

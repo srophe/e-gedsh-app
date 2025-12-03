@@ -87,4 +87,74 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
+$('html').click(function() {
+                    $('#footnoteDisplay').hide();
+                    $('#footnoteDisplay div.content').empty();
+                })
+                
+                $('.footnote-ref a').click(function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    var link = $(this);
+                    var href = $(this).attr('href');
+                    var content = $(href).html()
+                    $('#footnoteDisplay').css('display','block');
+                    $('#footnoteDisplay').css({'top':e.pageY-50,'left':e.pageX+25, 'position':'absolute'});
+                    $('#footnoteDisplay div.content').html( content );    
+                });
+
+//Get RDF
+            $('#relatedResources').children('form').each(function () {
+                var url = $(this).attr('action');
+                $.get(url, $(this).serialize(), function (data) {
+                    var showOtherResources = $("#listRelatedResources");
+                    var dataArray = data.results.bindings;
+                    if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
+                    $.each(dataArray, function (currentIndex, currentElem) {
+                        var relatedResources = 'Resources related to <a href="' + currentElem.uri.value + '">' + currentElem.label.value + '</a> '
+                        var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>': ''
+                        var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>': ''
+                        showOtherResources.append(
+                        '<div>' + relatedCitations + relatedSubjects + '</div>');
+                    });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                });
+            });
+            $('#showOtherResources').children('form').each(function () {
+                var url = $(this).attr('action');
+                $.get(url, $(this).serialize(), function (data) {
+                    var showOtherResources = $("#listOtherResources");
+                    var dataArray = data.results.bindings;
+                    if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
+                    $.each(dataArray, function (currentIndex, currentElem) {
+                        var relatedResources = 'Resources related to <a href="' + currentElem.uri.value + '">' + currentElem.label.value + '</a> '
+                        var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>': ''
+                        var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>': ''
+                        showOtherResources.append(
+                        '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>');
+                    });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                });
+            });
+            $('#getMoreLinkedData').one("click", function (e) {
+                $('#showMoreResources').children('form').each(function () {
+                    var url = $(this).attr('action');
+                    $.get(url, $(this).serialize(), function (data) {
+                        var showOtherResources = $("#showMoreResources");
+                        var dataArray = data.results.bindings;
+                        if (! jQuery.isArray(dataArray)) dataArray =[dataArray];
+                        $.each(dataArray, function (currentIndex, currentElem) {
+                            var relatedResources = 'Resources related to <a href="' + currentElem.uri.value + '">' + currentElem.label.value + '</a> '
+                            var relatedSubjects = (currentElem.subjects) ? '<div class="indent">' + currentElem.subjects.value + ' related subjects</div>': ''
+                            var relatedCitations = (currentElem.citations) ? '<div class="indent">' + currentElem.citations.value + ' related citations</div>': ''
+                            showOtherResources.append(
+                            '<div>' + relatedResources + relatedCitations + relatedSubjects + '</div>');
+                        });
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    });
+                });
+            });
 });

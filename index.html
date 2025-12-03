@@ -1,175 +1,441 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
-    <div class="banner-index full-page">
-        <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: <br/>Electronic Edition</h1>
-        <span class="img-credit">    
-            <label>Photo Credit</label> <button class="btn btn-link white-link" data-toggle="collapse" data-target="#img-rights">
-                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"/>
-            </button>
-            <span id="img-rights" class="collapse">
-                <i>Two images were used for this banner:</i>
-                <br/>
-                Ms. Paris, Bibliothèque Nationale, Syr. 341, f. 143r. ©Bibliothèque Nationale de France.<br/>
-                Syriac inscription in ʿArdnas, Ṭur ʿAbdin. See Fig 123c. Photo: Helen Brock (1985).
-            </span>
-        </span>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="container" style="margin-top:1em;">
-                    <p style="margin-top:2em; text-align: justify;">
+<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:srophe="https://srophe.app">
+   <head data-template="app:fix-links">
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      
+      <meta charset="utf-8" />
+      
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      
+      <title data-template="app:app-title">Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</title>
+      
+      <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+      
+      <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
+      
+      <link rel="schema.bibo" href="http://purl.org/ontology/bibo/" />
+      
+      <link data-template="app:metadata" />
+      
+      <link rel="shortcut icon" href="/resources/img/favicon.ico" />
+      
+      <link rel="stylesheet" href="/resources/css/syr-icon-fonts.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/main.css" />
+      
+      <!--<link rel="stylesheet" type="text/css" href="/resources/css/syriaca.css"/>-->
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/lightslider.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/sm-core-css.css" />
+      
+      <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css" />
+      
+      <!-- Leaflet -->
+      
+      <!-- Not needed for e-GEDSH
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+        <link rel="stylesheet" href="/resources/leaflet/leaflet.awesome-markers.css"/>   
+        -->
+      <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"></script>
+      <script type="text/javascript" src="/resources/js/clipboard.min.js"></script>
+      
+      <!-- temporary until migrate to bootstrap 3.0 -->
+      <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="/resources/js/jquery.smartmenus.min.js"></script>
+      <script src="https://www.google.com/recaptcha/api.js"></script>
+      </head>
+   <body id="body">
+      <nav class="navbar navbar-default navbar-fixed-top" role="navigation" data-template="app:fix-links">
+         
+         <div class="container">
+            
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  </button>
+               <a class="navbar-brand banner-container inline" href="/index.html">
+                  <img property="logo" class="img-responsive" style="padding-bottom:.5em;display:inline;" alt="e-GEDSH" src="/resources/img/e-gedsh.png" width="20px" />
+                  <span style="font-size:24px;margin-left:.25em; padding-top:1.5em; display:inline;">e-GEDSH</span>
+                  </a>
+               
+            </div>
+            
+            <div class="navbar-collapse collapse pull-right">
+               
+               <ul class="nav navbar-nav sm sm-vertical" id="main-menu">
+                  
+                  <li>
+                     <a href="/browse.html">Browse Entries</a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="/index.html">Home</a>
+                     
+                  </li>
+                  
+                  <li class="dropdown" style="margin-left: 1em;">
+                     <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                        <span class="icon-nav">
+                           <img src="/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho" />
+                           </span>
+                        <span class="icon-text">Beth Mardutho</span>  <b class="caret"></b>
+                        </a>
+                     
+                     <ul class="dropdown-menu pull-right">
+                        
+                        <li>
+                           <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
+                              <span class="icon-nav">
+                                 <img src="/resources/img/beth-mardutho.png" height="18px" alt="Beth Mardutho Home" />
+                                 </span>
+                              <span class="icon-text">Beth Mardutho Home</span>
+                              </a>
+                           
+                        </li>
+                        
+                        <li role="presentation" class="divider"></li>
+                        
+                        <li>
+                           <a href="http://sedra.bethmardutho.org/" class="icon-container" target="_blank">
+                              <span class="icon-nav">
+                                 <img src="/resources/img/sedra.png" height="18px" alt="SEDRA: Syriac Dictionaries" />
+                                 </span>
+                              <span class="icon-text">SEDRA: Syriac Dictionaries</span>
+                              </a>
+                           
+                        </li>
+                        
+                     </ul>
+                     
+                  </li>
+                  
+                  <!-- Shared drop-down menu of all submodules 
+                        <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
+                        -->
+                  
+               </ul>
+               
+               <form class="navbar-form navbar-right navbar-input-group" role="search" action="/search.html" method="get">
+                  
+                  <div class="input-group">
+                     <input type="text" class="form-control" placeholder="search" name="q" id="q" />
+                     
+                     <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                             <span class="glyphicon glyphicon-search"></span>
+                           </button>
+                        <a href="/search.html" title="advanced search" class="btn btn-default">
+                             <span class="glyphicon glyphicon-cog"></span>
+                           </a>
+                        
+                     </div>
+                     <!-- /btn-group -->
+                     
+                  </div>
+                  
+               </form>
+               
+            </div>
+            <!--/.nav-collapse -->
+            
+         </div>
+         
+      </nav>
+      <div xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
+         
+         <div class="banner-index full-page">
+            
+            <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: <br />Electronic Edition
+            </h1>
+            <span class="img-credit">    
+               <label>Photo Credit</label> <button class="btn btn-link white-link" data-toggle="collapse" data-target="#img-rights">
+                  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                  </button>
+               <span id="img-rights" class="collapse">
+                  <i>Two images were used for this banner:</i>
+                  <br />
+                  Ms. Paris, Bibliothèque Nationale, Syr. 341, f. 143r. ©Bibliothèque Nationale de France.<br />
+                  Syriac inscription in ʿArdnas, Ṭur ʿAbdin. See Fig 123c. Photo: Helen Brock (1985).
+                  </span>
+               </span>
+            
+         </div>
+         
+         <div class="container">
+            
+            <div class="row">
+               
+               <div class="col-md-8">
+                  
+                  <div class="container" style="margin-top:1em;">
+                     
+                     <p style="margin-top:2em; text-align: justify;">
                         e-GEDSH is an electronic version of the 2011 edition of the <em>Gorgias Encyclopedic Dictionary of the Syriac Heritage</em>,
                         published by <a href="https://www.gorgiaspress.com/" target="_blank">Gorgias Press</a> on behalf of the <a href="http://bethmardutho.org/" target="_blank">Beth Mardutho: The Syriac Institute</a>. 
                         e-GEDSH is the result of the collaborative efforts of many scholars.
                         The encyclopedia currently holds <a href="browse.html">
-                            <span data-template="app:entries-count"/> entries</a> written by <a href="List-Contributors">
-                                <span data-template="app:contributors-count"/> contributors</a>. 
-                        This digital edition is implemented on the Srophé App platform using TEI XML, eXist-db, 
+                           <span data-template="app:entries-count"></span> entries</a> written by <a href="List-Contributors">
+                           <span data-template="app:contributors-count"></span> contributors</a>. 
+                        This digital edition is implemented on the Srophé App platform using TEI XML, eXist-db,
+                        
                         and linked open data technologies.
-                    </p>            
-                    
-                    <h3>General Editor</h3>
-                    <div class="indent" style="margin-top:-.75em;">George Anton Kiraz, <em>Beth Mardutho: The Syriac Institute</em>
-                    </div>
-                    <h3>Print Edition Editors</h3>
-                    <div class="indent" style="margin-top:-.75em;">
+                        
+                     </p>            
+                     
+                     
+                     <h3>General Editor</h3>
+                     
+                     <div class="indent" style="margin-top:-.75em;">George Anton Kiraz, <em>Beth Mardutho: The Syriac Institute</em>
+                        
+                     </div>
+                     
+                     <h3>Print Edition Editors</h3>
+                     
+                     <div class="indent" style="margin-top:-.75em;">
                         Sebastian P. Brock, <em>University of Oxford</em>
-                        <br/>
+                        <br />
                         Aaron M. Butts,  <em>The Catholic University of America</em>
-                        <br/>
+                        <br />
                         George Anton Kiraz, <em>Beth Mardutho: The Syriac Institute</em>
-                        <br/>
+                        <br />
                         Lucas Van Rompay, <em>Duke University</em>
-                    </div>
-                    <h3>Digital Edition Technical Editors</h3>
-                    <div class="indent" style="margin-top:-.75em;">
+                        
+                     </div>
+                     
+                     <h3>Digital Edition Technical Editors</h3>
+                     
+                     <div class="indent" style="margin-top:-.75em;">
                         David A. Michelson, <em>Vanderbilt University</em>
-                        <br/>
+                        <br />
                         Ute Possekel, <em>Harvard University</em>
-                        <br/>
+                        <br />
                         Daniel L. Schwartz, <em>Texas A&amp;M University</em>
-                    </div>
-                    <h3>Senior Programmer</h3>
-                    <div class="indent" style="margin-top:-.75em;">
+                        
+                     </div>
+                     
+                     <h3>Senior Programmer</h3>
+                     
+                     <div class="indent" style="margin-top:-.75em;">
                         Winona Salesky
-                    </div>
-                    <h3>Senior Advisor</h3>
-                    <div class="indent" style="margin-top:-.75em;">
+                        
+                     </div>
+                     
+                     <h3>Senior Advisor</h3>
+                     
+                     <div class="indent" style="margin-top:-.75em;">
                         Peter R. L. Brown, <em>Princeton University</em>
-                    </div>
-                    <div class="padding-top" style="margin-top:2em;">
+                        
+                     </div>
+                     
+                     <div class="padding-top" style="margin-top:2em;">
                         <button class="btn btn-default" data-toggle="modal" data-target="#feedback">
-                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"/> Contact</button> 
-                    </div>
-                </div>
-                <div data-template="app:contact-form"/>
-            </div>
-            <div class="col-md-4">
-                <div class="container" style="margin-top:2em;">
-                    <h3>Front Matter</h3>
-                    <ul>
+                           <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact</button> 
+                        
+                     </div>
+                     
+                  </div>
+                  
+                  <div data-template="app:contact-form"></div>
+                  
+               </div>
+               
+               <div class="col-md-4">
+                  
+                  <div class="container" style="margin-top:2em;">
+                     
+                     <h3>Front Matter</h3>
+                     
+                     <ul>
+                        
                         <li>
-                            <a href="Making-e-GEDSH">The Making of the Electronic Edition</a> <em>by George A. Kiraz</em>
+                           <a href="Making-e-GEDSH">The Making of the Electronic Edition</a> <em>by George A. Kiraz</em>
+                           
                         </li>
+                        
                         <li>
-                            <a href="Making-GEDSH-print">The Making of the <em>Gorgias Encyclopedic Dictionary of the Syriac Heritage</em>
-                            </a> 
-                            <em>by George A. Kiraz</em>
+                           <a href="Making-GEDSH-print">The Making of the <em>Gorgias Encyclopedic Dictionary of the Syriac Heritage</em>
+                              </a> 
+                           <em>by George A. Kiraz</em>
+                           
                         </li>
+                        
                         <li>
-                            <a href="Editors-Preface-print">Editors’ Preface</a>
-                            <em>by Sebastian P. Brock, Aaron M. Butts, George A. Kiraz, and Lucas Van Rompay</em>
+                           <a href="Editors-Preface-print">Editors’ Preface</a>
+                           <em>by Sebastian P. Brock, Aaron M. Butts, George A. Kiraz, and Lucas Van Rompay</em>
+                           
                         </li>
+                        
                         <li>
-                            <a href="List-Contributors">List of Contributors</a>
+                           <a href="List-Contributors">List of Contributors</a>
+                           
                         </li>
+                        
                         <li>
-                            <a href="Sigila-Abbreviations">Sigla and Abbreviations</a>
+                           <a href="Sigila-Abbreviations">Sigla and Abbreviations</a>
+                           
                         </li>
+                        
                         <li>
-                            <a href="List-of-Figures">Figures and Color Plates</a>
+                           <a href="List-of-Figures">Figures and Color Plates</a>
+                           
                         </li>
-                    </ul>
-                    <h3>Entries</h3>
-                    <ul>
+                        
+                     </ul>
+                     
+                     <h3>Entries</h3>
+                     
+                     <ul>
+                        
                         <li>
-                            <a href="browse.html">Browse All Entries</a>
+                           <a href="browse.html">Browse All Entries</a>
+                           
                         </li>
-                    </ul>
-                    <h3>Back Matter</h3>
-                    <ul>
+                        
+                     </ul>
+                     
+                     <h3>Back Matter</h3>
+                     
+                     <ul>
+                        
                         <li>
-                            <a href="Maps">Maps</a>
+                           <a href="Maps">Maps</a>
+                           
                         </li>
+                        
                         <li>
-                            <a href="List-of-Patriarchs-Churches-Middle-East">List of Patriarchs of the Main Syriac Churches in the Middle East</a>
-                            <em>by Samuel Burleson and Lucas Van Rompay</em>
+                           <a href="List-of-Patriarchs-Churches-Middle-East">List of Patriarchs of the Main Syriac Churches in the Middle East</a>
+                           <em>by Samuel Burleson and Lucas Van Rompay</em>
+                           
                         </li>
+                        
                         <li>
-                            <a href="Manuscript-Index">Manuscript Index</a>
+                           <a href="Manuscript-Index">Manuscript Index</a>
+                           
                         </li>                        
-                    </ul>
-                    <h3>Printed Edition</h3>
-                    <ul>
+                        
+                     </ul>
+                     
+                     <h3>Printed Edition</h3>
+                     
+                     <ul>
+                        
                         <li>
-                            <a href="https://www.gorgiaspress.com/gorgias-encyclopedic-dictionary-of-the-syriac-heritage-students-and-scholars" target="_blank">Available from Gorgias Press</a>
+                           <a href="https://www.gorgiaspress.com/gorgias-encyclopedic-dictionary-of-the-syriac-heritage-students-and-scholars" target="_blank">Available from Gorgias Press</a>
+                           
                         </li>
-                    </ul>
-                    <br/>                    
-                </div>
+                        
+                     </ul>
+                     <br />                    
+                     
+                  </div>
+                  
+               </div>
+               
             </div>
-        </div>
-        <hr/>
-        <div class="container">
-            <ul class="list-inline funding" style="margin-left:2em;">
-                <li>
-                    <a href="http://www.bethmardutho.org/">
-                        <img src="resources/img/beth-mardutho.png" alt="Beth Mardutho" height="105px"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://www.bethmardutho.org/">
-                        <img src="resources/img/gorgias-press.png" alt="Gorgias Press " height="70px"/>
-                    </a>
-                </li> 
-                <li>
-                    <a href="https://github.com/srophe/srophe-eXist-app">
-                        <img src="resources/img/icons/srophe-logo.png" alt="Powered by Srophe" height="80px"/>
-                    </a>
-                </li>                
-                <li>
-                    <a href="http://www.balzan.org/en">
-                        <img src="resources/img/marchioBALZANblu_bianco.png" alt="Fondazione Internazionale Balzan" height="65px"/> 
+            
+            <hr />
+            
+            <div class="container">
+               
+               <ul class="list-inline funding" style="margin-left:2em;">
+                  
+                  <li>
+                     <a href="http://www.bethmardutho.org/">
+                        <img src="resources/img/beth-mardutho.png" alt="Beth Mardutho" height="105px" />
+                        </a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="http://www.bethmardutho.org/">
+                        <img src="resources/img/gorgias-press.png" alt="Gorgias Press " height="70px" />
+                        </a>
+                     
+                  </li> 
+                  
+                  <li>
+                     <a href="https://github.com/srophe/srophe-eXist-app">
+                        <img src="resources/img/icons/srophe-logo.png" alt="Powered by Srophe" height="80px" />
+                        </a>
+                     
+                  </li>                
+                  
+                  <li>
+                     <a href="http://www.balzan.org/en">
+                        <img src="resources/img/marchioBALZANblu_bianco.png" alt="Fondazione Internazionale Balzan" height="65px" /> 
                         Fondazione Internazionale
                         Balzan </a>
-                </li>
-                <li>
-                    <a href="http://www.neh.gov/">
-                        <img src="resources/img/neh_logo_horizontal_rgb.jpg" alt="National Endowment for the Humanities" height="55px"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://codhr.tamu.edu">
-                        <img src="resources/img/atm-co-dhr.png" alt="Initiative for Digital Humanities, Media, and Culture, Texas A&amp;M" height="50px"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://www.vanderbilt.edu/">
-                        <img src="resources/img/vu07a.png" alt="Vanderbilt University" height="45px"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://www.library.vanderbilt.edu/">
-                        <img src="resources/img/JAH_LIBRARIES.png" alt="Jean and Alexander Heard Library, Vanderbilt University" height="50px"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://www.princeton.edu/main/">
-                        <img src="resources/img/PU-standard.png" alt="Princeton University" height="60px"/>
-                    </a>
-                </li>
-                <!-- Test gitwebhooks-->
-            </ul>
-        </div>
-    </div>
-</div>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="http://www.neh.gov/">
+                        <img src="resources/img/neh_logo_horizontal_rgb.jpg" alt="National Endowment for the Humanities" height="55px" />
+                        </a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="http://codhr.tamu.edu">
+                        <img src="resources/img/atm-co-dhr.png" alt="Initiative for Digital Humanities, Media, and Culture, Texas A&amp;M" height="50px" />
+                        </a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="http://www.vanderbilt.edu/">
+                        <img src="resources/img/vu07a.png" alt="Vanderbilt University" height="45px" />
+                        </a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="http://www.library.vanderbilt.edu/">
+                        <img src="resources/img/JAH_LIBRARIES.png" alt="Jean and Alexander Heard Library, Vanderbilt University" height="50px" />
+                        </a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="http://www.princeton.edu/main/">
+                        <img src="resources/img/PU-standard.png" alt="Princeton University" height="60px" />
+                        </a>
+                     
+                  </li>
+                  
+                  <!-- Test gitwebhooks-->
+                  
+               </ul>
+               
+            </div>
+            
+         </div>
+         
+      </div>
+      <!-- Footer with Syriaca.org branding -->
+      <footer>
+         
+         <div class="container">
+            <img alt="Creative Commons License" style="border-width:0" src="$app-root/resources/img/cc.png" height="18px" />
+            This work is licensed under a 
+            <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/" style="color:white;">Creative Commons Attribution-NonCommercial 4.0 license (CC BY-NC 4.0)</a>.
+            <br />Copyright © 2011 Beth Mardutho: The Syriac Institute.
+            
+         </div>
+         
+         <!-- Additional Javascript -->
+         <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+         <script type="text/javascript" src="/resources/js/jquery.validate.min.js"></script>
+         <script type="text/javascript" src="/resources/js/main.js"></script>
+         <script type="text/javascript" src="/resources/js/lightslider.min.js"></script>
+         </footer>
+   </body>
+</html>

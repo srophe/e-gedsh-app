@@ -1,0 +1,120 @@
+<html xmlns="http://www.w3.org/1999/xhtml" data-template="app:get-rec">
+    <head data-template="app:fix-links">
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title data-template="app:app-title">Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</title>
+        <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"/>
+        <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/"/>
+        <link rel="schema.bibo" href="http://purl.org/ontology/bibo/"/>
+        <link data-template="app:metadata"/>
+        <link rel="shortcut icon" href="/resources/img/favicon.ico"/>
+        <link rel="stylesheet" href="/resources/css/syr-icon-fonts.css"/>
+        <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/resources/css/main.css"/>
+        <!--<link rel="stylesheet" type="text/css" href="/resources/css/syriaca.css"/>-->
+        <link rel="stylesheet" type="text/css" href="/resources/css/lightslider.css"/>
+        <link rel="stylesheet" type="text/css" href="/resources/css/sm-core-css.css"/>
+        <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css"/>
+        <!-- Leaflet -->
+        <!-- Not needed for e-GEDSH
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+        <link rel="stylesheet" href="/resources/leaflet/leaflet.awesome-markers.css"/>   
+        -->
+        <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"/>
+        <script type="text/javascript" src="/resources/js/clipboard.min.js"/>
+        <!-- temporary until migrate to bootstrap 3.0 -->
+        <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"/>
+        <script type="text/javascript" src="/resources/js/jquery.smartmenus.min.js"/>
+        <script src="https://www.google.com/recaptcha/api.js"/>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+                <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+            <![endif]-->
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation" data-template="app:fix-links">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"/>
+                        <span class="icon-bar"/>
+                        <span class="icon-bar"/>
+                    </button>
+                    <a class="navbar-brand banner-container inline" href="/index.html">
+                        <img property="logo" class="img-responsive" style="padding-bottom:.5em;display:inline;" alt="e-GEDSH" src="/resources/img/e-gedsh.png" width="20px"/>
+                        <span style="font-size:24px;margin-left:.25em; padding-top:1.5em; display:inline;">e-GEDSH</span>
+                    </a>
+                </div>
+                <div class="navbar-collapse collapse pull-right">
+                    <ul class="nav navbar-nav sm sm-vertical" id="main-menu">
+                        <li>
+                            <a href="/browse.html">Browse Entries</a>
+                        </li>
+                        <li>
+                            <a href="/index.html">Home</a>
+                        </li>
+                        <li class="dropdown" style="margin-left: 1em;">
+                            <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                                <span class="icon-nav">
+                                    <img src="/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho"/>
+                                </span>
+                                <span class="icon-text">Beth Mardutho</span>  <b class="caret"/>
+                            </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li>
+                                    <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
+                                        <span class="icon-nav">
+                                            <img src="/resources/img/beth-mardutho.png" height="18px" alt="Beth Mardutho Home"/>
+                                        </span>
+                                        <span class="icon-text">Beth Mardutho Home</span>
+                                    </a>
+                                </li>
+                                <li role="presentation" class="divider"/>
+                                <li>
+                                    <a href="http://sedra.bethmardutho.org/" class="icon-container" target="_blank">
+                                        <span class="icon-nav">
+                                            <img src="/resources/img/sedra.png" height="18px" alt="SEDRA: Syriac Dictionaries"/>
+                                        </span>
+                                        <span class="icon-text">SEDRA: Syriac Dictionaries</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Shared drop-down menu of all submodules 
+                        <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
+                        -->
+                    </ul>
+                    <form class="navbar-form navbar-right navbar-input-group" role="search" action="/search.html" method="get">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="search" name="q" id="q"/>
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">
+                                      <span class="glyphicon glyphicon-search"/>
+                                </button>
+                                <a href="/search.html" title="advanced search" class="btn btn-default">
+                                      <span class="glyphicon glyphicon-cog"/>
+                                </a>
+                            </div><!-- /btn-group -->
+                        </div>
+                    </form>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+        <div id="main">
+            <div id="content"/>
+        </div>
+        <!-- Footer -->
+        <footer data-template="app:shared-content" data-template-path="/templates/footer.html"/>
+        <div data-template="app:fix-links">
+            <!-- Additional Javascript -->
+            <script type="text/javascript" src="/resources/js/bootstrap.min.js"/>
+            <script type="text/javascript" src="/resources/js/jquery.validate.min.js"/>
+            <script type="text/javascript" src="/resources/js/main.js"/>
+            <script type="text/javascript" src="/resources/js/lightslider.min.js"/>
+            <!-- Google analytics. Values pulled from config.xml -->
+            <script data-template="app:google-analytics"/>
+        </div>
+    </body>
+</html>

@@ -10,7 +10,7 @@
 @import url("syr-font-families.css");
 
 /* Main content blocks */
-body {font-family: times, serif; background-color:#333;}
+body {font-family: times, serif;}
 #main { padding: 0; background-color:#999; }
 #content{background-color:white; padding-top: 50px;}
 .entry {text-align: justify; text-justify: inter-word;}
@@ -107,7 +107,7 @@ body {font-family: times, serif; background-color:#333;}
     border-bottom:4px solid #7c173e;}
 .banner-title {
     position:relative;
-    margin-top:0;
+    margin-top:50px;
     padding-top:0;
 	/*background-image:url('../img/egedsh-banner.png');*/
 	background-image:url('../img/egedsh-banner-interior.png');
@@ -135,7 +135,7 @@ body {font-family: times, serif; background-color:#333;}
 
 .banner-index h1 {
     position:absolute;
-    top:0;
+    top: 50;
     right:18px;
     height:55px;
     width:100%;
@@ -318,7 +318,7 @@ td {
     border-bottom: 1px solid #ccc; 
 }
 .well-white {background-color:white;}
-.section {background-color:white; margin:0 2em;}
+.section {background-color:white; margin:2em 2em;}
 .left-padding{padding-left:1em;}
 .top-padding{padding-top:1em;}
 .right-padding{padding-right:1em;}
@@ -378,6 +378,8 @@ td {
 	margin-left: 1em;
 	margin-right: 1em;
 }
+.nav-tabs li {margin:0; padding:0;}
+.nav-tabs li > a {margin:4px; padding:4px;}
 
 .nav-tabs li.active {font-size:1.25em;}
 .nav-stacked > li {
@@ -901,3 +903,4 @@ pre {
 .notes.footnote-refs{display:inline-block; padding-right:.75em;}
 .footnotes {margin:1em; font-size:.875em}
 .footnote{text-indent: 8px;}
+.tei-byline {display:block; font-style: italic; text-align:right;}

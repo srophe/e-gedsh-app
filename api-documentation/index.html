@@ -1,91 +1,302 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
-    <div class="banner-title full-page">
-    <span class="img-credit">
-        <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
-    </span>
-</div>
-    <div class="row container top-padding">
-        <div class="col-md-3">
-            <h3>Available APIs </h3>
-            <ul class="nav nav-tabs nav-stacked pull-left type-nav">
-                <li>
-                    <a href="#search">Search API</a>
-                </li>
-                <li>
-                    <a href="#geo">Geographic API</a>
-                </li>
-                <li>
-                    <a href="#oai">OAI-PMH Provider API</a>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-9">
-            <div>
-                <h1>Syriaca.org API documentation</h1>
-                <!--<p>Note about API policies (if we have any)</p>-->
-                <hr/>
-                <h3 id="search">Search API</h3>
-                <p>Base url: <pre>http://syriaca.org/api/search</pre>
-                </p>
-                <table class="table table-bordered">
-                    <thead>
+<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:srophe="https://srophe.app">
+   <head data-template="app:fix-links">
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      
+      <meta charset="utf-8" />
+      
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      
+      <title data-template="app:app-title">Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</title>
+      
+      <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+      
+      <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
+      
+      <link rel="schema.bibo" href="http://purl.org/ontology/bibo/" />
+      
+      <link data-template="app:metadata" />
+      
+      <link rel="shortcut icon" href="/resources/img/favicon.ico" />
+      
+      <link rel="stylesheet" href="/resources/css/syr-icon-fonts.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/main.css" />
+      
+      <!--<link rel="stylesheet" type="text/css" href="/resources/css/syriaca.css"/>-->
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/lightslider.css" />
+      
+      <link rel="stylesheet" type="text/css" href="/resources/css/sm-core-css.css" />
+      
+      <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css" />
+      
+      <!-- Leaflet -->
+      
+      <!-- Not needed for e-GEDSH
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+        <link rel="stylesheet" href="/resources/leaflet/leaflet.awesome-markers.css"/>   
+        -->
+      <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"></script>
+      <script type="text/javascript" src="/resources/js/clipboard.min.js"></script>
+      
+      <!-- temporary until migrate to bootstrap 3.0 -->
+      <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="/resources/js/jquery.smartmenus.min.js"></script>
+      <script src="https://www.google.com/recaptcha/api.js"></script>
+      </head>
+   <body id="body">
+      <nav class="navbar navbar-default navbar-fixed-top" role="navigation" data-template="app:fix-links">
+         
+         <div class="container">
+            
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  </button>
+               <a class="navbar-brand banner-container inline" href="/index.html">
+                  <img property="logo" class="img-responsive" style="padding-bottom:.5em;display:inline;" alt="e-GEDSH" src="/resources/img/e-gedsh.png" width="20px" />
+                  <span style="font-size:24px;margin-left:.25em; padding-top:1.5em; display:inline;">e-GEDSH</span>
+                  </a>
+               
+            </div>
+            
+            <div class="navbar-collapse collapse pull-right">
+               
+               <ul class="nav navbar-nav sm sm-vertical" id="main-menu">
+                  
+                  <li>
+                     <a href="/browse.html">Browse Entries</a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="/index.html">Home</a>
+                     
+                  </li>
+                  
+                  <li class="dropdown" style="margin-left: 1em;">
+                     <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                        <span class="icon-nav">
+                           <img src="/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho" />
+                           </span>
+                        <span class="icon-text">Beth Mardutho</span>  <b class="caret"></b>
+                        </a>
+                     
+                     <ul class="dropdown-menu pull-right">
+                        
+                        <li>
+                           <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
+                              <span class="icon-nav">
+                                 <img src="/resources/img/beth-mardutho.png" height="18px" alt="Beth Mardutho Home" />
+                                 </span>
+                              <span class="icon-text">Beth Mardutho Home</span>
+                              </a>
+                           
+                        </li>
+                        
+                        <li role="presentation" class="divider"></li>
+                        
+                        <li>
+                           <a href="http://sedra.bethmardutho.org/" class="icon-container" target="_blank">
+                              <span class="icon-nav">
+                                 <img src="/resources/img/sedra.png" height="18px" alt="SEDRA: Syriac Dictionaries" />
+                                 </span>
+                              <span class="icon-text">SEDRA: Syriac Dictionaries</span>
+                              </a>
+                           
+                        </li>
+                        
+                     </ul>
+                     
+                  </li>
+                  
+                  <!-- Shared drop-down menu of all submodules 
+                        <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
+                        -->
+                  
+               </ul>
+               
+               <form class="navbar-form navbar-right navbar-input-group" role="search" action="/search.html" method="get">
+                  
+                  <div class="input-group">
+                     <input type="text" class="form-control" placeholder="search" name="q" id="q" />
+                     
+                     <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                             <span class="glyphicon glyphicon-search"></span>
+                           </button>
+                        <a href="/search.html" title="advanced search" class="btn btn-default">
+                             <span class="glyphicon glyphicon-cog"></span>
+                           </a>
+                        
+                     </div>
+                     <!-- /btn-group -->
+                     
+                  </div>
+                  
+               </form>
+               
+            </div>
+            <!--/.nav-collapse -->
+            
+         </div>
+         
+      </nav>
+      <div xmlns:xi="http://www.w3.org/2001/XInclude" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
+         
+         <div class="banner-title full-page">
+            <span class="img-credit">
+               
+               <h1>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</h1>
+               </span>
+            
+         </div>
+         
+         <div class="row container top-padding">
+            
+            <div class="col-md-3">
+               
+               <h3>Available APIs </h3>
+               
+               <ul class="nav nav-tabs nav-stacked pull-left type-nav">
+                  
+                  <li>
+                     <a href="#search">Search API</a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="#geo">Geographic API</a>
+                     
+                  </li>
+                  
+                  <li>
+                     <a href="#oai">OAI-PMH Provider API</a>
+                     
+                  </li>
+                  
+               </ul>
+               
+            </div>
+            
+            <div class="col-md-9">
+               
+               <div>
+                  
+                  <h1>Syriaca.org API documentation</h1>
+                  
+                  <!--<p>Note about API policies (if we have any)</p>-->
+                  
+                  <hr />
+                  
+                  <h3 id="search">Search API</h3>
+                  
+                  <p>Base url: <pre>http://syriaca.org/api/search</pre>
+                     </p>
+                  
+                  <table class="table table-bordered">
+                     
+                     <thead>
+                        
                         <tr>
-                            <th class="api-path">Path</th>
-                            <th class="api-param">Parameters</th>
-                            <th class="api-desc">Description</th>
-                            <th class="api-method">Method</th>
+                           
+                           <th class="api-path">Path</th>
+                           
+                           <th class="api-param">Parameters</th>
+                           
+                           <th class="api-desc">Description</th>
+                           
+                           <th class="api-method">Method</th>
+                           
                         </tr>
-                    </thead>
-                    <tbody>
+                        
+                     </thead>
+                     
+                     <tbody>
+                        
                         <tr>
-                            <td>
-                                <pre>/persName</pre>
-                                <pre>/placeName</pre>
-                                <pre>/title</pre>
-                                <pre>/author</pre>
-                                <pre>/desc</pre>
-                                <pre>/note</pre>
-                                <pre>/event</pre>
-                                <pre>/body</pre>
-                            </td>
-                            <td>
-                                <strong>q</strong>
-                                <p>Accepts simple text string.</p>
-                                <strong>collection</strong>
-                                <p>Limits by collection.</p>
-                                <ul>
-                                    <li>Gateway to the Syriac Saints</li>
-                                    <li>The Syriac Biographical Dictionary</li>
-                                    <li>A Guide to Syriac Authors</li>
-                                    <li>Qadishe: A Guide to the Syriac Saints</li>
-                                    <li>The Syriac Gazetteer</li>
-                                    <li>Bibliotheca Hagiographica Syriaca Electronica</li>
-                                    <li>SPEAR: Syriac Persons, Events, and Relations</li>
-                                </ul>
-                                <strong>lang</strong>
-                                <p>Limits by xml:lang attribute.</p>
-                                <ul>
-                                    <li/>
-                                </ul>
-                                <strong>author</strong>
-                                <p>Accepts simple text string. Used only with '/title' search.</p>
-                            </td>
-                            <td>
-                                <p>Performs a simple keyword search across all Syriaca.org collections.</p>
-                                <p>Provides results as JSON.</p>
-                                <p>Example:<pre>/api/search/persName?q=aaron&amp;collection=The Syriac Biographical Dictionary</pre>
-                                </p>
-                                <p>Example:<pre>/api/search/placeName?q=edessa</pre>
-                                </p>
-                                <p>Example:<pre>/api/title?q=mary&amp;author=ephrem</pre>
-                                </p>
-                                <p>Example:<pre>/api/search/title?q=mari&amp;lang=fr</pre>
-                                </p>
-                                <p>Example results for:</p>
-                                <pre>/api/search/title?q=mary
+                           
+                           <td>
+                              <pre>/persName</pre>
+                              <pre>/placeName</pre>
+                              <pre>/title</pre>
+                              <pre>/author</pre>
+                              <pre>/desc</pre>
+                              <pre>/note</pre>
+                              <pre>/event</pre>
+                              <pre>/body</pre>
+                              </td>
+                           
+                           <td>
+                              <strong>q</strong>
+                              
+                              <p>Accepts simple text string.</p>
+                              <strong>collection</strong>
+                              
+                              <p>Limits by collection.</p>
+                              
+                              <ul>
+                                 
+                                 <li>Gateway to the Syriac Saints</li>
+                                 
+                                 <li>The Syriac Biographical Dictionary</li>
+                                 
+                                 <li>A Guide to Syriac Authors</li>
+                                 
+                                 <li>Qadishe: A Guide to the Syriac Saints</li>
+                                 
+                                 <li>The Syriac Gazetteer</li>
+                                 
+                                 <li>Bibliotheca Hagiographica Syriaca Electronica</li>
+                                 
+                                 <li>SPEAR: Syriac Persons, Events, and Relations</li>
+                                 
+                              </ul>
+                              <strong>lang</strong>
+                              
+                              <p>Limits by xml:lang attribute.</p>
+                              
+                              <ul>
+                                 
+                                 <li></li>
+                                 
+                              </ul>
+                              <strong>author</strong>
+                              
+                              <p>Accepts simple text string. Used only with '/title' search.</p>
+                              
+                           </td>
+                           
+                           <td>
+                              
+                              <p>Performs a simple keyword search across all Syriaca.org collections.</p>
+                              
+                              <p>Provides results as JSON.</p>
+                              
+                              <p>Example:<pre>/api/search/persName?q=aaron&amp;collection=The Syriac Biographical Dictionary</pre>
+                                 </p>
+                              
+                              <p>Example:<pre>/api/search/placeName?q=edessa</pre>
+                                 </p>
+                              
+                              <p>Example:<pre>/api/title?q=mary&amp;author=ephrem</pre>
+                                 </p>
+                              
+                              <p>Example:<pre>/api/search/title?q=mari&amp;lang=fr</pre>
+                                 </p>
+                              
+                              <p>Example results for:</p>
+                              <pre>/api/search/title?q=mary
 &amp;collection=Bibliotheca Hagiographica Syriaca Electronica
 &amp;lang=en&amp;author=ephrem</pre>
-                                <pre>
+                              <pre>
 [
     {
         "id": "http://syriaca.org/work/1002",
@@ -101,161 +312,316 @@
     }
 ]
                                 </pre>
-                            </td>
-                            <td>GET</td>
+                              </td>
+                           
+                           <td>GET</td>
+                           
                         </tr>
-                    </tbody>
-                </table>
-                <hr/>
-                <h3 id="geo">Geographic API</h3>
-                <p>Base url: <pre>http://syriaca.org/api/geo</pre>
-                </p>
-                <table class="table table-bordered">
-                    <thead>
+                        
+                     </tbody>
+                     
+                  </table>
+                  
+                  <hr />
+                  
+                  <h3 id="geo">Geographic API</h3>
+                  
+                  <p>Base url: <pre>http://syriaca.org/api/geo</pre>
+                     </p>
+                  
+                  <table class="table table-bordered">
+                     
+                     <thead>
+                        
                         <tr>
-                            <th class="api-path">Path</th>
-                            <th class="api-param">Parameters</th>
-                            <th class="api-desc">Description</th>
-                            <th class="api-method">Method</th>
+                           
+                           <th class="api-path">Path</th>
+                           
+                           <th class="api-param">Parameters</th>
+                           
+                           <th class="api-desc">Description</th>
+                           
+                           <th class="api-method">Method</th>
+                           
                         </tr>
-                    </thead>
-                    <tbody>
+                        
+                     </thead>
+                     
+                     <tbody>
+                        
                         <tr>
-                            <td>
-                                <pre>/json</pre>
-                            </td>
-                            <td>
-                                <strong>type</strong>
-                                <p>accepted values:</p>
-                                <ul>
-                                    <li>building</li>
-                                    <li>church</li>
-                                    <li>diocese</li>
-                                    <li>fortification</li>
-                                    <li>island</li>
-                                    <li>monastery</li>
-                                    <li>mountain</li>
-                                    <li>open-water</li>
-                                    <li>parish</li>
-                                    <li>province</li>
-                                    <li>quarter</li>
-                                    <li>region</li>
-                                    <li>river</li>
-                                    <li>settlement</li>
-                                    <li>state</li>
-                                    <li>temple</li>
-                                    <li>unknown</li>
-                                </ul>
-                            </td>
-                            <td>
-                                <p>Provides geoJSON results for all places within the gazetteer with geographic data. Places can be filtered by place type.</p>
-                                <p>Example return all locations:<pre>http://syriaca.org/api/geo/json</pre>
-                                </p>
-                                <p>Example return only churches:<pre>http://syriaca.org/api/geo/json?type=church</pre>
-                                </p>
-                                <p>Example return churches and rivers:<pre>http://syriaca.org/api/geo/json?type=church,river</pre>
-                                </p>
-                            </td>
-                            <td>GET</td>
+                           
+                           <td>
+                              <pre>/json</pre>
+                              </td>
+                           
+                           <td>
+                              <strong>type</strong>
+                              
+                              <p>accepted values:</p>
+                              
+                              <ul>
+                                 
+                                 <li>building</li>
+                                 
+                                 <li>church</li>
+                                 
+                                 <li>diocese</li>
+                                 
+                                 <li>fortification</li>
+                                 
+                                 <li>island</li>
+                                 
+                                 <li>monastery</li>
+                                 
+                                 <li>mountain</li>
+                                 
+                                 <li>open-water</li>
+                                 
+                                 <li>parish</li>
+                                 
+                                 <li>province</li>
+                                 
+                                 <li>quarter</li>
+                                 
+                                 <li>region</li>
+                                 
+                                 <li>river</li>
+                                 
+                                 <li>settlement</li>
+                                 
+                                 <li>state</li>
+                                 
+                                 <li>temple</li>
+                                 
+                                 <li>unknown</li>
+                                 
+                              </ul>
+                              
+                           </td>
+                           
+                           <td>
+                              
+                              <p>Provides geoJSON results for all places within the gazetteer with geographic data.
+                                 Places can be filtered by place type.
+                              </p>
+                              
+                              <p>Example return all locations:<pre>http://syriaca.org/api/geo/json</pre>
+                                 </p>
+                              
+                              <p>Example return only churches:<pre>http://syriaca.org/api/geo/json?type=church</pre>
+                                 </p>
+                              
+                              <p>Example return churches and rivers:<pre>http://syriaca.org/api/geo/json?type=church,river</pre>
+                                 </p>
+                              
+                           </td>
+                           
+                           <td>GET</td>
+                           
                         </tr>
+                        
                         <tr>
-                            <td>
-                                <pre>/kml</pre>
-                            </td>
-                            <td>
-                                <strong>type</strong>
-                                <p>accepted values:</p>
-                                <ul>
-                                    <li>building</li>
-                                    <li>church</li>
-                                    <li>diocese</li>
-                                    <li>fortification</li>
-                                    <li>island</li>
-                                    <li>monastery</li>
-                                    <li>mountain</li>
-                                    <li>open-water</li>
-                                    <li>parish</li>
-                                    <li>province</li>
-                                    <li>quarter</li>
-                                    <li>region</li>
-                                    <li>river</li>
-                                    <li>settlement</li>
-                                    <li>state</li>
-                                    <li>temple</li>
-                                    <li>unknown</li>
-                                </ul>
-                            </td>
-                            <td>
-                                <p>Provides KML results for all places within the gazetteer with geographic data. Places can be filtered by place type.</p>
-                                <p>Example return all locations:<pre>http://syriaca.org/api/geo/kml</pre>
-                                </p>
-                                <p>Example return only churches:<pre>http://syriaca.org/api/geo/kml?type=church</pre>
-                                </p>
-                                <p>Example return churches and rivers:<pre>http://syriaca.org/api/geo/kml?type=church,river</pre>
-                                </p>
-                            </td>
-                            <td>GET</td>
+                           
+                           <td>
+                              <pre>/kml</pre>
+                              </td>
+                           
+                           <td>
+                              <strong>type</strong>
+                              
+                              <p>accepted values:</p>
+                              
+                              <ul>
+                                 
+                                 <li>building</li>
+                                 
+                                 <li>church</li>
+                                 
+                                 <li>diocese</li>
+                                 
+                                 <li>fortification</li>
+                                 
+                                 <li>island</li>
+                                 
+                                 <li>monastery</li>
+                                 
+                                 <li>mountain</li>
+                                 
+                                 <li>open-water</li>
+                                 
+                                 <li>parish</li>
+                                 
+                                 <li>province</li>
+                                 
+                                 <li>quarter</li>
+                                 
+                                 <li>region</li>
+                                 
+                                 <li>river</li>
+                                 
+                                 <li>settlement</li>
+                                 
+                                 <li>state</li>
+                                 
+                                 <li>temple</li>
+                                 
+                                 <li>unknown</li>
+                                 
+                              </ul>
+                              
+                           </td>
+                           
+                           <td>
+                              
+                              <p>Provides KML results for all places within the gazetteer with geographic data. Places
+                                 can be filtered by place type.
+                              </p>
+                              
+                              <p>Example return all locations:<pre>http://syriaca.org/api/geo/kml</pre>
+                                 </p>
+                              
+                              <p>Example return only churches:<pre>http://syriaca.org/api/geo/kml?type=church</pre>
+                                 </p>
+                              
+                              <p>Example return churches and rivers:<pre>http://syriaca.org/api/geo/kml?type=church,river</pre>
+                                 </p>
+                              
+                           </td>
+                           
+                           <td>GET</td>
+                           
                         </tr>
-                    </tbody>
-                </table>
-                <h3 id="oai">OAI-PMH Provider API</h3>
-                <p>Base url: <pre>http://syriaca.org/api/oai</pre>
-                </p>
-                <p>Full OAI-PMH documentation can be found: <a href="http://www.openarchives.org/OAI/2.0/openarchivesprotocol.htm">http://www.openarchives.org/OAI/2.0/openarchivesprotocol.htm</a>
-                </p>
-                <table class="table table-bordered">
-                    <thead>
+                        
+                     </tbody>
+                     
+                  </table>
+                  
+                  <h3 id="oai">OAI-PMH Provider API</h3>
+                  
+                  <p>Base url: <pre>http://syriaca.org/api/oai</pre>
+                     </p>
+                  
+                  <p>Full OAI-PMH documentation can be found: <a href="http://www.openarchives.org/OAI/2.0/openarchivesprotocol.htm">http://www.openarchives.org/OAI/2.0/openarchivesprotocol.htm</a>
+                     
+                  </p>
+                  
+                  <table class="table table-bordered">
+                     
+                     <thead>
+                        
                         <tr>
-                            <th class="api-path">Path</th>
-                            <th class="api-param">Parameters</th>
-                            <th class="api-desc">Description</th>
-                            <th class="api-method">Method</th>
+                           
+                           <th class="api-path">Path</th>
+                           
+                           <th class="api-param">Parameters</th>
+                           
+                           <th class="api-desc">Description</th>
+                           
+                           <th class="api-method">Method</th>
+                           
                         </tr>
-                    </thead>
-                    <tbody>
+                        
+                     </thead>
+                     
+                     <tbody>
+                        
                         <tr>
-                            <td>
-                                none
-                            </td>
-                            <td>
-                                <strong>verb</strong>
-                                <p>OAI-PMH verb.</p>
-                                <strong>identifier</strong>
-                                <p>Syriaca.org record identifier. ex: http://syriaca.org/place/78</p>
-                                <strong>from</strong>
-                                <p>Date to start harvesting from. Uses publication/last modified date of record.</p>
-                                <strong>until</strong>
-                                <p>Date to end harvesting from. Uses publication/last modified date of record.</p>
-                                <strong>set</strong>
-                                <p>Syriaca.org sets are based on Syriaca.org submodules. Use verb=ListSets to view available sets.</p>
-                                <strong>start</strong>
-                                <p>Where to start results list.</p>
-                                <strong>metadataPrefix</strong>
-                                <p>What type of data to return.</p>
-                                <p>Syriaca.org currently supports OAI_DC and TEI. Use values: oai_dc or tei</p>
-                                <strong>resumptionToken</strong>
-                                <p/>
-                            </td>
-                            <td>
-                                <p>Description of service</p>
-                                <p>List Sets.</p>
-                                <p>Example:<pre>http://syriaca.org/modules/oai.xql?verb=ListSets</pre>
-                                </p>
-                                <p>List records (Dublin Core)</p>
-                                <p>Example:<pre>http://syriaca.org/modules/oai.xql?verb=ListRecords&amp;metadataPrefix=oai_dc</pre>
-                                </p>
-                                <p>List records (TEI)</p>
-                                <p>Example:<pre>http://syriaca.org/modules/oai.xql?verb=ListRecords&amp;metadataPrefix=tei</pre>
-                                </p>
-                                <p>Get a single record</p>
-                                <p>Example:<pre>http://syriaca.org/modules/oai.xql?verb=GetRecord&amp;identifier=http://syriaca.org/place/78</pre>
-                                </p>
-                            </td>
-                            <td>GET</td>
+                           
+                           <td>
+                              none
+                              
+                           </td>
+                           
+                           <td>
+                              <strong>verb</strong>
+                              
+                              <p>OAI-PMH verb.</p>
+                              <strong>identifier</strong>
+                              
+                              <p>Syriaca.org record identifier. ex: http://syriaca.org/place/78</p>
+                              <strong>from</strong>
+                              
+                              <p>Date to start harvesting from. Uses publication/last modified date of record.</p>
+                              <strong>until</strong>
+                              
+                              <p>Date to end harvesting from. Uses publication/last modified date of record.</p>
+                              <strong>set</strong>
+                              
+                              <p>Syriaca.org sets are based on Syriaca.org submodules. Use verb=ListSets to view available
+                                 sets.
+                              </p>
+                              <strong>start</strong>
+                              
+                              <p>Where to start results list.</p>
+                              <strong>metadataPrefix</strong>
+                              
+                              <p>What type of data to return.</p>
+                              
+                              <p>Syriaca.org currently supports OAI_DC and TEI. Use values: oai_dc or tei</p>
+                              <strong>resumptionToken</strong>
+                              
+                              <p></p>
+                              
+                           </td>
+                           
+                           <td>
+                              
+                              <p>Description of service</p>
+                              
+                              <p>List Sets.</p>
+                              
+                              <p>Example:<pre>http://syriaca.org/modules/oai.xql?verb=ListSets</pre>
+                                 </p>
+                              
+                              <p>List records (Dublin Core)</p>
+                              
+                              <p>Example:<pre>http://syriaca.org/modules/oai.xql?verb=ListRecords&amp;metadataPrefix=oai_dc</pre>
+                                 </p>
+                              
+                              <p>List records (TEI)</p>
+                              
+                              <p>Example:<pre>http://syriaca.org/modules/oai.xql?verb=ListRecords&amp;metadataPrefix=tei</pre>
+                                 </p>
+                              
+                              <p>Get a single record</p>
+                              
+                              <p>Example:<pre>http://syriaca.org/modules/oai.xql?verb=GetRecord&amp;identifier=http://syriaca.org/place/78</pre>
+                                 </p>
+                              
+                           </td>
+                           
+                           <td>GET</td>
+                           
                         </tr>
-                    </tbody>
-                </table>
+                        
+                     </tbody>
+                     
+                  </table>
+                  
+               </div>
+               
             </div>
-        </div>
-    </div>
-</div>
+            
+         </div>
+         
+      </div>
+      <!-- Footer with Syriaca.org branding -->
+      <footer>
+         
+         <div class="container">
+            <img alt="Creative Commons License" style="border-width:0" src="$app-root/resources/img/cc.png" height="18px" />
+            This work is licensed under a 
+            <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/" style="color:white;">Creative Commons Attribution-NonCommercial 4.0 license (CC BY-NC 4.0)</a>.
+            <br />Copyright © 2011 Beth Mardutho: The Syriac Institute.
+            
+         </div>
+         
+         <!-- Additional Javascript -->
+         <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+         <script type="text/javascript" src="/resources/js/jquery.validate.min.js"></script>
+         <script type="text/javascript" src="/resources/js/main.js"></script>
+         <script type="text/javascript" src="/resources/js/lightslider.min.js"></script>
+         </footer>
+   </body>
+</html>
