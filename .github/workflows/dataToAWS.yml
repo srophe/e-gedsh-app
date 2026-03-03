@@ -1,9 +1,6 @@
 name: Process XML to JSON and HTML For Full Data Set
 
 on:
-  push:
-    branches:
-      - 'main'
   workflow_dispatch:
 
 permissions:
@@ -47,26 +44,30 @@ jobs:
         run: |
           wget https://repo1.maven.org/maven2/net/sf/saxon/Saxon-HE/10.6/Saxon-HE-10.6.jar -O saxon.jar
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      
-      - name: Install Python deps
+      # 3. Convert TEI XML to JSON using XSLT
+      - name: Convert TEI to JSON using XSLT
         run: |
-          pip install --upgrade pip
-          pip install lxml pytest
+          mkdir -p json
+          find ./e-gedsh/data/tei/articles/tei -type f -name '*.xml' | while read file; do
+            id=$(basename "$file" .xml)
+            java -jar saxon.jar -s:"$file" -xsl:resources/xsl/tei2json.xsl -o:"json/${id}.json" 2>> logs/json-errors.log || echo "::warning:: JSON conversion failed for $file"
+          done
+          echo "Converted $(ls json/*.json 2>/dev/null | wc -l) files to JSON"
 
-      - name: Run pytest
-        run: pytest -q --junitxml=test-results.xml || true
-      
-      - name: Run Python TEI->JSON conversion
+      # 4. Combine individual JSON files into combined.json
+      - name: Create combined.json
         run: |
-          mkdir -p outputs
-          python3 tei2json.py e-gedsh/data/tei/articles/tei --outdir outputs --manuscripts manuscripts.json 
-          echo "python process"
+          echo '[' > json/combined.json
+          first=true
+          for file in json/*.json; do
+            [ "$file" = "json/combined.json" ] && continue
+            [ "$first" = true ] && first=false || echo ',' >> json/combined.json
+            cat "$file" >> json/combined.json
+          done
+          echo ']' >> json/combined.json
+          echo "Created combined.json with $(grep -c '"idno"' json/combined.json) entries"
           
-      # 3. Identify XML files (null-safe)
+      # 5. Identify XML files (null-safe)
       - name: Identify XML files (null-safe)
         run: |
           mkdir -p workspace
@@ -75,7 +76,7 @@ jobs:
           tr '\0' '\n' < xml_files.null > xml_files.txt || true
           echo "Found $(wc -l < xml_files.txt) XML files"
 
-      # 5. Configure AWS credentials 
+      # 6. Configure AWS credentials 
       - name: Configure AWS credentials for uploads
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -84,16 +85,16 @@ jobs:
           role-session-name: GitHub-OIDC-batch-upload
 
 
-      # 7. Commit manuscripts.json to repo
+      # 7. Commit JSON files to repo
       - name: Commit processed JSON to repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add manuscripts.json
-          git diff --staged --quiet || git commit -m "Update manuscripts.json from data conversion"
+          git add json/
+          git diff --staged --quiet || git commit -m "Update JSON files from TEI conversion"
           git push
 
-    #   7. Convert XML to HTML in parallel (produce/<id>.html)
+    #   8. Convert XML to HTML in parallel (produce/<id>.html)
       - name: Convert XML to HTML in Parallel (safe, outputs <id>.html)
         run: |
           mkdir -p logs data-html
@@ -110,7 +111,7 @@ jobs:
             fi
           ' _ {}
 
-      # 8. Upload HTML and XML (data/tei/) to S3 via sync (recommended)
+      # 9. Upload HTML and XML (data/tei/) to S3 via sync (recommended)
       - name: Upload HTML and data/tei XML to S3 using aws s3 sync
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -131,7 +132,7 @@ jobs:
           echo "XML files uploaded (data/tei/articles/tei):"
           aws s3 ls s3://${AWS_S3_BUCKET}/data/tei/articles/tei/ --recursive | grep -c '\.xml$' || true
 
-      # Step 8: Make site changes visible for testers 
+      # 10. Make site changes visible for testers 
 
       - name: Invalidate CloudFront Cache
         run: |
@@ -142,7 +143,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }} 
 
-      # 9. Upload logs/artifacts for debugging
+      # 11. Upload logs/artifacts for debugging
       - name: Upload Logs to GitHub Artifacts
         if: always()
         uses: actions/upload-artifact@v4
