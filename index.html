@@ -34,12 +34,7 @@
       
       <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css" />
       
-      <!-- Leaflet -->
-      
-      <!-- Not needed for e-GEDSH
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
-        <link rel="stylesheet" href="/resources/leaflet/leaflet.awesome-markers.css"/>   
-        -->
+
       <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"></script>
       <script type="text/javascript" src="/resources/js/clipboard.min.js"></script>
       
@@ -82,13 +77,13 @@
                   </li>
                   
                   <li class="dropdown" style="margin-left: 1em;">
-                     <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                     <!-- <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
                         <span class="icon-nav">
                            <img src="/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho" />
                            </span>
                         <span class="icon-text">Beth Mardutho</span>  <b class="caret"></b>
                         </a>
-                     
+                      -->
                      <ul class="dropdown-menu pull-right">
                         
                         <li>
@@ -117,9 +112,6 @@
                      
                   </li>
                   
-                  <!-- Shared drop-down menu of all submodules 
-                        <li data-template="app:shared-content" data-template-path="/templates/shared-links.html"/>
-                        -->
                   
                </ul>
                
@@ -184,9 +176,9 @@
                         The encyclopedia currently holds <a href="browse.html">
                            <span data-template="app:entries-count"></span> entries</a> written by <a href="List-Contributors">
                            <span data-template="app:contributors-count"></span> contributors</a>. 
-                        This digital edition is implemented on the Srophé App platform using TEI XML, eXist-db,
+                        The original digital edition was implemented on the Srophé App platform using TEI XML, eXist-db,
                         
-                        and linked open data technologies.
+                        and linked open data technologies. The current version runs on the Gaddel architectural design. 
                         
                      </p>            
                      
@@ -256,35 +248,35 @@
                      <ul>
                         
                         <li>
-                           <a href="Making-e-GEDSH">The Making of the Electronic Edition</a> <em>by George A. Kiraz</em>
+                           <a href="Making-e-GEDSH.html">The Making of the Electronic Edition</a> <em>by George A. Kiraz</em>
                            
                         </li>
                         
                         <li>
-                           <a href="Making-GEDSH-print">The Making of the <em>Gorgias Encyclopedic Dictionary of the Syriac Heritage</em>
+                           <a href="Making-GEDSH-print.html">The Making of the <em>Gorgias Encyclopedic Dictionary of the Syriac Heritage</em>
                               </a> 
                            <em>by George A. Kiraz</em>
                            
                         </li>
                         
                         <li>
-                           <a href="Editors-Preface-print">Editors’ Preface</a>
+                           <a href="Editors-Preface-print.html">Editors’ Preface</a>
                            <em>by Sebastian P. Brock, Aaron M. Butts, George A. Kiraz, and Lucas Van Rompay</em>
                            
                         </li>
                         
                         <li>
-                           <a href="List-Contributors">List of Contributors</a>
+                           <a href="List-Contributors.html">List of Contributors</a>
                            
                         </li>
                         
                         <li>
-                           <a href="Sigila-Abbreviations">Sigla and Abbreviations</a>
+                           <a href="Sigila-Abbreviations.html">Sigla and Abbreviations</a>
                            
                         </li>
                         
                         <li>
-                           <a href="List-of-Figures">Figures and Color Plates</a>
+                           <a href="List-of-Figures.html">Figures and Color Plates</a>
                            
                         </li>
                         
@@ -311,13 +303,13 @@
                         </li>
                         
                         <li>
-                           <a href="List-of-Patriarchs-Churches-Middle-East">List of Patriarchs of the Main Syriac Churches in the Middle East</a>
+                           <a href="List-of-Patriarchs-Churches-Middle-East.html">List of Patriarchs of the Main Syriac Churches in the Middle East</a>
                            <em>by Samuel Burleson and Lucas Van Rompay</em>
                            
                         </li>
                         
                         <li>
-                           <a href="Manuscript-Index">Manuscript Index</a>
+                           <a href="Manuscript-Index.html">Manuscript Index</a>
                            
                         </li>                        
                         
@@ -343,7 +335,7 @@
             
             <hr />
             
-            <div class="container">
+            <div class="container center">
                
                <ul class="list-inline funding" style="margin-left:2em;">
                   
@@ -359,22 +351,9 @@
                         <img src="resources/img/gorgias-press.png" alt="Gorgias Press " height="70px" />
                         </a>
                      
-                  </li> 
+                  </li>               
                   
-                  <li>
-                     <a href="https://github.com/srophe/srophe-eXist-app">
-                        <img src="resources/img/icons/srophe-logo.png" alt="Powered by Srophe" height="80px" />
-                        </a>
-                     
-                  </li>                
-                  
-                  <li>
-                     <a href="http://www.balzan.org/en">
-                        <img src="resources/img/marchioBALZANblu_bianco.png" alt="Fondazione Internazionale Balzan" height="65px" /> 
-                        Fondazione Internazionale
-                        Balzan </a>
-                     
-                  </li>
+
                   
                   <li>
                      <a href="http://www.neh.gov/">
@@ -396,7 +375,7 @@
                         </a>
                      
                   </li>
-                  
+                  <br/>
                   <li>
                      <a href="http://www.library.vanderbilt.edu/">
                         <img src="resources/img/JAH_LIBRARIES.png" alt="Jean and Alexander Heard Library, Vanderbilt University" height="50px" />
@@ -410,8 +389,20 @@
                         </a>
                      
                   </li>
+                  <li>
+                     <a href="https://www.library.vanderbilt.edu/digital-lab/">
+                        <img src="resources/img/DigitalLab-logo.jpeg" alt="Digital Lab" height="60px" />
+                        </a>
+                     
+                  </li>
+                                    <li>
+                     <a href="http://www.balzan.org/en">
+                        <img src="resources/img/marchioBALZANblu_bianco.png" alt="Fondazione Internazionale Balzan" height="65px" /> 
+                        Fondazione Internazionale
+                        Balzan </a>
+                     
+                  </li>
                   
-                  <!-- Test gitwebhooks-->
                   
                </ul>
                
@@ -420,22 +411,7 @@
          </div>
          
       </div>
-      <!-- Footer with Syriaca.org branding -->
-      <footer>
-         
-         <div class="container">
-            <img alt="Creative Commons License" style="border-width:0" src="$app-root/resources/img/cc.png" height="18px" />
-            This work is licensed under a 
-            <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/" style="color:white;">Creative Commons Attribution-NonCommercial 4.0 license (CC BY-NC 4.0)</a>.
-            <br />Copyright © 2011 Beth Mardutho: The Syriac Institute.
-            
-         </div>
-         
-         <!-- Additional Javascript -->
-         <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
-         <script type="text/javascript" src="/resources/js/jquery.validate.min.js"></script>
-         <script type="text/javascript" src="/resources/js/main.js"></script>
-         <script type="text/javascript" src="/resources/js/lightslider.min.js"></script>
-         </footer>
+
    </body>
+   <script src="/resources/js/footer.js"></script>
 </html>

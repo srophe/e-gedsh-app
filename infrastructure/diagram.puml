@@ -1,0 +1,86 @@
+@startuml
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam roundcorner 5
+skinparam packageStyle rectangle
+
+skinparam package {
+  BackgroundColor #f8f9fa
+  BorderColor #495057
+  FontColor #212529
+  FontStyle bold
+}
+
+skinparam component {
+  BackgroundColor #e9ecef
+  BorderColor #6c757d
+  FontColor #212529
+}
+
+skinparam arrow {
+  Color #495057
+  FontColor #495057
+}
+
+skinparam note {
+  BackgroundColor #fff3cd
+  BorderColor #ffc107
+  FontColor #212529
+}
+
+title e-GEDSH Application Architecture
+
+package "GitHub" {
+  [e-gedsh-app\nCode Repository] as AppRepo
+  [e-gedsh\nData Repository] as DataRepo
+  [GitHub Actions\nCI/CD] as Actions
+}
+
+package "AWS Infrastructure" {
+  [S3 Bucket\nStatic Hosting] as S3
+  [CloudFront\nCDN] as CloudFront
+  [IAM Role\nOIDC] as IAM
+}
+
+package "Static Site" {
+  [index.html] as Index
+  [search.html] as Search
+  [CSS/JS/Images] as Assets
+  [json/combined.json] as JSON
+}
+
+package "Build Process" {
+  [TEI XML Files] as TEI
+  [Saxon XSLT\nProcessor] as Saxon
+  [tei2json.xsl] as XSLT
+  [Individual JSON] as IndJSON
+  [Combine Script] as Combine
+}
+
+AppRepo --> Actions : triggers
+DataRepo --> Actions : checkout
+Actions --> Saxon : runs
+TEI --> Saxon : input
+XSLT --> Saxon : transform
+Saxon --> IndJSON : generates
+IndJSON --> Combine : input
+Combine --> JSON : creates
+Actions --> S3 : deploy
+Actions --> IAM : authenticate
+S3 --> CloudFront : origin
+CloudFront --> Index : serves
+CloudFront --> Search : serves
+CloudFront --> Assets : serves
+CloudFront --> JSON : serves
+
+note right of CloudFront
+  Client-side search
+  20 results per page
+  Field-specific filtering
+end note
+
+note bottom : e-GEDSH Static Site Architecture
+@enduml

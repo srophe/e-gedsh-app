@@ -1,0 +1,152 @@
+name: Process XML to JSON and HTML For Full Data Set
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  process_and_transform:
+    runs-on: ubuntu-latest
+    steps:
+
+      # 1. Checkout code + data repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout British Library data repository
+        uses: actions/checkout@v4
+        with:
+          repository: srophe/e-gedsh
+          ref: main
+          path: e-gedsh
+          
+      # 2. Java + Saxon
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Check cache for Saxon JAR
+        id: cache-saxon
+        uses: actions/cache@v4
+        with:
+          path: saxon.jar
+          key: saxon-HE-10.6
+
+      - name: Download Saxon if not cached
+        if: steps.cache-saxon.outputs.cache-hit != 'true'
+        run: |
+          wget https://repo1.maven.org/maven2/net/sf/saxon/Saxon-HE/10.6/Saxon-HE-10.6.jar -O saxon.jar
+
+      # 3. Convert TEI XML to JSON using XSLT
+      - name: Convert TEI to JSON using XSLT
+        run: |
+          mkdir -p json
+          find ./e-gedsh/data/tei/articles/tei -type f -name '*.xml' | while read file; do
+            id=$(basename "$file" .xml)
+            java -jar saxon.jar -s:"$file" -xsl:resources/xsl/tei2json.xsl -o:"json/${id}.json" 2>> logs/json-errors.log || echo "::warning:: JSON conversion failed for $file"
+          done
+          echo "Converted $(ls json/*.json 2>/dev/null | wc -l) files to JSON"
+
+      # 4. Combine individual JSON files into combined.json
+      - name: Create combined.json
+        run: |
+          echo '[' > json/combined.json
+          first=true
+          for file in json/*.json; do
+            [ "$file" = "json/combined.json" ] && continue
+            [ "$first" = true ] && first=false || echo ',' >> json/combined.json
+            cat "$file" >> json/combined.json
+          done
+          echo ']' >> json/combined.json
+          echo "Created combined.json with $(grep -c '"idno"' json/combined.json) entries"
+          
+      # 5. Identify XML files (null-safe)
+      - name: Identify XML files (null-safe)
+        run: |
+          mkdir -p workspace
+          # XML path in the data repo
+          find ./e-gedsh/data/tei/articles/tei -type f -name '*.xml' -print0 > xml_files.null || true
+          tr '\0' '\n' < xml_files.null > xml_files.txt || true
+          echo "Found $(wc -l < xml_files.txt) XML files"
+
+      # 6. Configure AWS credentials 
+      - name: Configure AWS credentials for uploads
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_GADDEL_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHub-OIDC-batch-upload
+
+
+      # 7. Commit JSON files to repo
+      - name: Commit processed JSON to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add json/
+          git diff --staged --quiet || git commit -m "Update JSON files from TEI conversion"
+          git push
+
+    #   8. Convert XML to HTML in parallel (produce/<id>.html)
+      - name: Convert XML to HTML in Parallel (safe, outputs <id>.html)
+        run: |
+          mkdir -p logs data-html
+          PARALLEL=$(nproc || echo 2)
+
+          cat xml_files.null | xargs -0 -n1 -P "$PARALLEL" -I {} sh -c '
+            file="$1"
+            id=$(basename "$file" .xml)
+            out_path="data-html/${id}.html"
+            mkdir -p "$(dirname "$out_path")"
+            echo "Converting $file -> $out_path"
+            if ! java -jar saxon.jar -s:"$file" -xsl:resources/xsl/tei2html.xsl -o:"$out_path" 2>> logs/errors.log; then
+              echo "::warning:: HTML transformation failed for $file" >> logs/errors.log
+            fi
+          ' _ {}
+
+      # 9. Upload HTML and XML (data/tei/) to S3 via sync (recommended)
+      - name: Upload HTML and data/tei XML to S3 using aws s3 sync
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3 }}
+        run: |
+          # Sync HTMLs to s3://... so keys are <id>.html
+          aws s3 sync data-html/ s3://${AWS_S3_BUCKET}/ \
+            --exclude "*" --include "*.html" \
+            --exact-timestamps || echo "s3 sync completed (or no files)"
+
+          # Sync TEI XMLs to s3://.../data/tei/ (source is data repo)
+          aws s3 sync e-gedsh/data/tei/articles/tei/ s3://${AWS_S3_BUCKET}/data/tei/ \
+            --exclude "*" --include "*.xml" || echo "s3 sync data completed"
+
+          # quick counts for logs
+          echo "HTML files uploaded:"
+          aws s3 ls s3://${AWS_S3_BUCKET}/ --recursive | grep -c '\.html$' || true
+          echo "XML files uploaded (data/tei/articles/tei):"
+          aws s3 ls s3://${AWS_S3_BUCKET}/data/tei/articles/tei/ --recursive | grep -c '\.xml$' || true
+
+      # 10. Make site changes visible for testers 
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.GADDEL_CLOUDFRONT_DISTRIBUTION_ID}} \
+            --paths "/*"
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }} 
+
+      # 11. Upload logs/artifacts for debugging
+      - name: Upload Logs to GitHub Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-logs
+          path: logs

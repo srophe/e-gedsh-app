@@ -26,7 +26,6 @@
       
       <link rel="stylesheet" type="text/css" href="/resources/css/main.css" />
       
-      <!--<link rel="stylesheet" type="text/css" href="/resources/css/syriaca.css"/>-->
       
       <link rel="stylesheet" type="text/css" href="/resources/css/lightslider.css" />
       
@@ -34,12 +33,7 @@
       
       <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css" />
       
-      <!-- Leaflet -->
-      
-      <!-- Not needed for e-GEDSH
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
-        <link rel="stylesheet" href="/resources/leaflet/leaflet.awesome-markers.css"/>   
-        -->
+
       <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"></script>
       <script type="text/javascript" src="/resources/js/clipboard.min.js"></script>
       
@@ -47,6 +41,7 @@
       <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"></script>
       <script type="text/javascript" src="/resources/js/jquery.smartmenus.min.js"></script>
       <script src="https://www.google.com/recaptcha/api.js"></script>
+      <script type="text/javascript" src="/resources/js/search.js"></script>
       </head>
    <body id="body">
       <nav class="navbar navbar-default navbar-fixed-top" role="navigation" data-template="app:fix-links">
@@ -161,16 +156,10 @@
          
          <div class="container top-padding">
             <form method="get" action="search.html" style="margin-top:2em;" class="form-horizontal indent" role="form">
-               <div class="well well-small"><button type="button" class="btn btn-info pull-right" data-toggle="collapse" data-target="#searchTips">
-                  Search Help <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button>&nbsp;<p></p>
+               <div class="well well-small">
                   <div class="panel panel-default collapse" id="searchTips">
                      <div class="panel-body">
-                        <h3 class="panel-title">Search Tips</h3>
-                        <p>For best results, users are recommended to use the <a href="search.html">advanced search</a> functions.
-                           Search results can also be improved by the use of the the following Boolean search characters:</p>
-                        <h4>Wildcard Characters:</h4>
-                        <p>Given the prevalence of variant spellings in names, using Wildcard Characters may help.</p>
-                        <p>
+              
                            <strong>"?"</strong> can be inserted as a variant for any single character.</p>
                         <div class="indent">
                            <p>Thus a search for:
@@ -248,9 +237,7 @@
                               <span class="glyphicon glyphicon-search"></span>&nbsp;
                            </a>
                         </div>
-                        finds three results in which the words "Jacob" and "Bishop" occur within two words of each other: "Jacob , 
-                        bishop of Nisibin", "Jacob, bishop of Phesilta", and "Jacob , bishop of ‛Ānah" while a 
-                        simple search for "Jacob Bishop" returns many more results.<p></p>
+
                      </div>
                   </div>
                   <div class="well well-small" style="background-color:white;">
@@ -259,27 +246,27 @@
                            <div class="form-group"><label for="q" class="col-sm-2 col-md-3  control-label">Keyword: </label>
                               <div class="col-sm-10 col-md-9 ">
                                  <div class="input-group"><input type="text" id="qs" name="q" class="form-control keyboard">
-                                    <div class="input-group-btn"><input type="text" id="keywordProximity" name="keywordProximity" class="form-control"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Proximity Operator">
+                                    <!-- <div class="input-group-btn"><input type="text" id="keywordProximity" name="keywordProximity" class="form-control"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Proximity Operator">
                                        &nbsp; Proximity *
-                                    </button></div>
+                                    </button></div> -->
                                  </div>
                               </div>
                            </div>
-                           <div class="form-group"><label for="author" class="col-sm-2 col-md-3  control-label">Contributor: </label>
-                              <div class="col-sm-10 col-md-9 "><input type="text" id="author" name="author" class="form-control"></div>
-                           </div><!-- Place Name-->
+                           <div class="form-group"><label for"title" class="col-sm-2 col-md-3  control-label">Title: </label>
+                              <div class="col-sm-10 col-md-9 "><input type="text" id="title" name="title" class="form-control"></div>
+                           </div>
                            <div class="form-group"><label for="placeName" class="col-sm-2 col-md-3  control-label">Place Name: </label>
                               <div class="col-sm-10 col-md-9 "><input type="text" id="placeName" name="placeName" class="form-control"></div>
                            </div>
                            <div class="form-group"><label for="persName" class="col-sm-2 col-md-3  control-label">Person Name: </label>
                               <div class="col-sm-10 col-md-9 "><input type="text" id="persName" name="persName" class="form-control"></div>
                            </div>
-                           <div class="form-group"><label for="bibl" class="col-sm-2 col-md-3  control-label">Sources: </label>
+                           <!-- <div class="form-group"><label for="bibl" class="col-sm-2 col-md-3  control-label">Sources: </label>
                               <div class="col-sm-10 col-md-9 "><input type="text" id="bibl" name="bibl" class="form-control"></div>
-                           </div>
+                           </div> -->
                            <div class="form-group"><label for="uri" class="col-sm-2 col-md-3  control-label">URI <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Searches the entire XML data and returns the entries that reference the specified URI(s)."></span>: </label>
                               <div class="col-sm-10 col-md-9 "><input type="text" id="uri" name="uri" class="form-control">
-                                 <p class="hint">*Enter e-GEDSH or Syriaca URI, ex. http://gedsh.bethmardutho.org/Aba, or http://srophe.org/srophe/person/13</p>
+                                 <p class="hint">*Enter e-GEDSH URI in URI search, ex. https://gedsh.bethmardutho.org/Aba-I, or search in keyword field for related Syriaca URIs ex. http://syriaca.org/person/306</p>
                               </div>
                            </div>
                         </div>
@@ -289,25 +276,12 @@
                      <button type="reset" class="btn">Clear</button></div><br class="clearfix"><br></div>
             </form>
             
-         </div>
-         
-      </div>
-      <!-- Footer with Syriaca.org branding -->
-      <footer>
-         
-         <div class="container">
-            <img alt="Creative Commons License" style="border-width:0" src="$app-root/resources/img/cc.png" height="18px" />
-            This work is licensed under a 
-            <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/" style="color:white;">Creative Commons Attribution-NonCommercial 4.0 license (CC BY-NC 4.0)</a>.
-            <br />Copyright © 2011 Beth Mardutho: The Syriac Institute.
+            <div id="search-results" style="margin-top:2em;"></div>
             
          </div>
          
-         <!-- Additional Javascript -->
-         <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
-         <script type="text/javascript" src="/resources/js/jquery.validate.min.js"></script>
-         <script type="text/javascript" src="/resources/js/main.js"></script>
-         <script type="text/javascript" src="/resources/js/lightslider.min.js"></script>
-         </footer>
+      </div>
+      
    </body>
+   <script src="resources/js/footer.js"></script>
 </html>

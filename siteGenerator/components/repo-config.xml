@@ -9,7 +9,7 @@
         <description>e-GEDSH is an electronic version of the 2011 edition of the Gorgias Encyclopedic Dictionary of the Syriac Heritage, published by Gorgias Press on behalf of the Beth Mardutho: The Syriac Institute. e-GEDSH is the result of the collaborative efforts of many scholars. The encyclopedia currently holds 622 entries written by 76 contributors. This digital edition is implemented on the Srophé App platform using TEI XML, eXist-db, and linked open data technologies.</description>
         <!-- Contact email -->
         <contact></contact>
-        <!-- Logo name (assumes path to logo is $app-root/resources/images/) -->
+        <!-- Logo name (assumes incorrectly that the path to logo is $app-root/resources/images/) -->
         <logo>srophe.svg</logo>
         <!-- Web Site URL -->
         <url>https://gedsh.bethmardutho.org/</url>
