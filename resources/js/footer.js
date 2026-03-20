@@ -6,6 +6,9 @@ const footerHTML = `<footer style="padding: 1em 0; margin: 0; width: 100%; displ
 <img alt="Creative Commons License" style="border-width:0" src="resources/img/cc.png" height="18px" /> 
 
 </div>
+         <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+         <script type="text/javascript" src="/resources/js/jquery.validate.min.js"></script>
+         <script type="text/javascript" src="/resources/js/main.js"></script>
 </footer>`;
 
 document.addEventListener('DOMContentLoaded', function() {
