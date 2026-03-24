@@ -11,6 +11,14 @@ const footerHTML = `<footer style="padding: 1em 0; margin: 0; width: 100%; displ
          <script type="text/javascript" src="/resources/js/main.js"></script>
 </footer>`;
 
+const bootstrapScript = document.createElement('script');
+const jqueryScript = document.createElement('script');
+const mainScript = document.createElement('script');
+
+
 document.addEventListener('DOMContentLoaded', function() {
     document.body.insertAdjacentHTML('beforeend', footerHTML);
+    document.body.insertAdjacentHTML('beforeend', bootstrapScript);
+    document.body.insertAdjacentHTML('beforeend', jqueryScript);
+    document.body.insertAdjacentHTML('beforeend', mainScript);
 });
