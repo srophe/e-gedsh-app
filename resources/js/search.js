@@ -95,7 +95,7 @@ function processUrlParams() {
     q: { id: ['q', 'qs'], field: 'all' },
     persName: { id: ['persName'], field: 'persName' },
     placeName: { id: ['placeName'], field: 'placeName' },
-    uri: { id: ['uri'], field: 'uri' },
+    uri: { id: ['uri'], field: 'all' },
     title: { id: ['title'], field: 'title' }
   };
   
