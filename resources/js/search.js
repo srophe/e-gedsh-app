@@ -10,6 +10,17 @@ fetch('/json/combined.json')
     processUrlParams();
   });
 
+function extractContributor(persName) {
+  if (!Array.isArray(persName) || !persName.length) return '';
+  return persName[persName.length - 1].replace(/\s+/g, ' ').trim();
+}
+
+function extractDate(fullText) {
+  if (!fullText) return '';
+  const m = fullText.match(/\b(?:person|place|work)\b[^()]*(\([^)]+\))/);
+  return m ? m[1].replace(/\s+/g, ' ').replace(/\(\s+/, '(').replace(/\s+\)/, ')') : '';
+}
+
 function performSearch(query, field = 'all') {
   if (!query || query.length < 2) return [];
   const lowerQuery = query.toLowerCase();
@@ -59,14 +70,17 @@ function displayResults(page = 1) {
   
   let html = `<div style="display:flex;align-items:center;justify-content:space-between;"><p style="margin:0;">Found ${allResults.length} results (showing ${start + 1}-${Math.min(end, allResults.length)})</p>${paginationNav}</div>`;
   
-  html += pageResults.map(entry => `
+  html += pageResults.map(entry => {
+    const contributor = extractContributor(entry.persName);
+    const date = extractDate(entry.fullText);
+    return `
     <div class="search-result" style="margin-bottom:1.5em;border-bottom:1px solid #eee;padding-bottom:1em;">
-      <h3><a href="${entry.uri}">${entry.title || entry.displayTitleEnglish}</a></h3>
-      ${entry.persName && entry.persName.length ? `<p><strong>Persons:</strong> ${entry.persName.join(', ')}</p>` : ''}
-      ${entry.placeName && entry.placeName.length ? `<p><strong>Places:</strong> ${entry.placeName.join(', ')}</p>` : ''}
-      <p>${(entry.fullText || '').substring(0, 300)}...</p>
+      <h3><a href="${entry.uri}">${entry.title || entry.displayTitleEnglish}</a>${date ? ` ${date}` : ''}</h3>
+      ${contributor ? `<p>Contributor: ${contributor}</p>` : ''}
+      <p>URI: <a href="${entry.uri}">${entry.uri || ''}</a></p>
     </div>
-  `).join('');
+  `;
+  }).join('');
   
   if (totalPages > 1) {
     html += paginationNav.replace('display:inline-block;margin-left:20px;', '').replace('margin:0;', '');

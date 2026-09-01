@@ -50,7 +50,7 @@ jobs:
           mkdir -p json
           find ./e-gedsh/data/tei/articles/tei -type f -name '*.xml' | while read file; do
             id=$(basename "$file" .xml)
-            java -jar saxon.jar -s:"$file" -xsl:resources/xsl/tei2json.xsl -o:"json/${id}.json" 2>> logs/json-errors.log || echo "::warning:: JSON conversion failed for $file"
+            java -jar saxon.jar -s:"$file" -xsl:resources/xsl/json.xsl -o:"json/${id}.json" 2>> logs/json-errors.log || echo "::warning:: JSON conversion failed for $file"
           done
           echo "Converted $(ls json/*.json 2>/dev/null | wc -l) files to JSON"
 
