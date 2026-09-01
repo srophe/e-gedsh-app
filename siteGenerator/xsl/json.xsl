@@ -189,33 +189,43 @@
             </string>    
         </xsl:if>
     </xsl:template>
+    <!-- Contributor: article author. Output as a single string ("Forename Surname").
+         Prefers the entry byline; falls back to the teiHeader author persName. -->
     <xsl:template match="*:fields[@function = 'contributor']">
         <xsl:param name="doc"/>
-        <xsl:if test="$doc/descendant::tei:div[@type='entry']/descendant::tei:byline">
-            <array key="{.}" xmlns="http://www.w3.org/2005/xpath-functions">      
-                <xsl:for-each-group select="$doc/descendant::tei:div[@type='entry']/descendant::tei:byline" group-by=".">
-                    <xsl:variable name="lastNameFirst">
-                        <xsl:choose>
-                            <xsl:when test="tei:surname">
-                                <xsl:value-of select="concat(tei:surname, ' ', tei:forename)"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="normalize-space(string-join(descendant-or-self::text(),' '))"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:variable>
-                    <string xmlns="http://www.w3.org/2005/xpath-functions">
-                        <xsl:choose>
-                            <xsl:when test="starts-with(@xml:lang,'sy')">
-                            &lt;span lang="syr" dir="rtl"&gt;<xsl:value-of select="$lastNameFirst"/>&lt;/span&gt;
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="$lastNameFirst"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </string>
-                </xsl:for-each-group>
-            </array>
+        <xsl:variable name="byline" select="$doc/descendant::tei:div[@type='entry']/descendant::tei:byline[1]"/>
+        <xsl:variable name="author" select="$doc/descendant::tei:teiHeader/descendant::tei:titleStmt/tei:author[1]"/>
+        <xsl:variable name="persName" select="($byline/descendant::tei:persName[1], $author/descendant::tei:persName[1])[1]"/>
+        <xsl:variable name="field">
+            <xsl:choose>
+                <xsl:when test="$persName/tei:surname or $persName/tei:forename">
+                    <xsl:value-of select="normalize-space(concat($persName/tei:forename, ' ', $persName/tei:surname))"/>
+                </xsl:when>
+                <xsl:when test="$byline">
+                    <xsl:value-of select="normalize-space(string-join($byline/descendant-or-self::text(),' '))"/>
+                </xsl:when>
+                <xsl:when test="$author">
+                    <xsl:value-of select="normalize-space(string-join($author/descendant-or-self::text(),' '))"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:if test="$field != ''">
+            <string key="{.}" xmlns="http://www.w3.org/2005/xpath-functions">
+                <xsl:value-of select="$field"/>
+            </string>
+        </xsl:if>
+    </xsl:template>
+
+    <!-- Infobox: the date/qualifier string, e.g. "(ca. 400)" or "(d. 552) [Ch. of E.]" -->
+    <xsl:template match="*:fields[@function = 'infobox']">
+        <xsl:param name="doc"/>
+        <xsl:variable name="field">
+            <xsl:value-of select="normalize-space(string-join($doc/descendant::tei:div[@type='entry']/tei:ab[@type='infobox']//text(),''))"/>
+        </xsl:variable>
+        <xsl:if test="$field != ''">
+            <string key="{.}" xmlns="http://www.w3.org/2005/xpath-functions">
+                <xsl:value-of select="$field"/>
+            </string>
         </xsl:if>
     </xsl:template>
     <xsl:template match="*:fields[@function = 'persName']">
@@ -245,10 +255,12 @@
             </array>
         </xsl:if>
     </xsl:template>
+    <!-- Placeholder: sources are not currently emitted. This is a no-op rather
+         than a literal "TEST" array, which would be invalid for xml-to-json
+         (an <array> may not contain text content) and abort the transform. -->
     <xsl:template match="*:fields[@function = 'sources']">
         <xsl:param name="doc"/>
         <xsl:param name="id"/>
-        <array key="{.}" xmlns="http://www.w3.org/2005/xpath-functions">TEST</array>
     </xsl:template>
     <xsl:template match="*:fields[@function = 'sources2']">
         <xsl:param name="doc"/>

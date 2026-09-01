@@ -10,12 +10,20 @@ fetch('/json/combined.json')
     processUrlParams();
   });
 
-function extractContributor(persName) {
+function getContributor(entry) {
+  // Prefer the dedicated contributor field emitted from the TEI author/byline.
+  if (entry.contributor) return entry.contributor.replace(/\s+/g, ' ').trim();
+  // Fallback for older JSON: last persName entry.
+  const persName = entry.persName;
   if (!Array.isArray(persName) || !persName.length) return '';
   return persName[persName.length - 1].replace(/\s+/g, ' ').trim();
 }
 
-function extractDate(fullText) {
+function getDate(entry) {
+  // Prefer the dedicated infobox field, e.g. "(ca. 400)" or "(d. 552) [Ch. of E.]".
+  if (entry.infobox) return entry.infobox.replace(/\s+/g, ' ').replace(/\(\s+/, '(').replace(/\s+\)/, ')').trim();
+  // Fallback for older JSON: scrape the date out of fullText.
+  const fullText = entry.fullText;
   if (!fullText) return '';
   const m = fullText.match(/\b(?:person|place|work)\b[^()]*(\([^)]+\))/);
   return m ? m[1].replace(/\s+/g, ' ').replace(/\(\s+/, '(').replace(/\s+\)/, ')') : '';
@@ -71,13 +79,14 @@ function displayResults(page = 1) {
   let html = `<div style="display:flex;align-items:center;justify-content:space-between;"><p style="margin:0;">Found ${allResults.length} results (showing ${start + 1}-${Math.min(end, allResults.length)})</p>${paginationNav}</div>`;
   
   html += pageResults.map(entry => {
-    const contributor = extractContributor(entry.persName);
-    const date = extractDate(entry.fullText);
+    const contributor = getContributor(entry);
+    const date = getDate(entry);
+    const uri = entry.idno || entry.uri || '';
     return `
     <div class="search-result" style="margin-bottom:1.5em;border-bottom:1px solid #eee;padding-bottom:1em;">
-      <h3><a href="${entry.uri}">${entry.title || entry.displayTitleEnglish}</a>${date ? ` ${date}` : ''}</h3>
+      <h3><a href="${uri}">${entry.title || entry.displayTitleEnglish}</a>${date ? ` ${date}` : ''}</h3>
       ${contributor ? `<p>Contributor: ${contributor}</p>` : ''}
-      <p>URI: <a href="${entry.uri}">${entry.uri || ''}</a></p>
+      <p>URI: <a href="${uri}">${uri}</a></p>
     </div>
   `;
   }).join('');
@@ -101,6 +110,7 @@ function processUrlParams() {
     q: urlParams.get('q'),
     persName: urlParams.get('persName'),
     placeName: urlParams.get('placeName'),
+    contributor: urlParams.get('contributor'),
     uri: urlParams.get('uri'),
     title: urlParams.get('title')
   };
@@ -109,6 +119,7 @@ function processUrlParams() {
     q: { id: ['q', 'qs'], field: 'all' },
     persName: { id: ['persName'], field: 'persName' },
     placeName: { id: ['placeName'], field: 'placeName' },
+    contributor: { id: ['contributor'], field: 'contributor' },
     uri: { id: ['uri'], field: 'all' },
     title: { id: ['title'], field: 'title' }
   };
