@@ -2,6 +2,10 @@ let searchData = [];
 let allResults = [];
 let currentPage = 1;
 const perPage = 20;
+// Query terms currently being searched, used to highlight matches in results.
+let activeTerms = [];
+// Number of characters of context to show on each side of a match in the snippet.
+const snippetContext = 120;
 
 fetch('/json/combined.json')
   .then(response => response.json())
@@ -27,6 +31,63 @@ function getDate(entry) {
   if (!fullText) return '';
   const m = fullText.match(/\b(?:person|place|work)\b[^()]*(\([^)]+\))/);
   return m ? m[1].replace(/\s+/g, ' ').replace(/\(\s+/, '(').replace(/\s+\)/, ')') : '';
+}
+
+// Escape text for safe insertion into HTML.
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Escape a string for use as a literal inside a RegExp.
+function escapeRegExp(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Wrap occurrences of the active search terms in <mark> tags.
+// Operates on already HTML-escaped text so the result is safe to inject.
+function highlightTerms(escapedText) {
+  if (!activeTerms.length) return escapedText;
+  // Longest terms first so overlapping matches prefer the fuller term.
+  const parts = activeTerms
+    .slice()
+    .sort((a, b) => b.length - a.length)
+    .map(escapeRegExp);
+  const re = new RegExp(`(${parts.join('|')})`, 'gi');
+  return escapedText.replace(re, '<mark>$1</mark>');
+}
+
+// Build a fullText snippet centered on the first matching term, with the
+// matched terms highlighted. Returns '' when there is no fullText.
+function buildSnippet(entry) {
+  const fullText = (entry.fullText || '').replace(/\s+/g, ' ').trim();
+  if (!fullText) return '';
+
+  let start = 0;
+  let end = Math.min(fullText.length, snippetContext * 2);
+
+  if (activeTerms.length) {
+    const lower = fullText.toLowerCase();
+    let idx = -1;
+    for (const term of activeTerms) {
+      const found = lower.indexOf(term.toLowerCase());
+      if (found !== -1 && (idx === -1 || found < idx)) idx = found;
+    }
+    if (idx !== -1) {
+      start = Math.max(0, idx - snippetContext);
+      end = Math.min(fullText.length, idx + snippetContext);
+    }
+  }
+
+  let snippet = fullText.slice(start, end);
+  if (start > 0) snippet = '… ' + snippet;
+  if (end < fullText.length) snippet = snippet + ' …';
+
+  return highlightTerms(escapeHtml(snippet));
 }
 
 function performSearch(query, field = 'all') {
@@ -82,11 +143,14 @@ function displayResults(page = 1) {
     const contributor = getContributor(entry);
     const date = getDate(entry);
     const uri = entry.idno || entry.uri || '';
+    const snippet = buildSnippet(entry);
     return `
     <div class="search-result" style="margin-bottom:1.5em;border-bottom:1px solid #eee;padding-bottom:1em;">
       <h3><a href="${uri}">${entry.title || entry.displayTitleEnglish}</a>${date ? ` ${date}` : ''}</h3>
       ${contributor ? `<p>Contributor: ${contributor}</p>` : ''}
       <p>URI: <a href="${uri}">${uri}</a></p>
+      ${snippet ? `<p class="search-snippet" style="color:#333;">${snippet}</p>` : ''}
+      
     </div>
   `;
   }).join('');
@@ -124,12 +188,20 @@ function processUrlParams() {
     title: { id: ['title'], field: 'title' }
   };
   
+  // Reset the terms highlighted in result snippets for this search.
+  activeTerms = [];
+
   let combinedResults = [];
   for (const [param, value] of Object.entries(params)) {
     if (value) {
       const config = fieldMap[param];
       const input = config.id.map(id => document.getElementById(id)).find(el => el);
       if (input) input.value = value;
+      // Highlight the query in the fullText snippet, except for URI lookups.
+      if (param !== 'uri') {
+        const term = value.trim();
+        if (term.length >= 2) activeTerms.push(term);
+      }
       const results = performSearch(value, config.field);
       combinedResults = combinedResults.length ? combinedResults.filter(r => results.includes(r)) : results;
     }
