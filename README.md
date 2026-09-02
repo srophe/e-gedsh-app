@@ -27,6 +27,11 @@ e-gedsh-app/
 ├── json/
 │   ├── combined.json      # Aggregated search data
 │   └── *.json            # Individual entry files
+├── siteGenerator/
+│   ├── build-json.sh      # Local TEI → JSON build script
+│   ├── xsl/json.xsl       # TEI → JSON transform (XSLT)
+│   └── components/
+│       └── repo-config.xml # Search field configuration
 └── infrastructure/
     ├── cloudformation.yml # AWS infrastructure
     └── README.md          # Deployment guide
@@ -100,19 +105,71 @@ To run the eXist-db version in a container:
 
 ## Search Data
 
-Search data is sourced from [e-gedsh](https://github.com/srophe/e-gedsh) repository and combined into `json/combined.json`.
+Search data is sourced from the [e-gedsh](https://github.com/srophe/e-gedsh) repository (TEI XML) and transformed into per-entry JSON files plus an aggregated `json/combined.json` that the search UI loads client-side.
 
 ### JSON Structure
 ```json
 {
   "fullText": "...",
   "title": "...",
+  "contributor": "Lucas Van Rompay",
   "idno": "https://gedsh.bethmardutho.org/...",
   "displayTitleEnglish": "...",
+  "infobox": "(ca. 400)",
   "persName": ["..."],
   "placeName": ["..."]
 }
 ```
+
+- `contributor` — the article author (from the TEI `byline`/`author`), shown in search results.
+- `infobox` — the entry's date/qualifier string (from `<ab type="infobox">`, e.g. `(ca. 400)`), shown next to the title.
+
+### Generating the JSON Locally
+
+The JSON is produced from the TEI XML by an XSLT stylesheet (`siteGenerator/xsl/json.xsl`) run through Saxon. The same transform runs in CI (`.github/workflows/dataToAWS.yml`); the steps below reproduce it on your machine.
+
+**Requirements**
+
+- Java 11+ (`java -version` to check)
+- The TEI source data checked out alongside this repo. The build script defaults to `../e-gedsh/data/tei/articles/tei`:
+  ```bash
+  # from the parent directory of e-gedsh-app
+  git clone https://github.com/srophe/e-gedsh.git
+  ```
+- Saxon-HE 10.6 — the build script downloads it automatically to `/tmp/saxon.jar` if it isn't present.
+
+**Build script (recommended)**
+
+```bash
+# from the e-gedsh-app root
+siteGenerator/build-json.sh
+```
+
+This converts every TEI article to `json/<id>.json`, skips non-article files (front/back matter), and rebuilds `json/combined.json`. To point at a TEI directory somewhere else, pass it as the first argument:
+
+```bash
+siteGenerator/build-json.sh /path/to/e-gedsh/data/tei/articles/tei
+```
+
+Set `SAXON_JAR` to reuse an existing Saxon jar instead of downloading one:
+
+```bash
+SAXON_JAR=/path/to/saxon.jar siteGenerator/build-json.sh
+```
+
+**Manual invocation (single file)**
+
+To transform one entry and print it to stdout:
+
+```bash
+java -jar /tmp/saxon.jar \
+  -s:/path/to/e-gedsh/data/tei/articles/tei/Aba.xml \
+  -xsl:siteGenerator/xsl/json.xsl
+```
+
+The stylesheet locates its field configuration (`siteGenerator/components/repo-config.xml`) relative to itself, so no extra parameters are required regardless of the working directory. To read the config from a different app root instead, pass `staticSitePath=<app-root>`.
+
+After regenerating, restart your local web server (or hard-refresh) so the browser picks up the new `json/combined.json`.
 
 ## Deployment
 
