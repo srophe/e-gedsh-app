@@ -29,10 +29,19 @@
     
     <xsl:output method="text" encoding="utf-8"/>
     
-    <xsl:param name="applicationPath" select="'/Users/wsalesky/syriaca/syriaca/Gaddel'"/>
-    <xsl:param name="staticSitePath" select="'/Users/wsalesky/syriaca/syriaca/Gaddel'"/>
-    <xsl:param name="dataPath" select="'/Users/wsalesky/syriaca/syriaca/syriaca-data/data/'"/>
-    <xsl:param name="configPath" select="concat($staticSitePath, '/siteGenerator/components/repo-config.xml')"/>
+    <xsl:param name="applicationPath" select="''"/>
+    <xsl:param name="staticSitePath" select="''"/>
+    <xsl:param name="dataPath" select="''"/>
+    <!-- Locate repo-config.xml.
+         Default: resolve relative to this stylesheet (siteGenerator/xsl/json.xsl
+         -> ../components/repo-config.xml), so the transform works no matter the
+         working directory or how it is invoked.
+         Override: pass staticSitePath=<app-root> to use
+         <app-root>/siteGenerator/components/repo-config.xml instead. -->
+    <xsl:param name="configPath" select="
+        if ($staticSitePath != '')
+        then concat($staticSitePath, '/siteGenerator/components/repo-config.xml')
+        else resolve-uri('../components/repo-config.xml', static-base-uri())"/>
     <xsl:variable name="config">
         <xsl:if test="doc-available(xs:anyURI($configPath))">
             <xsl:sequence select="document(xs:anyURI($configPath))"/>

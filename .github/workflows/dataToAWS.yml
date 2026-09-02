@@ -45,22 +45,34 @@ jobs:
           wget https://repo1.maven.org/maven2/net/sf/saxon/Saxon-HE/10.6/Saxon-HE-10.6.jar -O saxon.jar
 
       # 3. Convert TEI XML to JSON using XSLT
+      #    Only article entries are kept; the produced JSON must carry a top-level
+      #    "idno". Front/back matter and other non-article XML are discarded.
       - name: Convert TEI to JSON using XSLT
         run: |
-          mkdir -p json
+          mkdir -p json logs
           find ./e-gedsh/data/tei/articles/tei -type f -name '*.xml' | while read file; do
             id=$(basename "$file" .xml)
-            java -jar saxon.jar -s:"$file" -xsl:resources/xsl/json.xsl -o:"json/${id}.json" 2>> logs/json-errors.log || echo "::warning:: JSON conversion failed for $file"
+            out="json/${id}.json"
+            if ! java -jar saxon.jar -s:"$file" -xsl:siteGenerator/xsl/json.xsl -o:"$out" 2>> logs/json-errors.log; then
+              echo "::warning:: JSON conversion failed for $file"
+              continue
+            fi
+            if ! grep -q '"idno"' "$out"; then
+              echo "Skipping non-article file: $file"
+              rm -f "$out"
+            fi
           done
           echo "Converted $(ls json/*.json 2>/dev/null | wc -l) files to JSON"
 
       # 4. Combine individual JSON files into combined.json
+      #    Only include records that carry an "idno" (article entries).
       - name: Create combined.json
         run: |
           echo '[' > json/combined.json
           first=true
           for file in json/*.json; do
             [ "$file" = "json/combined.json" ] && continue
+            grep -q '"idno"' "$file" || continue
             [ "$first" = true ] && first=false || echo ',' >> json/combined.json
             cat "$file" >> json/combined.json
           done
