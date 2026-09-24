@@ -685,13 +685,18 @@
                         
                     </xsl:otherwise>
                 </xsl:choose>
+                <!--
                 <xsl:if test="doc-available(xs:anyURI(concat($staticSitePath,'/siteGenerator/components/footer.html')))">
                     <xsl:copy-of select="document(xs:anyURI(concat($staticSitePath,'/siteGenerator/components/footer.html')))"/>
                 </xsl:if>
+                -->
+                <script src="/resources/js/footer.js"></script>
             </body>
+            <!--
             <xsl:if test="$template/child::*[1]/html:script">
                 <xsl:copy-of select="$template/child::*[1]/html:script"/>
-            </xsl:if>  
+            </xsl:if> 
+            -->
         </html>
     </xsl:template>
      
