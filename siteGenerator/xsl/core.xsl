@@ -24,7 +24,16 @@
     
     <!-- G -->
     <xsl:template match="t:graphic">
-        <img src="{string(@url)}"/>
+        <!-- http://http:// -->
+        <xsl:variable name="imageURL">
+            <xsl:choose>
+                <xsl:when test="contains(@url,'/iiif/')">
+                    <xsl:value-of select="concat(replace(@url,'http:','https:'),'/full/800,/0/default.png')"/>
+                </xsl:when>
+                <xsl:otherwise><xsl:value-of select="string(@url)"/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <img src="{$imageURL}"/>
         <xsl:copy-of select="@*[not(local-name()='url')]"/>
         <xsl:apply-templates select="child::*"/>
     </xsl:template> 
