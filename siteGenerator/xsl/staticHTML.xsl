@@ -293,7 +293,7 @@
         <xsl:variable name="nodes" select="//t:TEI | //rdf:RDF | *"/>
         <xsl:for-each-group select="$path/child::*" group-by=".">
             <xsl:message>Path: <xsl:value-of select="$path"/></xsl:message>
-            <xsl:result-document href="{replace(.,'.xml','.html')}">
+
                 <xsl:choose>
                     <xsl:when test="$fileType = 'HTML'">
                         <xsl:call-template name="htmlPage">
@@ -320,7 +320,7 @@
                         <xsl:message>Unrecognizable file type <xsl:value-of select="$fileType"/></xsl:message>
                     </xsl:otherwise>    
                 </xsl:choose>
-            </xsl:result-document>
+            
         </xsl:for-each-group>
     </xsl:template>
     
@@ -421,47 +421,108 @@
                     </xsl:when>
                 </xsl:choose>
             </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="$template/descendant::*:head">
-                        <xsl:choose>
-                            <xsl:when test="$template/descendant::*:head">
-                                <xsl:choose>
-                                    <xsl:when test="$pageType = 'TEI'">
-                                            <!--<xsl:sequence select="$collectionTemplate"/>-->
-                                            <head xmlns="http://www.w3.org/1999/xhtml">
-                                                <!--<xsl:sequence select="$collectionTemplate"/>-->
-                                                <xsl:for-each select="$collectionTemplate/descendant::*:head/child::*">
-                                                    <xsl:choose>
-                                                        <xsl:when test="local-name() = 'title'">
-                                                            <title xmlns="http://www.w3.org/1999/xhtml">
-                                                                <xsl:choose>
-                                                                    <xsl:when test="$nodes/descendant::t:body[descendant::*[@srophe:tags = '#syriaca-headword']]">
-                                                                        <xsl:value-of select="$nodes/descendant::t:body/descendant::*[@srophe:tags = '#syriaca-headword'][@xml:lang = 'en']"/>
-                                                                    </xsl:when>
-                                                                    <xsl:otherwise>
-                                                                       <xsl:value-of select="$nodes/descendant-or-self::t:titleStmt/t:title[1]"/>                
-                                                                    </xsl:otherwise>            
-                                                                </xsl:choose> 
-                                                            </title> 
-                                                        </xsl:when>
-                                                        <xsl:otherwise>
-                                                            <xsl:copy-of select="."/>
-                                                        </xsl:otherwise>
-                                                    </xsl:choose>
-                                                </xsl:for-each>
-                                            </head> 
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:copy-of select="$template/descendant::*:head"/>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:otherwise><xsl:message>Error in template, check template for html:head </xsl:message></xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise><xsl:message>No template found for html:head element</xsl:message></xsl:otherwise>
-                </xsl:choose>
+            <head data-template="app:fix-links">
+                <meta charset="utf-8"/>
+                <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title data-template="app:app-title">
+                    <xsl:choose>
+                        <xsl:when test="$nodes/descendant::t:body[descendant::*[@srophe:tags = '#syriaca-headword']]">
+                            <xsl:value-of select="$nodes/descendant::t:body/descendant::*[@srophe:tags = '#syriaca-headword'][@xml:lang = 'en']"/>
+                        </xsl:when>
+                        <xsl:when test="$nodes/descendant-or-self::t:titleStmt/t:title[1]">
+                            <xsl:value-of select="$nodes/descendant-or-self::t:titleStmt/t:title[1]"/>                
+                        </xsl:when>
+                        <xsl:otherwise>Gorgias Encyclopedic Dictionary of the Syriac Heritage: Electronic Edition</xsl:otherwise>
+                    </xsl:choose>
+                    </title>
+                <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"/>
+                <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/"/>
+                <link rel="schema.bibo" href="http://purl.org/ontology/bibo/"/>
+                <link data-template="app:metadata"/>
+                <link rel="shortcut icon" href="/resources/img/favicon.ico"/>
+                <link rel="stylesheet" href="/resources/css/syr-icon-fonts.css"/>
+                <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css"/>
+                <link rel="stylesheet" type="text/css" href="/resources/css/main.css"/>
+                <link rel="stylesheet" type="text/css" href="/resources/css/lightslider.css"/>
+                <link rel="stylesheet" type="text/css" href="/resources/css/sm-core-css.css"/>
+                <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css"/>
+                <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"/>
+                <script type="text/javascript" src="/resources/js/clipboard.min.js"/>
+                <!-- temporary until migrate to bootstrap 3.0 -->
+                <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"/>
+                <script type="text/javascript" src="/resources/js/jquery.smartmenus.min.js"/>
+                <script src="https://www.google.com/recaptcha/api.js"/>
+            </head>
             <body id="body">
+                <nav class="navbar navbar-default navbar-fixed-top" role="navigation" data-template="app:fix-links">
+                    <div class="container">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"/>
+                                <span class="icon-bar"/>
+                                <span class="icon-bar"/>
+                            </button>
+                            <a class="navbar-brand banner-container inline" href="/index.html">
+                                <img property="logo" class="img-responsive" style="padding-bottom:.5em;display:inline;" alt="e-GEDSH" src="/resources/img/e-gedsh.png" width="20px"/>
+                                <span style="font-size:24px;margin-left:.25em; padding-top:1.5em; display:inline;">e-GEDSH</span>
+                            </a>
+                        </div>
+                        <div class="navbar-collapse collapse pull-right">
+                            <ul class="nav navbar-nav sm sm-vertical" id="main-menu">
+                                <li>
+                                    <a href="/browse.html">Browse Entries</a>
+                                </li>
+                                <li>
+                                    <a href="/index.html">Home</a>
+                                </li>
+                                <li class="dropdown" style="margin-left: 1em;">
+                                    <a href="#" class="dropdown-toggle lonely-caret" data-toggle="dropdown">
+                                        <span class="icon-nav">
+                                            <img src="/resources/img/beth-mardutho.png" height="32px" alt="Beth Mardutho"/>
+                                        </span>
+                                        <span class="icon-text">Beth Mardutho</span>  <b class="caret"/>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li>
+                                            <a href="http://bethmardutho.org/" class="icon-container" target="_blank">
+                                                <span class="icon-nav">
+                                                    <img src="/resources/img/beth-mardutho.png" height="18px" alt="Beth Mardutho Home"/>
+                                                </span>
+                                                <span class="icon-text">Beth Mardutho Home</span>
+                                            </a>
+                                        </li>
+                                        <li role="presentation" class="divider"/>
+                                        <li>
+                                            <a href="http://sedra.bethmardutho.org/" class="icon-container" target="_blank">
+                                                <span class="icon-nav">
+                                                    <img src="/resources/img/sedra.png" height="18px" alt="SEDRA: Syriac Dictionaries"/>
+                                                </span>
+                                                <span class="icon-text">SEDRA: Syriac Dictionaries</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <form class="navbar-form navbar-right navbar-input-group" role="search" action="/search.html" method="get">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="search" name="q" id="q"/>
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default" type="submit">
+                                              <span class="glyphicon glyphicon-search"/>
+                                        </button>
+                                        <a href="/search.html" title="advanced search" class="btn btn-default">
+                                              <span class="glyphicon glyphicon-cog"/>
+                                        </a>
+                                    </div><!-- /btn-group -->
+                                </div>
+                            </form>
+                        </div><!--/.nav-collapse -->
+                    </div>
+                </nav>
+                
+                <!--
                 <xsl:choose>
                     <xsl:when test="not(empty($template))">
                         <xsl:choose>
@@ -482,6 +543,8 @@
                         <xsl:call-template name="genericNav"/>
                     </xsl:otherwise>
                 </xsl:choose>
+                -->
+                
                 <xsl:choose>
                     <xsl:when test="$pageType = 'HTML'">
                         <xsl:copy-of select="$nodes"/>
