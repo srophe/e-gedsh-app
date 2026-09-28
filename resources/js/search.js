@@ -195,8 +195,10 @@ function processUrlParams() {
   activeTerms = [];
 
   let combinedResults = [];
+  let searched = false;
   for (const [param, value] of Object.entries(params)) {
     if (value) {
+      searched = true;
       const config = fieldMap[param];
       const input = config.id.map(id => document.getElementById(id)).find(el => el);
       if (input) input.value = value;
@@ -210,7 +212,9 @@ function processUrlParams() {
     }
   }
   
-  if (combinedResults.length) {
+  // Render whenever a search was actually run, so a zero-match search still
+  // shows the "no results" message instead of leaving the page blank.
+  if (searched) {
     allResults = combinedResults;
     displayResults(1);
   }
