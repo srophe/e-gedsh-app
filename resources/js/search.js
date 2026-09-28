@@ -119,7 +119,7 @@ function displayResults(page = 1) {
   if (!container) return;
   
   if (allResults.length === 0) {
-    container.innerHTML = '<p>No results found.</p>';
+    container.innerHTML = '<div class="well well-small" style="background-color:white;"><p style="margin:0;">Results: 0</p></div>';
     return;
   }
   
@@ -216,4 +216,35 @@ function processUrlParams() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', processUrlParams);
+// Clear the search form inputs, rendered results, in-memory state, and the
+// query string in the URL. Wired to the "Clear" button on the search form.
+function clearSearch() {
+  // Empty every field the search form uses.
+  ['q', 'qs', 'persName', 'placeName', 'contributor', 'uri', 'title'].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  // Clear rendered results and reset in-memory state.
+  const container = document.getElementById('search-results');
+  if (container) container.innerHTML = '';
+  allResults = [];
+  activeTerms = [];
+  currentPage = 1;
+
+  // Strip the query string from the URL without reloading the page.
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  processUrlParams();
+
+  // The Clear button is a native form reset; also clear results and the URL.
+  const resetBtn = document.querySelector('form[role="form"] button[type="reset"]');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function () {
+      // Defer so this runs after the browser's native form reset.
+      window.setTimeout(clearSearch, 0);
+    });
+  }
+});
