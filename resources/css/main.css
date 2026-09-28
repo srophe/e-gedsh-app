@@ -262,7 +262,10 @@ h3.syr{
 h4 {font-size: 1em; margin-top:1em;}
 .byline {text-align:right;}
 .infobox {font-size:.875em; font-weight:normal !important;}
-.hi {background-color:yellow;}
+/* Search-term highlight: darker gold for stronger contrast against the white
+   page (3.25:1 vs white, meets WCAG 1.4.11 non-text contrast) while keeping
+   black text legible on the highlight (6.45:1, meets WCAG AA 1.4.3). */
+.hi, mark {background-color:#deda10; color:#000;}
 
 .white-link{color:white;}
 

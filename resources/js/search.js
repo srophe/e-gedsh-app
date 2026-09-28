@@ -58,7 +58,10 @@ function highlightTerms(escapedText) {
     .sort((a, b) => b.length - a.length)
     .map(escapeRegExp);
   const re = new RegExp(`(${parts.join('|')})`, 'gi');
-  return escapedText.replace(re, '<mark>$1</mark>');
+  // Darker gold highlight: black text on it is 6.45:1 (WCAG AA), and the
+  // highlight is 3.25:1 against the white page (WCAG 1.4.11). Inline style so
+  // it wins over Bootstrap's default bright-yellow <mark> rule.
+  return escapedText.replace(re, '<mark style="background-color:#deda10;color:#000;">$1</mark>');
 }
 
 // Build a fullText snippet centered on the first matching term, with the
