@@ -48,20 +48,109 @@ function escapeRegExp(str) {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Wrap occurrences of the active search terms in <mark> tags.
-// Operates on already HTML-escaped text so the result is safe to inject.
-function highlightTerms(escapedText) {
-  if (!activeTerms.length) return escapedText;
-  // Longest terms first so overlapping matches prefer the fuller term.
+// Transliteration marks (Syriac ʿayn/alaph and various apostrophes/quotes) that
+// searching should ignore, so e.g. "Abdisho" matches "ʿAbdishoʿ".
+const IGNORED_MARKS = /[ʿʾ'’‘`´ʼʻ]/g;
+
+// Fold a single character to its search-normalized form: lowercase, strip
+// combining diacritics, and drop ignored transliteration marks. Returns a
+// string because one source char can fold to zero chars (a mark) or several.
+function foldChar(ch) {
+  return ch
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(IGNORED_MARKS, '');
+}
+
+// Fold a whole string for diacritic/punctuation-insensitive comparison.
+function foldText(str) {
+  return String(str)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(IGNORED_MARKS, '');
+}
+
+// Fold a string and build a map from each folded-index to the original-string
+// index it came from, so matches found in the folded text can be located back
+// in the original for highlighting.
+function foldWithMap(str) {
+  let folded = '';
+  const map = [];
+  for (let i = 0; i < str.length; i++) {
+    const f = foldChar(str[i]);
+    for (let j = 0; j < f.length; j++) map.push(i);
+    folded += f;
+  }
+  // Sentinel so map[folded.length] resolves to the end of the string.
+  map.push(str.length);
+  return { folded, map };
+}
+
+// Turn a user query into a RegExp source that matches on folded text.
+// Supports "*" (any run of characters), "?" (a single character), and treats
+// a query wrapped in double quotes as an exact phrase. All other characters
+// are matched literally (regex-escaped).
+function queryToRegExpSource(query) {
+  let q = query.trim();
+  // A quoted query is an exact phrase; strip the surrounding quotes. Inner
+  // wildcards still apply.
+  if (q.length >= 2 && q.startsWith('"') && q.endsWith('"')) {
+    q = q.slice(1, -1);
+  }
+  const folded = foldText(q);
+  let src = '';
+  for (const ch of folded) {
+    if (ch === '*') src += '.*';
+    else if (ch === '?') src += '.';
+    else src += escapeRegExp(ch);
+  }
+  return src;
+}
+
+// Does the folded form of `text` contain a match for `query`?
+function foldedMatches(text, query) {
+  if (typeof text !== 'string') return false;
+  const src = queryToRegExpSource(query);
+  if (!src) return false;
+  return new RegExp(src, 'i').test(foldText(text));
+}
+
+// Build one RegExp (matching on folded text) from all active terms, for
+// locating matches to highlight. Returns null when there is nothing to match.
+function buildHighlightRegExp() {
   const parts = activeTerms
-    .slice()
-    .sort((a, b) => b.length - a.length)
-    .map(escapeRegExp);
-  const re = new RegExp(`(${parts.join('|')})`, 'gi');
-  // Darker gold highlight: black text on it is 6.45:1 (WCAG AA), and the
-  // highlight is 3.25:1 against the white page (WCAG 1.4.11). Inline style so
-  // it wins over Bootstrap's default bright-yellow <mark> rule.
-  return escapedText.replace(re, '<mark style="background-color:#deda10;color:#000;">$1</mark>');
+    .map(queryToRegExpSource)
+    .filter(Boolean)
+    // Longest sources first so overlapping matches prefer the fuller term.
+    .sort((a, b) => b.length - a.length);
+  if (!parts.length) return null;
+  return new RegExp('(' + parts.join('|') + ')', 'gi');
+}
+
+// Wrap matches of the active search terms in the ORIGINAL text with <mark>,
+// locating them via the folded text + index map, then HTML-escaping each
+// segment. Returns HTML that is safe to inject.
+function highlightOriginal(text) {
+  const re = buildHighlightRegExp();
+  if (!re) return escapeHtml(text);
+  const { folded, map } = foldWithMap(text);
+  let out = '';
+  let lastOrig = 0;
+  let m;
+  while ((m = re.exec(folded)) !== null) {
+    // Skip zero-width matches (e.g. a lone "*") to avoid an infinite loop.
+    if (m[0].length === 0) { re.lastIndex++; continue; }
+    const origStart = map[m.index];
+    const origEnd = map[m.index + m[0].length];
+    out += escapeHtml(text.slice(lastOrig, origStart));
+    out += '<mark style="background-color:#deda10;color:#000;">'
+      + escapeHtml(text.slice(origStart, origEnd)) + '</mark>';
+    lastOrig = origEnd;
+  }
+  out += escapeHtml(text.slice(lastOrig));
+  return out;
 }
 
 // Build a fullText snippet centered on the first matching term, with the
@@ -73,44 +162,41 @@ function buildSnippet(entry) {
   let start = 0;
   let end = Math.min(fullText.length, snippetContext * 2);
 
-  if (activeTerms.length) {
-    const lower = fullText.toLowerCase();
-    let idx = -1;
-    for (const term of activeTerms) {
-      const found = lower.indexOf(term.toLowerCase());
-      if (found !== -1 && (idx === -1 || found < idx)) idx = found;
-    }
-    if (idx !== -1) {
-      start = Math.max(0, idx - snippetContext);
-      end = Math.min(fullText.length, idx + snippetContext);
+  const re = buildHighlightRegExp();
+  if (re) {
+    const { folded, map } = foldWithMap(fullText);
+    const m = re.exec(folded);
+    if (m && m[0].length) {
+      const origIdx = map[m.index];
+      start = Math.max(0, origIdx - snippetContext);
+      end = Math.min(fullText.length, origIdx + snippetContext);
     }
   }
 
   let snippet = fullText.slice(start, end);
-  if (start > 0) snippet = '… ' + snippet;
-  if (end < fullText.length) snippet = snippet + ' …';
+  const prefix = start > 0 ? '… ' : '';
+  const suffix = end < fullText.length ? ' …' : '';
 
-  return highlightTerms(escapeHtml(snippet));
+  // Highlight within the snippet (prefix/suffix are added un-highlighted).
+  return prefix + highlightOriginal(snippet) + suffix;
 }
 
 function performSearch(query, field = 'all') {
-  if (!query || query.length < 2) return [];
-  const lowerQuery = query.toLowerCase();
-  console.log("search", query);
+  if (!query) return [];
+  // Require at least two non-wildcard characters to avoid matching everything.
+  if (foldText(query).replace(/[*?"]/g, '').length < 2) return [];
   return searchData.filter(entry => {
     if (field === 'all') {
       return Object.values(entry).some(value => {
-        if (typeof value === 'string') return value.toLowerCase().includes(lowerQuery);
-        if (Array.isArray(value)) return value.some(v => v.toLowerCase().includes(lowerQuery));
+        if (typeof value === 'string') return foldedMatches(value, query);
+        if (Array.isArray(value)) return value.some(v => foldedMatches(v, query));
         return false;
       });
-    } else {
-      console.log("entry field", entry, field)
-      const fieldValue = entry[field];
-      if (typeof fieldValue === 'string') return fieldValue.toLowerCase().includes(lowerQuery);
-      if (Array.isArray(fieldValue)) return fieldValue.some(v => v.toLowerCase().includes(lowerQuery));
-      return false;
     }
+    const fieldValue = entry[field];
+    if (typeof fieldValue === 'string') return foldedMatches(fieldValue, query);
+    if (Array.isArray(fieldValue)) return fieldValue.some(v => foldedMatches(v, query));
+    return false;
   });
 }
 
@@ -119,7 +205,10 @@ function displayResults(page = 1) {
   if (!container) return;
   
   if (allResults.length === 0) {
-    container.innerHTML = '<div class="well well-small" style="background-color:white;"><p style="margin:0;">Results: 0</p></div>';
+    container.innerHTML = '<div class="well well-small">'
+      + '<p style="margin:0;"><strong>Results: 0</strong></p>'
+      + '<p style="margin:.5em 0 0;">No results found. Try different or fewer search terms.</p>'
+      + '</div>';
     return;
   }
   

@@ -159,87 +159,80 @@
            <div class="col-md-4 search-panel">
             <form method="get" action="search.html" style="margin-top:2em;" class="form-horizontal indent" role="form">
                <div class="well well-small">
-                  <div class="panel panel-default collapse" id="searchTips">
+                  <button type="button" class="btn btn-default btn-block" data-toggle="collapse" data-target="#searchTips" aria-expanded="false" aria-controls="searchTips">
+                     <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Search Tips
+                  </button>
+                  <div class="panel panel-default collapse" id="searchTips" style="margin-top:.5em;">
                      <div class="panel-body">
-              
-                           <strong>"?"</strong> can be inserted as a variant for any single character.</p>
+                        <p>Search matches the text of an entry, ignoring diacritics and
+                           transliteration marks. You can refine a search with the wildcards and
+                           exact-phrase syntax below.</p>
+
+                        <h4>Single-character wildcard: <span class="btn code">?</span></h4>
+                        <p><strong>"?"</strong> stands in for any single character.</p>
                         <div class="indent">
-                           <p>Thus a search for:
-                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                           <p>Thus a search for:</p>
+                           <div class="btn-group code-grp" role="group" style="width:100%;">
                               <span class="btn code">G?wargis</span>
                               <a href="/search.html?q=G?wargis" type="button" class="btn btn-primary">
                                  <span class="glyphicon glyphicon-search"></span>&nbsp;
                               </a>
                            </div>
-                           returns results which contain either "Gewargis" or "Giwargis".<p></p>
-                           <p>Similarly a search for:
-                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                           returns results which contain either "Gewargis" or "Giwargis".
+                           <p>Similarly a search for:</p>
+                           <div class="btn-group code-grp" role="group" style="width:100%;">
                               <span class="btn code">M?r</span>
                               <a href="/search.html?q=M?r" type="button" class="btn btn-primary">
                                  <span class="glyphicon glyphicon-search"></span>&nbsp;
                               </a>
                            </div>
-                           returns results which contain either "Mar" or "Mor".<p></p>
+                           returns results which contain either "Mar" or "Mor".
                         </div>
-                        <p>
-                           <strong>"*"</strong> can be inserted as a variant for multiple characters or a truncated word.</p>
+
+                        <h4>Multiple-character wildcard: <span class="btn code">*</span></h4>
+                        <p><strong>"*"</strong> stands in for any number of characters, so it is
+                           useful for truncated words.</p>
                         <div class="indent">
-                           <p>Thus a search for:
-                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                           <p>Thus a search for:</p>
+                           <div class="btn-group code-grp" role="group" style="width:100%;">
                               <span class="btn code">Dayr*</span>
                               <a href="/search.html?q=Dayr*" type="button" class="btn btn-primary">
                                  <span class="glyphicon glyphicon-search"></span>&nbsp;
                               </a>
-                           </div> 
-                           returns results for "Dayr" and "Dayro" and more.<p></p>
-                           <p>Similarly a search for
-                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                           </div>
+                           returns results for "Dayr" and "Dayro" and more.
+                           <p>Similarly a search for:</p>
+                           <div class="btn-group code-grp" role="group" style="width:100%;">
                               <span class="btn code">Ab*</span>
                               <a href="/search.html?q=Ab*" type="button" class="btn btn-primary">
                                  <span class="glyphicon glyphicon-search"></span>&nbsp;
                               </a>
                            </div>
-                           returns results for "ʿAbdishoʿ" and "ʿAbda" and more.<p></p>
+                           returns results for "ʿAbdishoʿ" and "ʿAbda" and more.
                         </div>
+
                         <p class="bg-info" style="padding:.5em;">
-                           <small>Note: Because the sources we quote use a variety of transliteration formats, Syriaca.org ignores diacritics and punctuation in searching; for example, use of "ʿ" is not required to find results with this diacritical mark.</small>
+                           <small>Note: Because the sources we quote use a variety of transliteration
+                           formats, searching ignores diacritics and transliteration marks; for
+                           example, use of "ʿ" is not required to find results containing that mark,
+                           and "Henanisho" will match "Ḥenanishoʿ".</small>
                         </p>
-                        <h4>Fuzzy Search Character</h4>
-                        <p>Appending the character <strong>"~"</strong> after a word returns results for words that are close but not exact matches.</p>
-                        <div class="indent">
-                           <p>Thus a search for 
-                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
-                              <span class="btn code">Aba~</span>
-                              <a href="/search.html?q=Aba~" type="button" class="btn btn-primary">
-                                 <span class="glyphicon glyphicon-search"></span>&nbsp;
-                              </a>
-                           </div>
-                           returns results which contain "Aba" but also "Abi", "Saba", "Aha", and other words that are "fuzzy" matches for "Aba".<p></p>
-                        </div>
+
                         <h4>Exact Phrase Searches</h4>
-                        <p>To find an exact phrase, it should be enclosed in double quotes.</p>
+                        <p>To match an exact phrase (words in that order), enclose it in double
+                           quotes. Diacritics are still ignored, and wildcards may be used inside
+                           the phrase.</p>
                         <div class="indent">
-                           <p>Thus 
-                           </p><div class="btn-group code-grp" role="group" style="width:100%;">
+                           <p>Thus:</p>
+                           <div class="btn-group code-grp" role="group" style="width:100%;">
                               <span class="btn code">"ʿAbdishoʿ I"</span>
                               <a href="/search.html?q=&quot;ʿAbdishoʿ I&quot;" type="button" class="btn btn-primary">
                                  <span class="glyphicon glyphicon-search"></span>&nbsp;
                               </a>
                            </div>
-                           returns only one result with that exact phrase, while several results are found for the words "ʿAbdishoʿ" and "I".<p></p>
+                           returns only results containing that exact phrase, rather than results
+                           for the separate words "ʿAbdishoʿ" and "I".
                         </div>
-                        <h4>Proximity Characters</h4>
-                        <p>To find two or more words which occur within a specified range of each other, one can append the character "~" 
-                           followed by a number to an "Exact Phrase" search. This allows one to search for two or more words that occur within a 
-                           specified distance of each other as defined by number of words.</p>
-                        <p>Thus 
-                        </p><div class="btn-group code-grp" role="group" style="width:100%;">
-                           <span class="btn code">"Jacob+Bishop"~2</span>
-                           <a href="/search.html?q=&quot;Jacob+Bishop&quot;~2" type="button" class="btn btn-primary">
-                              <span class="glyphicon glyphicon-search"></span>&nbsp;
-                           </a>
-                        </div>
-
                      </div>
                   </div>
                   <div class="well well-small" style="background-color:white;">
@@ -269,7 +262,7 @@
                            <!-- <div class="form-group"><label for="bibl" class="col-sm-2 col-md-3  control-label">Sources: </label>
                               <div class="col-sm-10 col-md-9 "><input type="text" id="bibl" name="bibl" class="form-control"></div>
                            </div> -->
-                           <div class="form-group"><label for="uri" class="col-sm-2 col-md-3  control-label">URI <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Searches the entire XML data and returns the entries that reference the specified URI(s)."></span>: </label>
+                           <div class="form-group"><label for="uri" class="col-sm-2 col-md-3  control-label">URI: <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Searches the entire XML data and returns the entries that reference the specified URI(s)."></span> </label>
                               <div class="col-sm-10 col-md-9 "><input type="text" id="uri" name="uri" class="form-control">
                                  <p class="hint">*Enter an e-GEDSH URI (ex. https://gedsh.bethmardutho.org/Aba-I) or a referenced Syriaca URI (ex. http://syriaca.org/person/306).</p>
                               </div>
