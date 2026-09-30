@@ -193,11 +193,34 @@ function performSearch(query, field = 'all') {
         return false;
       });
     }
+    // A "Person Name" search must not match article contributors. The
+    // contributor's name is appended into each entry's persName list, so drop
+    // any persName value that matches the entry's contributor before matching.
+    if (field === 'persName') {
+      return personNamesExcludingContributor(entry).some(v => foldedMatches(v, query));
+    }
     const fieldValue = entry[field];
     if (typeof fieldValue === 'string') return foldedMatches(fieldValue, query);
     if (Array.isArray(fieldValue)) return fieldValue.some(v => foldedMatches(v, query));
     return false;
   });
+}
+
+// Collapse all Unicode whitespace to single spaces and fold for comparison, so
+// e.g. the contributor "David\u2009 A. Michelson" equals the persName entry
+// "  David  A.  Michelson  ".
+function foldForCompare(str) {
+  return foldText(String(str).replace(/\s+/g, ' ').trim());
+}
+
+// The entry's persName values with the contributor's name removed. Returns []
+// when there is no persName list.
+function personNamesExcludingContributor(entry) {
+  const names = entry.persName;
+  if (!Array.isArray(names)) return [];
+  if (!entry.contributor) return names;
+  const contributor = foldForCompare(entry.contributor);
+  return names.filter(name => foldForCompare(name) !== contributor);
 }
 
 function displayResults(page = 1) {
