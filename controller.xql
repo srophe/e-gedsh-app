@@ -71,7 +71,7 @@ else if (contains($exist:path, "/$shared/")) then
     </dispatch>    
 
 (: Checks for any record uri patterns as defined in repo.xml :)    
-else if(contains($exist:path,"/entry/") or contains($exist:path,"/fig/") or ends-with($exist:path, ("/atom","/tei","/rdf","/ttl",'.tei','.atom','.rdf','.ttl'))) then
+else if(contains($exist:path,"/") or contains($exist:path,"/fig/") or ends-with($exist:path, ("/atom","/tei","/rdf","/ttl",'.tei','.atom','.rdf','.ttl'))) then
     (: Sends to restxql to handle /atom, /tei,/rdf:)
     let $id := replace(xmldb:decode($exist:resource), "^(.*)\..*$", "$1")
     let $document-uri := concat($config:app-root,'/html/',tokenize($id,'/')[last()],'.html')
