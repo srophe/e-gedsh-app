@@ -232,6 +232,7 @@
                         <xsl:choose>
                             <xsl:when test="descendant::t:idno[@type='front']">frontMatter</xsl:when>
                             <xsl:when test="descendant::t:idno[@type='back']">backMatter</xsl:when>
+                            <xsl:when test="contains(descendant::t:ab[@type='idnos'][1]/t:idno[@type='URI'],'/fig/')">figure</xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="replace(translate(translate(translate(translate(replace(normalize-space(descendant::t:div[@type='entry']/t:head[1]),'ʿ',''),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H'),' ','')"/>
                             </xsl:otherwise>
@@ -243,6 +244,7 @@
                             <xsl:when test="$sort = 'front'">Front</xsl:when>
                             <xsl:when test="$sort = 'backMatter'">Back</xsl:when>
                             <xsl:when test="$sort = 'back'">Back</xsl:when>
+                            <xsl:when test="$sort = 'figure'">Figure</xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="upper-case(substring($sort,1,1))"/>
                             </xsl:otherwise>
@@ -252,22 +254,32 @@
                         <xsl:when test="$sortGroup = 'Front'">
                             <xsl:for-each select="descendant-or-self::t:div[@type='section']">
                                 <xsl:variable name="idno" select="t:ab/t:idno[@type='URI'][1]"/>
-                                <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'entry/')),'.html')"/></path>
+                                <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'')),'.html')"/></path>
                             </xsl:for-each>
                         </xsl:when>
                         <xsl:when test="$sortGroup = 'Back'">
                             <xsl:for-each select="descendant-or-self::t:div[@type='section']">
                                 <xsl:variable name="idno" select="t:ab/t:idno[@type='URI'][1]"/>
-                                <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'entry/')),'.html')"/></path>
+                                <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'')),'.html')"/></path>
                                 <xsl:for-each select="t:div[@type='subsection']">
                                     <xsl:variable name="idno" select="t:ab/t:idno[@type='URI'][1]"/>
-                                    <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'entry/')),'.html')"/></path>
+                                    <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'')),'.html')"/></path>
+                                </xsl:for-each>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:when test="$sortGroup = 'Figure'">
+                            <xsl:for-each select="descendant-or-self::t:div[@type='figure']">
+                                <xsl:variable name="idno" select="t:ab/t:idno[@type='URI'][1]"/>
+                                <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'')),'.html')"/></path>
+                                <xsl:for-each select="t:div[@type='subsection']">
+                                    <xsl:variable name="idno" select="t:ab/t:idno[@type='URI'][1]"/>
+                                    <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'')),'.html')"/></path>
                                 </xsl:for-each>
                             </xsl:for-each>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:variable name="idno" select="descendant::t:ab/t:idno[@type='URI'][1]"/>
-                            <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'entry/')),'.html')"/></path>
+                            <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'')),'.html')"/></path>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
@@ -293,7 +305,7 @@
         <xsl:variable name="nodes" select="//t:TEI | //rdf:RDF | *"/>
         <xsl:for-each-group select="$path/child::*" group-by=".">
             <xsl:message>Path: <xsl:value-of select="$path"/></xsl:message>
-
+            <xsl:result-document href="{replace(.,'.xml','.html')}">
                 <xsl:choose>
                     <xsl:when test="$fileType = 'HTML'">
                         <xsl:call-template name="htmlPage">
@@ -320,7 +332,7 @@
                         <xsl:message>Unrecognizable file type <xsl:value-of select="$fileType"/></xsl:message>
                     </xsl:otherwise>    
                 </xsl:choose>
-            
+            </xsl:result-document>
         </xsl:for-each-group>
     </xsl:template>
     
@@ -331,6 +343,9 @@
         <xsl:variable name="root">
             <xsl:choose>
                 <xsl:when test="$nodes/descendant::t:idno[@type='front'] or $nodes/descendant::t:idno[@type='back']">
+                    <xsl:sequence select="$nodes/descendant-or-self::t:idno[@type='URI'][. = $idno]/parent::t:ab/parent::t:div[@type][1]"/>
+                </xsl:when>
+                <xsl:when test="contains($nodes/descendant::t:ab[@type='idnos'][1]/t:idno[@type='URI'],'/fig/')">
                     <xsl:sequence select="$nodes/descendant-or-self::t:idno[@type='URI'][. = $idno]/parent::t:ab/parent::t:div[@type][1]"/>
                 </xsl:when>
                 <xsl:otherwise>
