@@ -50,7 +50,7 @@
                    <span class="tei-idno">https://gedsh.bethmardutho.org/fig/1</span>
                
                 <span class="tei-figure">
-                   <img src="https://iiif.dh.tamu.edu/iiif/2/syriaca%2fGEDSH_fig_001.tif/full/800,/0/default.png" />
+                               <div id="openseadragon1" style="width: 800px; height: 600px;"></div>
                 <span class="tei-figDesc">Fig. 1. Orpheus taming wild animals. Mosaic decorating the tomb of Papa,
                   with Syriac inscription dated 194, and reflecting Greco-Roman culture of the
                   Edessa area under the Abgarids. Dallas Museum of Art. Photo: John F. Healey. See
@@ -66,7 +66,14 @@
                    <a href="https://gedsh.bethmardutho.org/Old-Syriac-documents">Old Syriac documents</a>.
                </span>
             </span>
-            
+            <script src="/openseadragon/openseadragon.min.js"></script>
+            <script type="text/javascript">
+               var viewer = OpenSeadragon({
+                  id: "openseadragon1",
+                  prefixUrl: "/openseadragon/images/",
+                  tileSources: "https://iiif.dh.tamu.edu/iiif/2/syriaca%2fGEDSH_fig_001.tif"
+               });
+            </script>
                   </div>
                </div>
                <div class="col-md-3 col-md-pull-6 toc noprint">
