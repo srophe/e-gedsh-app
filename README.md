@@ -27,9 +27,12 @@ e-gedsh-app/
 ├── json/
 │   ├── combined.json      # Aggregated search data
 │   └── *.json            # Individual entry files
+├── fig/
+│   └── <N>.html          # Generated figure pages (e.g. fig/1.html)
 ├── siteGenerator/
 │   ├── build-json.sh      # Local TEI → JSON build script
 │   ├── xsl/json.xsl       # TEI → JSON transform (XSLT)
+│   ├── xsl/figures.xsl    # TEI figures → per-figure HTML transform (XSLT)
 │   └── components/
 │       └── repo-config.xml # Search field configuration
 └── infrastructure/
@@ -170,6 +173,56 @@ java -jar /tmp/saxon.jar \
 The stylesheet locates its field configuration (`siteGenerator/components/repo-config.xml`) relative to itself, so no extra parameters are required regardless of the working directory. To read the config from a different app root instead, pass `staticSitePath=<app-root>`.
 
 After regenerating, restart your local web server (or hard-refresh) so the browser picks up the new `json/combined.json`.
+
+## Figure Pages (IIIF)
+
+Each illustration referenced from entries as *Fig. N* has its own page at `/fig/<N>`
+(e.g. [`/fig/1`](https://gedsh.bethmardutho.org/fig/1)). These pages are static HTML
+files committed to the repo under `fig/` (`fig/1.html`, `fig/2.html`, `fig/3c.html`, …)
+and are deployed with the rest of the code, not by the data workflow.
+
+The figure images are served from a
+[IIIF Image API 2.1](https://iiif.io/api/image/2.1/) server. In the source TEI each
+figure references the image by its IIIF *identifier* (the base URI), for example:
+
+```
+http://iiif.dh.tamu.edu/iiif/2/syriaca%2fGEDSH_fig_001.tif
+```
+
+That identifier is **not** a displayable image on its own — requesting it returns the
+IIIF image information document (`info.json`). A displayable image requires a full IIIF
+Image API request (`{identifier}/{region}/{size}/{rotation}/{quality}.{format}`), which
+the generator builds automatically, upgrading `http:` to `https:`:
+
+```
+https://iiif.dh.tamu.edu/iiif/2/syriaca%2fGEDSH_fig_001.tif/full/650,/0/default.jpg
+```
+
+### Regenerating the figure pages locally
+
+The pages are produced from the figures TEI file (`e-GEDSH_figs.xml`, which lives in the
+[e-gedsh](https://github.com/srophe/e-gedsh) data repo, outside `articles/tei`) by
+`siteGenerator/xsl/figures.xsl` run through Saxon.
+
+**Requirements** — same as the JSON build: Java 11+ and Saxon-HE 10.6. Download Saxon
+once if you don't have it:
+
+```bash
+curl -sSL https://repo1.maven.org/maven2/net/sf/saxon/Saxon-HE/10.6/Saxon-HE-10.6.jar -o /tmp/saxon.jar
+```
+
+**Generate** — from the `e-gedsh-app` root, write the pages into `fig/` (`outDir` is the
+directory that will contain the `fig/` folder):
+
+```bash
+java -jar /tmp/saxon.jar \
+  -s:../e-gedsh/data/tei/e-GEDSH_figs.xml \
+  -xsl:siteGenerator/xsl/figures.xsl \
+  outDir=.
+```
+
+This writes one `fig/<N>.html` per `<div type="figure">` in the source. Review the diff
+and commit the regenerated files; they deploy with the code repo (`codeToAWS.yml`).
 
 ## Deployment
 

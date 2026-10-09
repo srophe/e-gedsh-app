@@ -189,13 +189,18 @@
         <xsl:choose>
             <xsl:when test="@url">
                 <xsl:choose>
-                    <xsl:when test="starts-with(@url,'http://cantaloupe.dh.tamu.edu/iiif')"> 
+                    <!-- IIIF Image API identifier: the @url is the image base URI, which on
+                         its own returns info.json rather than an image. Build a full IIIF
+                         image request (region/size/rotation/quality.format) for display, and
+                         upgrade http: to https: to avoid mixed-content blocking. -->
+                    <xsl:when test="contains(@url,'/iiif/')">
+                        <xsl:variable name="iiifBase" select="replace(@url,'^http:','https:')"/>
                         <div class="graphic">
                             <div style="width:100% !important;">
-                                <img src="{concat(@url,'/full/650,/0/default.jpg')}"/>
+                                <img src="{concat($iiifBase,'/full/650,/0/default.jpg')}"/>
                             </div>
                             <span class="see-full-image text-center">
-                                <a href="{concat(@url,'/full/full/0/default.jpg')}">See full image</a>
+                                <a href="{concat($iiifBase,'/full/full/0/default.jpg')}">See full image</a>
                             </span>
                         </div>
                     </xsl:when>

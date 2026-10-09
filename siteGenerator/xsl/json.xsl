@@ -237,12 +237,20 @@
             </string>
         </xsl:if>
     </xsl:template>
+    <!-- persName: the subject persons named within the entry. Excludes the
+         article contributor's name, which appears in the entry byline (and,
+         defensively, any teiHeader author), so a "Person Name" search does not
+         match contributors. -->
     <xsl:template match="*:fields[@function = 'persName']">
         <xsl:param name="doc"/>
         <xsl:param name="id"/>
-        <xsl:if test="$doc/descendant::tei:div[@type='entry']/descendant::tei:persName">
+        <xsl:variable name="persNames" select="$doc/descendant::tei:div[@type='entry']/descendant::tei:persName
+            [descendant-or-self::text() != '']
+            [not(ancestor::tei:byline)]
+            [not(ancestor::tei:author)]"/>
+        <xsl:if test="$persNames">
                 <array key="{.}" xmlns="http://www.w3.org/2005/xpath-functions"> 
-                    <xsl:for-each-group select="$doc/descendant::tei:div[@type='entry']/descendant::tei:persName[descendant-or-self::text() != '']" group-by=".">
+                    <xsl:for-each-group select="$persNames" group-by=".">
                         <string xmlns="http://www.w3.org/2005/xpath-functions">
                             <!--<xsl:value-of select="normalize-space(string-join(descendant-or-self::text(),' '))"/>-->
                             <xsl:apply-templates select="." mode="xmlLang"/>
