@@ -40,8 +40,12 @@ jobs:
       - name: Debug
         run: aws s3 sync ./ s3://gaddel-e-gedsh-site --exact-timestamps --dryrun
       - name: Sync all files to S3
+        # --cache-control sets long edge/browser caching to cut CloudFront origin
+        # requests (max-age = browser TTL 1 day; s-maxage = CloudFront edge TTL 1
+        # year). Safe because the next step invalidates /* on every deploy, so
+        # updated content is never served stale.
         run: |
-          aws s3 sync ./ s3://gaddel-e-gedsh-site --exact-timestamps --exclude ".gitignore" --exclude ".gitattributes" --exclude ".git/*" --exclude ".github/*" --exclude "tests/*" --exclude "siteGenerator/*" --exclude ".DS_Store" --exclude "build/*"
+          aws s3 sync ./ s3://gaddel-e-gedsh-site --exact-timestamps --cache-control "public, max-age=86400, s-maxage=31536000" --exclude ".gitignore" --exclude ".gitattributes" --exclude ".git/*" --exclude ".github/*" --exclude "tests/*" --exclude "siteGenerator/*" --exclude ".DS_Store" --exclude "build/*"
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
