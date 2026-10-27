@@ -24,14 +24,12 @@
     
     <!-- G -->
     <xsl:template match="t:graphic">
-        <!-- http://http:// -->
-        <xsl:variable name="imageURL">
-            <xsl:choose>
-                <xsl:when test="contains(@url,'/iiif/')">
-                    <xsl:variable name="imagePath" select="concat(replace(@url,'http:','https:'),'/info.json')"/>
-                    <div id="openseadragon1" style="width: 800px; height: 600px;"></div>
-                    <script src="/resources/openseadragon/openseadragon.min.js"></script>
-                    <script type="text/javascript">
+        <xsl:choose>
+            <xsl:when test="contains(@url,'/iiif/')">
+                <xsl:variable name="imagePath" select="concat(replace(@url,'http:','https:'),'/info.json')"/>
+                <div xmlns="http://www.w3.org/1999/xhtml" id="openseadragon1" style="width: 800px; height: 600px;"></div>
+                <script src="/resources/openseadragon/openseadragon.min.js"></script>
+                <script type="text/javascript">
                         <![CDATA[
                             var viewer = OpenSeadragon({
                             id: "openseadragon1",
@@ -39,17 +37,22 @@
                             tileSources: "]]><xsl:value-of select="$imagePath"/><![CDATA["
                             });
                         ]]>
-                    </script>
+                </script>
                     <!--
                     <xsl:value-of select="concat(replace(@url,'http:','https:'),'/full/800,/0/default.png')"/>
                     -->
-                </xsl:when>
-                <xsl:otherwise><xsl:value-of select="string(@url)"/></xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
+            </xsl:when>
+            <xsl:otherwise>
+                <img xmlns="http://www.w3.org/1999/xhtml" src="{@url}"/>
+                <xsl:copy-of select="@*[not(local-name()='url')]"/>
+                <xsl:apply-templates select="child::*"/>
+            </xsl:otherwise>    
+        </xsl:choose>
+        <!--
         <img src="{$imageURL}"/>
         <xsl:copy-of select="@*[not(local-name()='url')]"/>
         <xsl:apply-templates select="child::*"/>
+        -->
     </xsl:template> 
     
     <!-- H -->

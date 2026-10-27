@@ -182,6 +182,10 @@
                     <xsl:if test="t:head[starts-with(.,'Map')] and t:figure/t:graphic"> map-section </xsl:if>
                 </xsl:attribute>
             </xsl:if>
+            <xsl:if test="@type='figure'">
+                <h1 class="inline">Figure</h1>
+                <hr/>
+            </xsl:if>
             <xsl:apply-templates/>
             
             <xsl:if test="descendant::t:note[@rend='footer'] and not(parent::t:div)">

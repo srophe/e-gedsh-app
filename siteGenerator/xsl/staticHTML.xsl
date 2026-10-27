@@ -232,6 +232,7 @@
                         <xsl:choose>
                             <xsl:when test="descendant::t:idno[@type='front']">frontMatter</xsl:when>
                             <xsl:when test="descendant::t:idno[@type='back']">backMatter</xsl:when>
+                            <xsl:when test="descendant::t:idno[@type='URI']/parent::t:ab/parent::t:div[@type='figure']">figure</xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="replace(translate(translate(translate(translate(replace(normalize-space(descendant::t:div[@type='entry']/t:head[1]),'ʿ',''),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H'),' ','')"/>
                             </xsl:otherwise>
@@ -243,6 +244,7 @@
                             <xsl:when test="$sort = 'front'">Front</xsl:when>
                             <xsl:when test="$sort = 'backMatter'">Back</xsl:when>
                             <xsl:when test="$sort = 'back'">Back</xsl:when>
+                            <xsl:when test="$sort = 'figure'">Figure</xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="upper-case(substring($sort,1,1))"/>
                             </xsl:otherwise>
@@ -263,6 +265,12 @@
                                     <xsl:variable name="idno" select="t:ab/t:idno[@type='URI'][1]"/>
                                     <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'entry/')),'.html')"/></path>
                                 </xsl:for-each>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:when test="$sortGroup = 'Figure'">
+                            <xsl:for-each select="descendant-or-self::t:div[@type='figure']">
+                                <xsl:variable name="idno" select="t:ab/t:idno[@type='URI'][1]"/>
+                                <path idno="{$idno}"><xsl:value-of select="concat(replace($idno,$base-uri,concat($staticSitePath,'fig/')),'.html')"/></path>
                             </xsl:for-each>
                         </xsl:when>
                         <xsl:otherwise>
@@ -293,7 +301,9 @@
         <xsl:variable name="nodes" select="//t:TEI | //rdf:RDF | *"/>
         <xsl:for-each-group select="$path/child::*" group-by=".">
             <xsl:message>Path: <xsl:value-of select="$path"/></xsl:message>
-
+            
+            <!--Failed while closing output file: 403 Forbidden for: https://gedsh.bethmardutho.org-->
+            <xsl:result-document href="{replace(replace(.,'.xml','.html'),'https://gedsh.bethmardutho.org/','/Users/wsalesky/syriaca/gedsh/temp/')}">
                 <xsl:choose>
                     <xsl:when test="$fileType = 'HTML'">
                         <xsl:call-template name="htmlPage">
@@ -320,7 +330,7 @@
                         <xsl:message>Unrecognizable file type <xsl:value-of select="$fileType"/></xsl:message>
                     </xsl:otherwise>    
                 </xsl:choose>
-            
+            </xsl:result-document>
         </xsl:for-each-group>
     </xsl:template>
     
@@ -332,6 +342,9 @@
             <xsl:choose>
                 <xsl:when test="$nodes/descendant::t:idno[@type='front'] or $nodes/descendant::t:idno[@type='back']">
                     <xsl:sequence select="$nodes/descendant-or-self::t:idno[@type='URI'][. = $idno]/parent::t:ab/parent::t:div[@type][1]"/>
+                </xsl:when>
+                <xsl:when test="$nodes/descendant::t:idno[@type='URI']/parent::t:ab/parent::t:div[@type='figure']">
+                    <xsl:sequence select="$nodes/descendant-or-self::t:idno[@type='URI'][. = $idno]/parent::t:ab/parent::t:div[@type='figure'][1]"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:sequence select="$nodes"/>
@@ -522,29 +535,6 @@
                     </div>
                 </nav>
                 
-                <!--
-                <xsl:choose>
-                    <xsl:when test="not(empty($template))">
-                        <xsl:choose>
-                            <xsl:when test="$template/descendant::html:nav">
-                                <xsl:copy-of select="$template/descendant::html:nav"/>
-                            </xsl:when>
-                            <xsl:when test="$template/descendant::html:div[@role='navigation']">
-                                <xsl:copy-of select="$template/descendant::div[@role='navigation']"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:message>No template found for html:nav element</xsl:message>
-                                <xsl:call-template name="genericNav"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:message>No template found for html:head element</xsl:message>
-                        <xsl:call-template name="genericNav"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-                -->
-                
                 <xsl:choose>
                     <xsl:when test="$pageType = 'HTML'">
                         <xsl:copy-of select="$nodes"/>
@@ -594,50 +584,49 @@
                                             </xsl:otherwise>
                                         </xsl:choose>-->
                                     </div>
-                                    <div class="col-md-3 col-md-pull-6 toc noprint">
-                                        <!-- Need to work on the logic of this
-                                        <div data-template="app:next-entry"/>
-                                        -->
-                                        <!-- Bootstrap Ttoggle is not working -->
-                                        <xsl:variable name="tocPath">
-                                            <xsl:choose>
-                                                <xsl:when test="$staticSitePath != ''">
-                                                    <xsl:value-of select="concat($staticSitePath, '/siteGenerator/components/toc.html')"/>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <xsl:value-of select="'../components/toc.html'"/>
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </xsl:variable>
-                                        <xsl:if test="doc-available(xs:anyURI($tocPath))">
-                                            <xsl:sequence select="document(xs:anyURI($tocPath))"/>
-                                        </xsl:if>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <!-- Other data formats -->
-                                        <xsl:call-template name="otherDataFormats">
-                                            <xsl:with-param name="node" select="t:TEI"/>
-                                            <xsl:with-param name="idno" select="$idno"/>
-                                            <xsl:with-param name="formats" select="'uri,print,tei,purchase'"/>
-                                        </xsl:call-template>
-                                        <!-- Linked Data -->
-                                        <xsl:choose>
-                                            <xsl:when test="$nodes/descendant::t:idno[@type='front'] or $nodes/descendant::t:idno[@type='back']"></xsl:when>
-                                            <xsl:otherwise>
-                                                <div class="panel panel-default" style="margin-top:1em;" xmlns="http://www.w3.org/1999/xhtml">
-                                                    <div class="panel-heading"><a href="#" data-toggle="collapse" data-target="#showLinkedData">Linked Data  </a>
-                                                        <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to 
-                                                            additional resources beyond this record. 
-                                                            We welcome your additions, please use the e-mail button on the right to contact Syriaca.org about submitting additional links."></span>
-                                                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#submitLinkedData" style="margin-right:1em;"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></button>
-                                                    </div>
-                                                    <div class="panel-body">
-                                                        <div class="related-resources" id="relatedResources">
-                                                            <h4>Resources related to <xsl:value-of select="$root/descendant::t:div[@type]/t:head"/></h4>
-                                                            <form class="form-inline hidden" action="https://sparql.vanderbilt.edu/sparql" method="get" id="lod1">
-                                                                <input type="hidden" name="format" id="format" value="json"/>
-                                                                <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
-                                                                    <xsl:text disable-output-escaping="yes">
+                                    <xsl:choose>
+                                        <xsl:when test="$nodes/descendant::t:idno[@type='URI']/parent::t:ab/parent::t:div[@type='figure']"/>
+                                        <xsl:otherwise>
+                                            <div class="col-md-3 col-md-pull-6 toc noprint">
+                                                <xsl:variable name="tocPath">
+                                                    <xsl:choose>
+                                                        <xsl:when test="$staticSitePath != ''">
+                                                            <xsl:value-of select="concat($staticSitePath, '/siteGenerator/components/toc.html')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="'../components/toc.html'"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </xsl:variable>
+                                                <xsl:if test="doc-available(xs:anyURI($tocPath))">
+                                                    <xsl:sequence select="document(xs:anyURI($tocPath))"/>
+                                                </xsl:if>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <!-- Other data formats -->
+                                                <xsl:call-template name="otherDataFormats">
+                                                    <xsl:with-param name="node" select="t:TEI"/>
+                                                    <xsl:with-param name="idno" select="$idno"/>
+                                                    <xsl:with-param name="formats" select="'uri,print,tei,purchase'"/>
+                                                </xsl:call-template>
+                                                <!-- Linked Data -->
+                                                <xsl:choose>
+                                                    <xsl:when test="$nodes/descendant::t:idno[@type='front'] or $nodes/descendant::t:idno[@type='back']"></xsl:when>
+                                                    <xsl:otherwise>
+                                                        <div class="panel panel-default" style="margin-top:1em;" xmlns="http://www.w3.org/1999/xhtml">
+                                                            <div class="panel-heading"><a href="#" data-toggle="collapse" data-target="#showLinkedData">Linked Data  </a>
+                                                                <span class="glyphicon glyphicon-question-sign text-info moreInfo" aria-hidden="true" data-toggle="tooltip" title="This sidebar provides links via Syriaca.org to 
+                                                                    additional resources beyond this record. 
+                                                                    We welcome your additions, please use the e-mail button on the right to contact Syriaca.org about submitting additional links."></span>
+                                                                <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#submitLinkedData" style="margin-right:1em;"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></button>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <div class="related-resources" id="relatedResources">
+                                                                    <h4>Resources related to <xsl:value-of select="$root/descendant::t:div[@type]/t:head"/></h4>
+                                                                    <form class="form-inline hidden" action="https://sparql.vanderbilt.edu/sparql" method="get" id="lod1">
+                                                                        <input type="hidden" name="format" id="format" value="json"/>
+                                                                        <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
+                                                                            <xsl:text disable-output-escaping="yes">
                                                                 prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
                                                                 prefix lawd: &lt;http://lawd.info/ontology/&gt;
                                                                 prefix skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
@@ -652,20 +641,20 @@
                                                                 }
                                                                 GROUP BY ?uri 
                                                             </xsl:text>
-                                                                </textarea>
-                                                            </form>
-                                                            <div id="listRelatedResources"></div>
-                                                        </div>
-                                                        <xsl:if test="$root/descendant::*/@ref[contains(.,'http://syriaca.org/')]">
-                                                            <xsl:variable name="otherResources" select="$root/descendant::t:body/descendant::*/@ref[contains(.,'http://syriaca.org/')]"/>
-                                                            <xsl:variable name="distinctRes" select="distinct-values($otherResources)"/>
-                                                            <div class="other-resources" xmlns="http://www.w3.org/1999/xhtml">
-                                                                <h4>Resources related to <xsl:value-of select="count($distinctRes)"/> other topics in this article. </h4>
-                                                                <div class="collapse" id="showOtherResources">
-                                                                    <form class="form-inline hidden" action="https://sparql.vanderbilt.edu/sparql" method="get">
-                                                                        <input type="hidden" name="format" id="format" value="json"/>
-                                                                        <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
-                                                                            <xsl:text disable-output-escaping="yes">
+                                                                        </textarea>
+                                                                    </form>
+                                                                    <div id="listRelatedResources"></div>
+                                                                </div>
+                                                                <xsl:if test="$root/descendant::*/@ref[contains(.,'http://syriaca.org/')]">
+                                                                    <xsl:variable name="otherResources" select="$root/descendant::t:body/descendant::*/@ref[contains(.,'http://syriaca.org/')]"/>
+                                                                    <xsl:variable name="distinctRes" select="distinct-values($otherResources)"/>
+                                                                    <div class="other-resources" xmlns="http://www.w3.org/1999/xhtml">
+                                                                        <h4>Resources related to <xsl:value-of select="count($distinctRes)"/> other topics in this article. </h4>
+                                                                        <div class="collapse" id="showOtherResources">
+                                                                            <form class="form-inline hidden" action="https://sparql.vanderbilt.edu/sparql" method="get">
+                                                                                <input type="hidden" name="format" id="format" value="json"/>
+                                                                                <textarea id="query" class="span9" rows="15" cols="150" name="query" type="hidden">
+                                                                                    <xsl:text disable-output-escaping="yes">
                                                                     prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
                                                                     prefix lawd: &lt;http://lawd.info/ontology/&gt;
                                                                     prefix skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
@@ -685,20 +674,22 @@
                                                                         }
                                                                         GROUP BY ?uri 
                                                                     </xsl:text>
-                                                                        </textarea>
-                                                                    </form>
-                                                                    <div id="listOtherResources"></div>
-                                                                    
-                                                                </div>
-                                                                <a href="#" class="btn btn-default togglelink" style="width:100%;" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide Other Resources" id="getLinkedData">Show Other Resources</a>
+                                                                                </textarea>
+                                                                            </form>
+                                                                            <div id="listOtherResources"></div>
+                                                                            
+                                                                        </div>
+                                                                        <a href="#" class="btn btn-default togglelink" style="width:100%;" data-toggle="collapse" data-target="#showOtherResources" data-text-swap="Hide Other Resources" id="getLinkedData">Show Other Resources</a>
+                                                                    </div>
+                                                                </xsl:if>
                                                             </div>
-                                                        </xsl:if>
-                                                    </div>
-                                                </div>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    </div>
-                                </div>  
+                                                        </div>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </div>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                               </div>  
                             </div>
                             <!-- Floating footnotes display -->
                             <div id="footnoteDisplay" class="footnote">
