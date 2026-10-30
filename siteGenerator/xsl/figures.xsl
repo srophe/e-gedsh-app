@@ -8,6 +8,8 @@
     exclude-result-prefixes="xs t tei local" version="3.0">
 
     <!-- ==================================================================
+         Deprecated Code. Figures can be run via the staticHTML.xsl stylesheet. 
+         
          figures.xsl
 
          Generate one static HTML page per figure from the figures TEI file

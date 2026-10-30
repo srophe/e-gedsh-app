@@ -341,7 +341,7 @@
         <xsl:variable name="root">
             <xsl:choose>
                 <xsl:when test="$nodes/descendant::t:idno[@type='front'] or $nodes/descendant::t:idno[@type='back']">
-                    <xsl:sequence select="$nodes/descendant-or-self::t:idno[@type='URI'][. = $idno]/parent::t:ab/parent::t:div[@type][1]"/>
+                    <xsl:sequence select="$nodes/descendant-or-self::t:idno[@type='URI'][. = $idno]/parent::t:ab/parent::t:div[@type = 'section'][1]"/>
                 </xsl:when>
                 <xsl:when test="$nodes/descendant::t:idno[@type='URI']/parent::t:ab/parent::t:div[@type='figure']">
                     <xsl:sequence select="$nodes/descendant-or-self::t:idno[@type='URI'][. = $idno]/parent::t:ab/parent::t:div[@type='figure'][1]"/>
@@ -558,49 +558,15 @@
                                             <xsl:with-param name="collection" select="$collection"/>
                                             <xsl:with-param name="idno" select="$idno"/>
                                         </xsl:apply-templates>
-                                        <!-- 
-                                        <xsl:choose>
-                                    <xsl:when test="descendant::t:idno[@type='front'] or descendant::t:idno[@type='back']">
-                                        <xsl:value-of select="$nodes/descendant-or-self::t:idno[@type='URI'][. = @idno]/parent::t:ab/parent::t:div[@type][1]"/>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:value-of select="$nodes"/>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                                        -->
-                                        <!--<xsl:choose>
-                                            <xsl:when test="$nodes/descendant::t:idno[@type='front'] or $nodes/descendant::t:idno[@type='back']">
-                                                <xsl:value-of select="local-name($nodes)"/>
-                                                <xsl:apply-templates select="$nodes/descendant-or-self::t:idno[@type='URI'][. = $idno]/parent::t:ab/parent::t:div[@type][1]">
-                                                    <xsl:with-param name="collection" select="$collection"/>
-                                                    <xsl:with-param name="idno" select="$idno"/>
-                                                </xsl:apply-templates>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:apply-templates select="$nodes/ancestor-or-self::t:TEI">
-                                                    <xsl:with-param name="collection" select="$collection"/>
-                                                    <xsl:with-param name="idno" select="$idno"/>
-                                                </xsl:apply-templates>
-                                            </xsl:otherwise>
-                                        </xsl:choose>-->
                                     </div>
                                     <xsl:choose>
-                                        <xsl:when test="$nodes/descendant::t:idno[@type='URI']/parent::t:ab/parent::t:div[@type='figure']"/>
+                                        <xsl:when test="$nodes/descendant::t:idno[@type='URI']/parent::t:ab/parent::t:div[@type='figure']"></xsl:when>
                                         <xsl:otherwise>
                                             <div class="col-md-3 col-md-pull-6 toc noprint">
-                                                <xsl:variable name="tocPath">
-                                                    <xsl:choose>
-                                                        <xsl:when test="$staticSitePath != ''">
-                                                            <xsl:value-of select="concat($staticSitePath, '/siteGenerator/components/toc.html')"/>
-                                                        </xsl:when>
-                                                        <xsl:otherwise>
-                                                            <xsl:value-of select="'../components/toc.html'"/>
-                                                        </xsl:otherwise>
-                                                    </xsl:choose>
-                                                </xsl:variable>
-                                                <xsl:if test="doc-available(xs:anyURI($tocPath))">
-                                                    <xsl:sequence select="document(xs:anyURI($tocPath))"/>
-                                                </xsl:if>
+                                                <h3>Browse</h3>
+                                                <xsl:call-template name="toc">
+                                                    <xsl:with-param select="$root" name="node"/>
+                                                </xsl:call-template>
                                             </div>
                                             <div class="col-md-3">
                                                 <!-- Other data formats -->
@@ -696,64 +662,134 @@
                                 <div class="content"/>  
                             </div>
                         </div>
-                        <!--
-                        <xsl:choose>
-                            <xsl:when test="$collectionTemplate">
-                                <div class="main-content-block">
-                                    <div class="interior-content">
-                                        <xsl:call-template name="otherDataFormats">
-                                            <xsl:with-param name="node" select="t:TEI"/>
-                                            <xsl:with-param name="idno" select="$idno"/>
-                                            <xsl:with-param name="formats" select="'print,tei,rdf'"/>
-                                        </xsl:call-template>
-                                        <div class="row">
-                                            <div class="col-md-7 col-lg-8">
-                                                <xsl:apply-templates select="$nodes/ancestor-or-self::t:TEI">
-                                                    <xsl:with-param name="collection" select="$collection"/>
-                                                    <xsl:with-param name="idno" select="$idno"/>
-                                                </xsl:apply-templates>
-                                            </div>
-                                            <div class="col-md-5 col-lg-4 right-menu">
-                                                <xsl:choose>
-                                                    <xsl:when test="$nodes/ancestor-or-self::t:TEI/descendant::t:geo">
-                                                        <xsl:call-template name="leafletMap">
-                                                            <xsl:with-param name="nodes" select="$nodes/ancestor-or-self::t:TEI"/>
-                                                        </xsl:call-template>
-                                                    </xsl:when>
-                                                </xsl:choose>
-                                                <span class="rdfRelationships" data-recordID="{$idno}"/>
-                                        </div>
-                                        </div>
-                                    </div>
-                                </div>  
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="genericTEIPage">
-                                    <xsl:with-param name="config" select="$config"></xsl:with-param>
-                                    <xsl:with-param name="repository-title" select="$repository-title"/>
-                                    <xsl:with-param name="collection-title" select="$collection-title"/>
-                                </xsl:call-template>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                        -->
-                        
                     </xsl:otherwise>
                 </xsl:choose>
-                <!--
-                <xsl:if test="doc-available(xs:anyURI(concat($staticSitePath,'/siteGenerator/components/footer.html')))">
-                    <xsl:copy-of select="document(xs:anyURI(concat($staticSitePath,'/siteGenerator/components/footer.html')))"/>
-                </xsl:if>
-                -->
                 <script src="/resources/js/footer.js"></script>
             </body>
-            <!--
-            <xsl:if test="$template/child::*[1]/html:script">
-                <xsl:copy-of select="$template/child::*[1]/html:script"/>
-            </xsl:if> 
-            -->
         </html>
     </xsl:template>
      
+    <xsl:template name="toc">
+        <xsl:param name="node"/>
+        <xsl:variable name="docURI" select="$resource-path"/>
+        <xsl:variable name="docPath" select="tokenize($docURI,'/')[last()]"/>
+        <xsl:variable name="path" select="replace($docURI,$docPath,'')"/>
+        <xsl:variable name="browseList">
+            <xsl:for-each select="collection(concat($path,'/.?select=*.xml'))//t:TEI">
+                <xsl:variable name="sort">
+                    <xsl:choose>
+                        <xsl:when test="descendant::t:idno[@type='front']">frontMatter</xsl:when>
+                        <xsl:when test="descendant::t:idno[@type='back']">backMatter</xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="replace(translate(translate(translate(translate(replace(normalize-space(descendant::t:div[@type='entry']/t:head[1]),'ʿ',''),'Ṭ','T'),'Ṣ','S'),'Ç ','C'),'Ḥ','H'),' ','')"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="sortGroup">
+                    <xsl:choose>
+                        <xsl:when test="$sort = 'frontMatter'">Front</xsl:when>
+                        <xsl:when test="$sort = 'front'">Front</xsl:when>
+                        <xsl:when test="$sort = 'backMatter'">Back</xsl:when>
+                        <xsl:when test="$sort = 'back'">Back</xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="upper-case(substring($sort,1,1))"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="$sortGroup = 'Front'">
+                        <xsl:for-each select="descendant-or-self::t:div[@type='section']">
+                            <xsl:variable name="title" select="t:head[1]"/>
+                            <xsl:variable name="uri" select="tokenize(t:ab/t:idno[@type='URI'],'/')[last()]"/>
+                            <div xmlns="http://www.w3.org/1999/xhtml" sort="{$sortGroup}" sortNum="{t:ab/t:idno[@type='front']}">
+                                <a href="{$uri}" class="facet-label btn btn-default sub-menu" type="entry" sortNum="{t:ab/t:idno[@type='front']}">
+                                    <xsl:value-of select="$title" />
+                                </a>    
+                            </div>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:when test="$sortGroup = 'Back'">
+                        <xsl:for-each select="descendant-or-self::t:div[@type='section']">
+                            <xsl:variable name="title" select="t:head[1]"/>
+                            <xsl:variable name="uri" select="tokenize(t:ab/t:idno[@type='URI'],'/')[last()]"/>
+                            <div xmlns="http://www.w3.org/1999/xhtml" sort="{$sortGroup}" sortNum="{t:ab/t:idno[@type='back']}">
+                                <a xmlns="http://www.w3.org/1999/xhtml" type="entry" href="{$uri}" class="facet-label btn btn-default sub-menu" sortNum="{t:ab/t:idno[@type='back']}">
+                                    <xsl:value-of select="$title" />
+                                </a>
+                            </div>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:variable name="title" select="descendant::t:div[@type='entry']/t:head[1]"/>
+                        <xsl:variable name="uri" select="tokenize(descendant::t:ab/t:idno[@type='URI'],'/')[last()]"/>
+                        <xsl:variable name="order" select="descendant::t:ab/t:idno[@type='entry']"/>
+                        <div xmlns="http://www.w3.org/1999/xhtml" sort="{$sortGroup}" sortNum="{$order}">
+                            <a xmlns="http://www.w3.org/1999/xhtml" type="entry" href="{$uri}" class="facet-label btn btn-default sub-menu" sortNum="{$order}">
+                                <xsl:value-of select="$title" />
+                            </a>
+                        </div>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+        </xsl:variable>  
+        <!-- Need to order them by idno type='entry' or type='front'/back -->
+        <xsl:variable name="toc">
+            <div class="facet-list show" xmlns="http://www.w3.org/1999/xhtml">
+                <xsl:for-each-group select="$browseList/child::*" group-by="@sort">
+                    <xsl:if test="current-grouping-key() = 'Front'">
+                        <a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#{current-grouping-key()}"><xsl:value-of select="current-grouping-key()"/> (<xsl:value-of select="count(current-group())"/>)</a>
+                        <div id="{current-grouping-key()}" class="collapse">
+                            <xsl:for-each select="current-group()">
+                                <xsl:sort select="xs:integer(@sortNum)"/>
+                                <xsl:sequence select="."/>
+                            </xsl:for-each>
+                        </div>
+                    </xsl:if>
+                </xsl:for-each-group>
+                <xsl:for-each-group select="$browseList/child::*" group-by="@sort">
+                    <xsl:sort select="current-grouping-key()"/>
+                    <xsl:if test="current-grouping-key() != 'Front' and current-grouping-key() != 'Back' and current-grouping-key() != ''">
+                        <a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#{current-grouping-key()}"><xsl:value-of select="current-grouping-key()"/> (<xsl:value-of select="count(current-group())"/>)</a>
+                        <div id="{current-grouping-key()}" class="collapse">
+                            <xsl:for-each select="current-group()">
+                                <xsl:sort select="xs:integer(@sortNum)"/>
+                                <xsl:sequence select="."/>
+                            </xsl:for-each>
+                        </div>
+                    </xsl:if>
+                </xsl:for-each-group>
+                <xsl:for-each-group select="$browseList/child::*" group-by="@sort">
+                    <xsl:if test="current-grouping-key() = 'Back'">
+                        <a href="#" class="facet-label btn btn-default" data-toggle="collapse" data-target="#{current-grouping-key()}"><xsl:value-of select="current-grouping-key()"/> (<xsl:value-of select="count(current-group())"/>)</a>
+                        <div id="{current-grouping-key()}" class="collapse">
+                            <xsl:for-each select="current-group()">
+                                <xsl:sort select="xs:integer(@sortNum)"/>
+                                <xsl:sequence select="."/>
+                            </xsl:for-each>
+                        </div>
+                    </xsl:if>
+                </xsl:for-each-group>
+            </div>    
+        </xsl:variable>
+        <xsl:variable name="currentTitle">
+            <xsl:choose>
+                <xsl:when test="$node/descendant-or-self::t:head"><xsl:value-of select="$node/descendant-or-self::t:head[1]"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="$node/child::*[1]"/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="nextURI">
+            <xsl:value-of select="$toc/descendant-or-self::*:a[. = $currentTitle]/following::*:a[@type='entry'][1]/@href"/>
+        </xsl:variable>
+        <xsl:variable name="prevURI">
+            <xsl:value-of select="$toc/descendant-or-self::*:a[. = $currentTitle]/preceding::*:a[@type='entry'][1]/@href"/>
+        </xsl:variable>
+        <p>
+            <xsl:if test="$prevURI != ''"> <a href="{$prevURI}"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a><xsl:text> | </xsl:text></xsl:if> 
+            <xsl:value-of select="$currentTitle"/> 
+            <xsl:if test="$nextURI != ''"><xsl:text> | </xsl:text><a href="{$nextURI}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a></xsl:if>
+        </p> 
+        <xsl:sequence select="$toc"/>
+    </xsl:template> 
     <xsl:template match="html:li">
         <xsl:choose>
             <xsl:when test="@data-template='app:shared-content'">
