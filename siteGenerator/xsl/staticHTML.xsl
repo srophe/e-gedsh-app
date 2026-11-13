@@ -460,7 +460,7 @@
                 <link rel="stylesheet" type="text/css" href="/resources/css/lightslider.css"/>
                 <link rel="stylesheet" type="text/css" href="/resources/css/sm-core-css.css"/>
                 <link rel="stylesheet" type="text/css" media="print" href="/resources/css/print.css"/>
-                <script defer="defer" data-domain="gedsh.bethmardutho.org" src="https://plausible.io/js/plausible.js"/>
+                
                 <script type="text/javascript" src="/resources/js/clipboard.min.js"/>
                 <!-- temporary until migrate to bootstrap 3.0 -->
                 <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"/>
